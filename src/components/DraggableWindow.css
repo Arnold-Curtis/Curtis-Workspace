@@ -1,0 +1,419 @@
+/* Draggable Window Styling */
+.draggable-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  border-radius: 5px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.1s ease;
+}
+
+.draggable-window.dragging {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+  transform: scale(1.005);
+}
+
+.draggable-window.fullscreen {
+  position: fixed !important;
+  top: 60px !important; /* Position below the top bar */
+  left: 50px !important; /* Position to the right of sidebar icons */
+  right: 0 !important;
+  bottom: 40px !important; /* Leave space for taskbar */
+  width: calc(100% - 50px) !important; /* Adjust for sidebar icons */
+  height: calc(100% - 100px) !important; /* Adjust for top bar and taskbar */
+  transform: none !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 0;
+}
+
+/* Active window styling */
+.draggable-window.active .window-container {
+  border-color: #4c4c4c;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.draggable-window.active .window-title-bar {
+  background-color: #2a2d2e;
+}
+
+.draggable-window:not(.active) {
+  opacity: 0.92;
+}
+
+.window-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #3c3c3c;
+  border-radius: 5px;
+}
+
+/* Window header/title bar */
+.window-header {
+  background-color: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  cursor: move; /* Show move cursor on header */
+  user-select: none; /* Prevent text selection while dragging */
+}
+
+.window-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  height: 32px;
+  background-color: #252526;
+  cursor: move;
+  user-select: none;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.window-title {
+  display: flex;
+  align-items: center;
+  color: #cccccc;
+  font-size: 12px;
+}
+
+.tab-icon {
+  color: #519aba;
+  font-size: 14px;
+}
+
+.window-icon {
+  margin-right: 8px;
+  font-size: 14px;
+  color: #519aba;
+}
+
+/* Window control buttons (minimize, maximize, close) */
+.window-controls {
+  display: flex;
+  align-items: center;
+}
+
+.window-control {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #cccccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  margin-left: 2px;
+  transition: all 0.15s ease;
+}
+
+.window-control:hover {
+  background-color: #383838;
+}
+
+.window-control.minimize:hover {
+  background-color: #3b3b3b;
+}
+
+.window-control.maximize:hover,
+.window-control.restore:hover {
+  background-color: #1c4c75;
+  color: #ffffff;
+}
+
+.window-control.close:hover {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+
+.window-control {
+  background: none;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  color: #cccccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.window-control:hover {
+  background-color: #2a2d2e;
+}
+
+.window-control.close:hover {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+
+.window-control.maximize:hover {
+  background-color: #0e639c;
+  color: #ffffff;
+}
+
+/* Window content */
+.window-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 35px);
+  background-color: #1e1e1e;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  background-color: transparent;
+  z-index: 100;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.resize-handle-se {
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  cursor: se-resize;
+}
+
+.resize-handle-sw {
+  bottom: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  cursor: sw-resize;
+}
+
+.resize-handle-ne {
+  top: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  cursor: ne-resize;
+}
+
+.resize-handle-nw {
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nw-resize;
+}
+
+.resize-handle-e {
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 100%;
+  cursor: e-resize;
+}
+
+.resize-handle-w {
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 100%;
+  cursor: w-resize;
+}
+
+.resize-handle-n {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: n-resize;
+}
+
+.resize-handle-s {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: s-resize;
+}
+
+/* Prevent text selection during resizing */
+.no-select {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  cursor: inherit !important;
+}
+
+/* Import React-Resizable styles */
+.react-resizable {
+  position: relative;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-color: transparent;
+  padding: 0;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+/* Make resize handles visible on hover */
+.draggable-window:hover .react-resizable-handle {
+  opacity: 0.25;
+}
+
+.draggable-window .react-resizable-handle:hover {
+  opacity: 0.8 !important;
+}
+
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23FFFFFF" d="M8,8 L16,16 L16,0 L0,16 L8,8 Z"/></svg>');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+}
+
+.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+}
+
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+}
+
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+
+.react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 50%;
+  margin-top: -10px;
+  cursor: ew-resize;
+}
+
+.react-resizable-handle-w {
+  left: 0;
+}
+
+.react-resizable-handle-e {
+  right: 0;
+}
+
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  left: 50%;
+  margin-left: -10px;
+  cursor: ns-resize;
+}
+
+.react-resizable-handle-n {
+  top: 0;
+}
+
+.react-resizable-handle-s {
+  bottom: 0;
+}
+
+/* Make sure the fullscreen window doesn't disappear */
+.fullscreen .window-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Mobile styles for draggable windows */
+@media (max-width: 768px) {
+  .draggable-window {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    box-shadow: none;
+    border-radius: 0;
+    transition: none;
+  }
+  
+  .window-container {
+    border: none;
+    border-radius: 0;
+  }
+  
+  .window-content {
+    height: auto !important;
+    min-height: calc(100vh - 130px);
+  }
+  
+  .window-title-bar {
+    cursor: default;
+  }
+  
+  .resize-handle,
+  .react-resizable-handle {
+    display: none !important;
+  }
+  
+  .window-controls {
+    display: none;
+  }
+  
+  .draggable-window.fullscreen {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Specific mobile portrait styles */
+@media (orientation: portrait) and (max-width: 768px) {
+  .window-content {
+    min-height: calc(100vh - 95px);
+    overflow-y: auto;
+  }
+  
+  .window-title-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
+
+/* Specific mobile landscape styles */
+@media (orientation: landscape) and (max-width: 920px) {
+  .window-content {
+    min-height: calc(100vh - 95px);
+    max-height: calc(100vh - 95px);
+    overflow-y: auto;
+  }
+}

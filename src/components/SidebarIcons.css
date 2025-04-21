@@ -1,0 +1,104 @@
+.SidebarIcons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #181818; /* Updated background color */
+  padding: 10px 0;
+  height: 100vh;
+  width: 50px; /* Fixed width for the activity bar */
+  border-right: 1px solid #252526;
+  z-index: 1000; /* Ensure it stays above other content */
+}
+
+.icon-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  padding: 15px 0;
+  margin: 5px 0;
+  transition: background-color 0.3s ease;
+}
+
+.icon-container:hover {
+  background-color: #2a2d2e;
+}
+
+.icon-container.active {
+  background-color: #37373d;
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background-color: #61dafb;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.2s ease;
+}
+
+.icon-container:hover .icon {
+  transform: scale(1.1);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .SidebarIcons {
+    flex-direction: row;
+    height: 50px;
+    width: 100%;
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    z-index: 1000;
+  }
+
+  .icon-container {
+    padding: 5px 0;
+    margin: 0;
+    flex: 1;
+  }
+
+  .active-indicator {
+    left: 0;
+    top: 0;
+    height: 2px;
+    width: 100%;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Portrait-specific mobile styles */
+@media (orientation: portrait) and (max-width: 768px) {
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Landscape-specific mobile styles */
+@media (orientation: landscape) and (max-width: 920px) {
+  .SidebarIcons {
+    width: 40px;
+  }
+  
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
+}

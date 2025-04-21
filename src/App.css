@@ -1,0 +1,384 @@
+/* Reset default margin and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  box-sizing: border-box;
+  background-color: #0a192f; /* Set the purple background color */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 60px - 40px); /* Adjust for TopBar height and Taskbar height */
+  overflow: hidden; /* Prevent overflow */
+  position: relative;
+  background-color: #0a192f; /* Purple background */
+  padding-bottom: 40px; /* Make room for the taskbar */
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  margin-left: 50px; /* Space for SidebarIcons */
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden; /* Changed from auto to hidden to prevent unwanted scrolling */
+}
+
+/* Window Wrapper - Container for draggable windows */
+.window-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Position windows with slight offset to see multiple windows */
+.window-wrapper:nth-child(2) .draggable-window {
+  left: 60px;
+  top: 80px;
+}
+
+.window-wrapper:nth-child(3) .draggable-window {
+  left: 100px;
+  top: 120px;
+}
+
+/* New class for centered content containers */
+.centered-content {
+  width: 92%; /* Increased from 85% to utilize more horizontal space */
+  max-width: 1600px; /* Increased from 1200px to allow wider content */
+  height: calc(100% - 40px); /* Add some padding from top/bottom */
+  margin: 20px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Special case for Home page */
+.home-content {
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 1000;
+  background-color: #282c34;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 200px; /* Sidebar width */
+  flex-shrink: 0; /* Prevent shrinking */
+  background-color: #20232a;
+  height: 100%;
+  overflow: hidden; /* Prevent overflow */
+  position: fixed; /* Fix sidebar to the left */
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.sidebar-icons {
+  width: 200px; /* Match the sidebar width */
+  flex-shrink: 0;
+  height: 60px;
+  background-color: #20232a;
+  overflow: hidden; /* Prevent overflow */
+}
+
+@media (max-width: 768px) {
+  .content {
+    width: 100%; /* Sidebar collapses on smaller screens */
+    padding: 10px;
+  }
+
+  .sidebar {
+    display: none; /* Hide sidebar on small screens */
+  }
+}
+
+/* Mobile device styles */
+.mobile-device .main-content {
+  overflow-y: auto; /* Enable vertical scrolling on mobile */
+  padding-bottom: 0; /* Remove padding for taskbar */
+  height: calc(100% - 60px); /* Only account for TopBar */
+}
+
+.mobile-device .content {
+  margin-left: 0;
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 0;
+}
+
+.mobile-device .top-bar {
+  height: 50px; /* Smaller top bar on mobile */
+  padding: 0 10px;
+}
+
+.mobile-device .window-wrapper {
+  padding: 10px 5px; /* Reduced padding */
+}
+
+.mobile-device .centered-content {
+  width: 100%;
+  height: auto;
+  margin: 10px auto;
+  max-width: none;
+}
+
+.mobile-device .draggable-window {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  transform: none !important;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.mobile-device .window-content {
+  height: auto !important;
+  min-height: 80vh;
+}
+
+/* Portrait-specific styles */
+.portrait-mode .sidebar {
+  display: none; /* Hide sidebar on portrait */
+}
+
+.portrait-mode .sidebar-icons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  width: 100%;
+  height: 40px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.portrait-mode .SidebarIcons {
+  flex-direction: row;
+  height: 40px;
+  width: 100%;
+  padding: 0;
+}
+
+.portrait-mode .icon-container {
+  padding: 5px 0;
+  margin: 0;
+}
+
+.portrait-mode .active-indicator {
+  position: absolute;
+  left: auto;
+  top: 0;
+  height: 2px;
+  width: 100%;
+}
+
+/* Landscape-specific styles */
+.landscape-mode .sidebar {
+  width: 140px;
+  font-size: 90%;
+}
+
+.landscape-mode .sidebar-icons {
+  width: 40px;
+}
+
+.landscape-mode .SidebarIcons {
+  width: 40px; 
+}
+
+.landscape-mode .content {
+  margin-left: 40px;
+}
+
+/* Medium-sized screens */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 180px;
+  }
+
+  .content {
+    margin-left: 50px;
+  }
+
+  .centered-content {
+    width: 95%;
+  }
+}
+
+/* Smaller tablets and large phones in landscape */
+@media (max-width: 920px) {
+  .sidebar {
+    width: 160px;
+  }
+  
+  .sidebar-icons {
+    width: 40px;
+  }
+  
+  .SidebarIcons {
+    width: 40px;
+  }
+  
+  .content {
+    margin-left: 40px;
+  }
+}
+
+/* Phones and small screens */
+@media (max-width: 768px) {
+  .content {
+    width: 100%; 
+    margin-left: 0;
+    padding: 5px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+  
+  .sidebar-icons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    height: 40px;
+    z-index: 1000;
+  }
+  
+  .SidebarIcons {
+    flex-direction: row;
+    height: 40px;
+    width: 100%;
+    padding: 0;
+  }
+  
+  .icon-container {
+    padding: 5px 0;
+    margin: 0;
+  }
+  
+  .active-indicator {
+    position: absolute;
+    left: auto;
+    top: 0;
+    height: 2px;
+    width: 100%;
+  }
+  
+  .main-content {
+    height: calc(100% - 60px);
+    padding-bottom: 40px;
+  }
+  
+  .top-bar {
+    padding: 0 10px;
+  }
+  
+  .window-wrapper {
+    padding: 5px;
+  }
+  
+  .draggable-window {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    box-shadow: none;
+  }
+  
+  .centered-content {
+    width: 100%;
+    margin: 5px 0;
+    box-shadow: none;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .top-bar {
+    height: 50px;
+  }
+  
+  .main-content {
+    height: calc(100% - 50px - 40px);
+  }
+}

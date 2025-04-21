@@ -1,0 +1,557 @@
+.projects-container {
+  width: 100%;
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Fira Code', monospace;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent scrolling on the container */
+  border-radius: 8px;
+  position: absolute; /* Position absolutely */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.projects-header {
+  background-color: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+/* GitHub redirect button styling */
+.github-redirect-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 15px;
+  background-color: #2d2d2e;
+  cursor: pointer;
+  color: #cccccc;
+  font-size: 13px;
+  border-right: 1px solid #3c3c3c;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  margin-left: auto;
+}
+
+.github-redirect-button:hover {
+  background-color: #4a4a4a;
+  color: #ffffff;
+}
+
+.github-redirect-button:hover .github-icon {
+  color: #ffffff;
+}
+
+.redirect-icon {
+  font-size: 12px;
+  color: #61dafb;
+}
+
+.github-icon {
+  font-size: 14px;
+  color: #cccccc;
+  transition: color 0.2s ease;
+}
+
+.redirect-text {
+  font-weight: 500;
+}
+
+.file-tab {
+  background-color: #1e1e1e;
+  height: 100%;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  font-size: 13px;
+  color: #cccccc;
+  border-right: 1px solid #3c3c3c;
+}
+
+.file-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #61dafb;
+}
+
+.tab-icon {
+  color: #519aba;
+}
+
+.close-icon {
+  margin-left: 10px;
+  font-size: 12px;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.close-icon:hover {
+  opacity: 1;
+}
+
+.projects-content {
+  display: flex;
+  height: calc(100% - 35px); /* Subtract header height */
+  overflow: hidden;
+  width: 100%; /* Ensure full width */
+}
+
+/* Explorer sidebar */
+.explorer-section {
+  width: 220px; /* Slightly wider for better readability */
+  min-width: 220px; /* Prevent shrinking */
+  background-color: #252526;
+  overflow-y: auto;
+  border-right: 1px solid #3c3c3c;
+  height: 100%; /* Ensure full height */
+}
+
+.explorer-header {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #6d6d6d;
+  background-color: #2d2d2d;
+  text-transform: uppercase;
+}
+
+.project-list {
+  padding: 10px 0;
+}
+
+.project-item {
+  padding: 6px 16px;
+  font-size: 13px;
+  color: #cccccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.project-item.active {
+  background-color: #37373d;
+}
+
+.project-item:hover {
+  background-color: #2a2d2e;
+}
+
+.project-item i {
+  color: #61dafb;
+  font-size: 12px;
+}
+
+/* Project display area */
+.project-display {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 30px 40px; /* Increased horizontal padding */
+  height: 100%; /* Ensure full height */
+  box-sizing: border-box; /* Include padding in height calculation */
+}
+
+.project-details {
+  max-width: 1200px; /* Increased from 900px */
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr; /* Default for small screens */
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #3c3c3c;
+  padding-bottom: 15px;
+  grid-column: span 1;
+}
+
+.project-header h2 {
+  margin: 0;
+  color: #4FC1FF;
+  font-size: 28px; /* Increased size */
+  font-weight: 500;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #cccccc;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.close-btn:hover {
+  background-color: #2a2d2e;
+}
+
+.project-image {
+  margin-bottom: 30px;
+  border: 1px solid #3c3c3c;
+  border-radius: 5px;
+  overflow: hidden;
+  max-width: 100%;
+  grid-column: span 1;
+}
+
+.project-image img {
+  width: 100%;
+  display: block;
+}
+
+.project-info {
+  grid-column: span 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.info-section {
+  margin-bottom: 0; /* Remove bottom margin since we're using grid gap */
+}
+
+.info-section h3 {
+  color: #CE9178;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-icon {
+  color: #61dafb;
+}
+
+.info-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: #cccccc;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-tag {
+  background-color: #2d2d2d;
+  color: #61dafb;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  border: 1px solid #3c3c3c;
+}
+
+.feature-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature-icon {
+  color: #61dafb;
+  font-size: 14px;
+}
+
+.project-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.project-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.github-link {
+  background-color: #333;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+.github-link:hover {
+  background-color: #444;
+}
+
+.demo-link {
+  background-color: #0e639c;
+  color: #ffffff;
+}
+
+.demo-link:hover {
+  background-color: #1177bb;
+}
+
+.project-link.demo-link.disabled {
+  background-color: #555555;
+  color: #999999;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.project-link.demo-link.disabled i {
+  color: #999999;
+}
+
+/* No selection state */
+.no-selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%; /* Ensure full width */
+}
+
+.placeholder-content {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  color: #61dafb;
+  margin-bottom: 20px;
+}
+
+.placeholder-content h3 {
+  color: #4FC1FF;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.placeholder-content p {
+  color: #cccccc;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (min-width: 1400px) {
+  .project-details {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  
+  .project-header {
+    grid-column: span 2;
+  }
+  
+  .project-image {
+    grid-column: 1;
+  }
+  
+  .project-info {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 1400px) {
+  .project-info {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projects-content {
+    flex-direction: column;
+  }
+  
+  .explorer-section {
+    width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #3c3c3c;
+  }
+  
+  .project-display {
+    padding: 15px;
+  }
+  
+  .project-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .project-header h2 {
+    font-size: 24px;
+  }
+  
+  .project-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .project-link {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .placeholder-content {
+    padding: 20px;
+  }
+  
+  .placeholder-icon {
+    font-size: 36px;
+  }
+}
+
+/* Portrait mode specific styles */
+@media (orientation: portrait) and (max-width: 768px) {
+  .explorer-section {
+    max-height: 150px;
+  }
+  
+  .project-item {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .project-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+  }
+  
+  .info-section h3 {
+    font-size: 14px;
+  }
+  
+  .info-section p, .feature-item {
+    font-size: 12px;
+  }
+  
+  .tech-tags {
+    gap: 5px;
+  }
+  
+  .tech-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .project-display {
+    padding: 10px;
+  }
+  
+  .project-links {
+    margin-top: 15px;
+  }
+}
+
+/* Landscape mode specific styles */
+@media (orientation: landscape) and (max-width: 920px) {
+  .projects-content {
+    flex-direction: row; /* Keep side-by-side layout in landscape */
+  }
+  
+  .explorer-section {
+    width: 160px;
+    min-width: 160px;
+    max-height: none;
+    border-right: 1px solid #3c3c3c;
+    border-bottom: none;
+  }
+  
+  .project-item {
+    padding: 5px 10px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  
+  .project-display {
+    padding: 15px;
+  }
+  
+  .project-header h2 {
+    font-size: 22px;
+  }
+  
+  .project-links {
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  .project-link {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .explorer-header {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+  
+  .project-item {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .project-header h2 {
+    font-size: 20px;
+  }
+  
+  .project-header {
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .info-section h3 {
+    font-size: 14px;
+  }
+  
+  .info-section p, .feature-item {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  
+  .tech-tag {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+  
+  .project-links a {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
