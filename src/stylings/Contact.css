@@ -382,7 +382,9 @@ body {
   width: 100%;
   background-color: #1e1e1e;
   color: #d4d4d4;
-  overflow-y: auto;
+  overflow-y: auto !important; /* Force scrolling at container level */
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- HEADER STYLING ---- */
@@ -423,8 +425,10 @@ body {
 .contact-content {
   display: flex;
   flex: 1;
-  overflow-y: auto;
   position: relative;
+  height: auto;
+  min-height: calc(100vh - 95px);
+  overflow: visible; /* Allow content to be visible */
 }
 
 .code-line-numbers {
@@ -434,6 +438,7 @@ body {
   text-align: right;
   user-select: none;
   min-width: 40px;
+  overflow-y: hidden; /* Prevent scrolling */
 }
 
 .line-number {
@@ -446,6 +451,9 @@ body {
   flex: 1;
   font-family: 'Fira Code', monospace;
   line-height: 1.6;
+  overflow: visible; /* Let parent handle scrolling */
+  height: auto;
+  padding-bottom: 60px; /* Add space at the bottom */
 }
 
 /* ---- CODE COMMENT ---- */
@@ -1012,5 +1020,606 @@ textarea.input-field {
   
   .code-comment {
     font-size: 12px;
+  }
+}
+
+/* Mobile-specific enhancements for Contact page */
+@media (max-width: 768px) {
+  .contact-page-container {
+    padding-bottom: 60px; /* Make room for mobile nav */
+    overflow-y: auto !important; /* Ensure content is fully visible */
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  /* Make the contact form more mobile-friendly */
+  .contact-form-wrapper {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  /* Adjust the contact card layout for better readability */
+  .contact-info-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  /* Ensure form inputs are easier to tap */
+  .input-field {
+    font-size: 16px; /* Prevent zoom on mobile when focusing inputs */
+    padding: 12px;
+  }
+  
+  /* Make submit button more prominent */
+  .submit-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+  }
+  
+  .contact-content {
+    overflow: visible; /* Allow content to flow naturally */
+    height: auto;
+  }
+  
+  .contact-main {
+    overflow: visible; /* Allow content to determine the height */
+    height: auto;
+    padding-bottom: 80px; /* Add more bottom padding for mobile */
+  }
+  
+  /* Fix issues with scrolling containers */
+  body, #root, .App {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+/* Portrait mode specific adjustments */
+@media (orientation: portrait) and (max-width: 768px) {
+  /* Further optimize form for portrait mode */
+  .form-group {
+    margin-bottom: 12px;
+  }
+  
+  /* Hide code line numbers in portrait to save space */
+  .code-line-numbers {
+    display: none;
+  }
+}
+
+/* Landscape mode specific adjustments */
+@media (orientation: landscape) and (max-width: 920px) {
+  .contact-page-container {
+    padding-bottom: 55px;
+  }
+  
+  /* Make better use of horizontal space */
+  .contact-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Fix for Windows desktop version scrolling */
+@media (min-width: 769px) {
+  body, html {
+    overflow: hidden; /* Prevent body scrolling */
+    height: 100vh;
+  }
+  
+  #root, .App {
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .contact-page-container {
+    overflow-y: auto !important; /* Force scrollbar here */
+    height: 100%;
+    max-height: 100vh;
+  }
+  
+  .contact-content {
+    overflow: visible;
+    height: auto;
+  }
+  
+  .contact-main {
+    overflow: visible;
+  }
+  
+  /* Make sure all parent containers allow scrolling */
+  body, #root, .App, .container {
+    overflow: auto;
+    height: 100%;
+  }
+  
+  /* Make sure the export section at the bottom is visible */
+  .export-section {
+    margin-bottom: 40px;
+  }
+}
+
+/* Add padding to the last element to ensure it's visible */
+.export-section:last-child {
+  margin-bottom: 50px;
+}
+
+/* Admin panel styles */
+.admin-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(37, 37, 38, 0.7);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #61dafb;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-toggle:hover {
+  background-color: #3c3c3c;
+  transform: scale(1.1);
+}
+
+.admin-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.admin-panel {
+  background-color: #252526;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background-color: #3c3c3c;
+  border-bottom: 1px solid #555;
+}
+
+.admin-panel-header h3 {
+  color: #e9e9e9;
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #e9e9e9;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-form {
+  padding: 20px;
+}
+
+.submissions-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.submissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.submissions-header h4 {
+  margin: 0;
+  color: #e9e9e9;
+  font-size: 16px;
+}
+
+.download-btn {
+  background-color: #0e639c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: #1177bb;
+}
+
+.submissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.submission-item {
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  padding: 15px;
+  border-left: 3px solid #61dafb;
+}
+
+.submission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.submission-header h5 {
+  margin: 0;
+  color: #CE9178;
+  font-size: 16px;
+}
+
+.submission-date {
+  color: #6A9955;
+  font-size: 12px;
+}
+
+.submission-email {
+  color: #9CDCFE;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.submission-message {
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.no-submissions {
+  text-align: center;
+  color: #6a737d;
+  padding: 30px 0;
+  font-style: italic;
+}
+
+.exit-btn {
+  margin-top: 20px;
+  background-color: #4d4d4d;
+}
+
+.exit-btn:hover {
+  background-color: #5a5a5a;
+}
+
+/* Mobile responsive styles for admin panel */
+@media (max-width: 768px) {
+  .admin-panel {
+    width: 95%;
+    max-width: none;
+    max-height: 90vh;
+  }
+  
+  .submissions-container {
+    padding: 15px;
+    max-height: 75vh;
+  }
+  
+  .admin-form {
+    padding: 15px;
+  }
+}
+
+/* View Mode Toggle Button */
+.view-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #0e639c;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.view-mode-toggle:hover {
+  background-color: #1177bb;
+  transform: translateY(-2px);
+}
+
+.view-mode-toggle i {
+  font-size: 16px;
+}
+
+/* Submissions View Styling */
+.submissions-view {
+  width: 100%;
+}
+
+/* Access Form Styling */
+.access-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+}
+
+.access-info h2 {
+  color: #CE9178;
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.access-info p {
+  margin: 15px 0;
+  line-height: 1.6;
+}
+
+.highlight-code {
+  background-color: rgba(97, 218, 251, 0.1);
+  color: #61dafb;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+  border: 1px solid rgba(97, 218, 251, 0.2);
+}
+
+.access-form {
+  width: 100%;
+}
+
+/* Submissions Container */
+.submissions-container {
+  background-color: #252526;
+  border-radius: 4px;
+  margin: 20px 0;
+  min-height: 400px;
+}
+
+.submissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.submissions-header h3 {
+  margin: 0;
+  color: #CE9178;
+  font-size: 18px;
+}
+
+.submissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.submission-card {
+  background-color: #2d2d2d;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 3px solid #61dafb;
+}
+
+.submission-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.submission-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #252526;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.sender-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sender-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0e639c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.sender-details h4 {
+  margin: 0 0 5px 0;
+  color: #f9f9f9;
+  font-size: 16px;
+}
+
+.sender-email {
+  color: #9CDCFE;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.sender-email:hover {
+  text-decoration: underline;
+}
+
+.submission-date {
+  color: #6A9955;
+  font-size: 12px;
+  text-align: right;
+  line-height: 1.5;
+}
+
+.submission-content {
+  padding: 15px;
+  color: #d4d4d4;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.submission-content p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.no-submissions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  color: #6a737d;
+  text-align: center;
+}
+
+.no-submissions i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.4;
+}
+
+.no-submissions p {
+  font-size: 18px;
+  margin: 0 0 10px 0;
+  color: #9CDCFE;
+}
+
+.no-submissions span {
+  font-size: 14px;
+}
+
+/* Download Button */
+.download-btn {
+  background-color: #0e639c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: #1177bb;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .view-mode-toggle {
+    top: 10px;
+    right: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .submissions-grid {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+  
+  .access-form-wrapper {
+    padding: 15px;
+  }
+  
+  .submission-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .submission-date {
+    text-align: left;
+    margin-left: 52px; /* Aligns with the sender name */
+  }
+}
+
+@media (max-width: 480px) {
+  .sender-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+  
+  .sender-details h4 {
+    font-size: 14px;
+  }
+  
+  .sender-email {
+    font-size: 12px;
+  }
+  
+  .submission-date {
+    font-size: 11px;
+    margin-left: 42px;
+  }
+  
+  .submission-content {
+    font-size: 13px;
+    padding: 12px;
   }
 }

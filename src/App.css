@@ -74,7 +74,7 @@ html, body {
   flex-direction: column;
   height: 100%;
   position: relative;
-  margin-left: 50px; /* Space for SidebarIcons */
+  margin-left: 0; /* Changed from 50px to 0 - removing space for SidebarIcons */
   padding: 0;
   box-sizing: border-box;
   overflow: hidden; /* Changed from auto to hidden to prevent unwanted scrolling */
@@ -380,5 +380,96 @@ html, body {
   
   .main-content {
     height: calc(100% - 50px - 40px);
+  }
+}
+
+/* Mobile full wrapper - used to make component windows fill the entire screen on mobile */
+.mobile-full-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile device adjustments */
+@media (max-width: 768px) {
+  /* Override the background color on mobile for content area */
+  .content, .main-content {
+    background-color: #1e1e1e;
+    padding-bottom: 0;
+  }
+  
+  /* Ensure content fills the space on mobile */
+  .content {
+    margin-left: 0;
+    overflow-y: auto;
+    width: 100%;
+    padding: 0;
+  }
+  
+  /* Keep the home content centered on mobile */
+  .home-content {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: calc(100vh - 60px - 60px); /* Adjust for top bar and mobile nav */
+  }
+  
+  /* Reduce vertical padding on mobile */
+  .window-wrapper {
+    padding: 0;
+  }
+  
+  /* Remove the window border and background on mobile */
+  .draggable-window {
+    position: static !important;
+    top: unset !important;
+    left: unset !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  
+  /* Reduce header size on mobile */
+  .window-title-bar {
+    height: 40px;
+  }
+  
+  /* Ensure window content is visible and scrollable on mobile */
+  .window-content {
+    height: auto !important;
+    min-height: calc(100vh - 110px); /* Adjusted for top bar, header, and mobile nav */
+    overflow-y: auto;
+  }
+  
+  /* Make sure contents fill the screen */
+  .centered-content {
+    width: 100%;
+    margin: 0;
+    height: auto;
+    box-shadow: none;
+  }
+}
+
+/* Portrait-specific adjustments */
+@media (orientation: portrait) and (max-width: 768px) {
+  /* Additional height adjustment for portrait mode */
+  .window-content {
+    min-height: calc(100vh - 100px); /* Slightly shorter header in portrait mode */
+  }
+}
+
+/* Landscape-specific adjustments */
+@media (orientation: landscape) and (max-width: 920px) {
+  /* Optimize for limited vertical space in landscape */
+  .window-content {
+    min-height: calc(100vh - 120px);
+  }
+  
+  .home-content {
+    min-height: calc(100vh - 50px - 50px); /* Adjust for shorter top bar and nav in landscape */
   }
 }

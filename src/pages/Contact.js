@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../stylings/Contact.css';
 import { motion } from 'framer-motion';
 
@@ -27,10 +27,20 @@ const Contact = () => {
     setSubmitting(true);
     setError(null);
 
+    // Create submission object with timestamp
+    const submissionData = {
+      ...formData,
+      timestamp: new Date().toISOString(),
+      id: Date.now()
+    };
+
+    // Save to localStorage
+    const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+    const updatedSubmissions = [submissionData, ...savedSubmissions];
+    localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
+
     // Simulate form submission
     setTimeout(() => {
-      // In a real app, you would send the data to a server here
-      console.log('Form submitted:', formData);
       setSubmitting(false);
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });

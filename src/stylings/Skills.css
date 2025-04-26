@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 1rem;
-  width: 85vw;
-  height: 100vh; /* Ensure it fills the viewport height */
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* Category Selector styling */
@@ -17,6 +18,10 @@
   padding: 20px 0;
   background-color: #1e1e1e;
   border-bottom: 1px solid #3c3c3c;
+  overflow-x: auto; /* Allow horizontal scrolling if needed */
+  position: sticky; /* Keep visible when scrolling */
+  top: 0;
+  z-index: 10;
 }
 
 .selector-container {
@@ -25,6 +30,7 @@
   justify-content: center;
   gap: 15px;
   max-width: 800px;
+  padding: 0 15px;
 }
 
 .category-button {
@@ -105,10 +111,13 @@
 }
 
 .skill-name {
-  width: 220px; /* Increased width for better readability */
-  margin-right: 20px; /* Increased spacing */
+  width: 160px; /* Increased width for better readability */
+  margin-right: 15px; /* Increased spacing */
   font-size: 14px; /* Slightly larger font */
   color: #9CDCFE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .skill-progress {
@@ -117,7 +126,7 @@
   border-radius: 3px; /* Slightly larger radius */
   overflow: hidden;
   height: 12px; /* Slightly taller progress bars */
-  margin-right: 20px; /* Increased spacing */
+  margin-right: 15px; /* Increased spacing */
   border: 1px solid #3c3c3c;
 }
 
@@ -201,7 +210,7 @@
   font-family: 'Fira Code', monospace;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent scrolling on the container */
+  overflow: auto; /* Changed from hidden to auto to allow scrolling */
   position: relative;
   border-radius: 8px;
 }
@@ -256,8 +265,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevents unwanted overflow */
+  overflow: auto; /* Allow scrolling */
   height: calc(100% - 35px); /* Take full height minus header */
+  width: 100%;
+  padding-bottom: 20px; /* Add padding at bottom to ensure all content is visible */
 }
 
 /* VS Code panel styling */
@@ -318,16 +329,26 @@
 
 /* Terminal styling */
 .terminal-container {
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  min-height: 200px; /* Increased from 180px to give more space for animation */
   background-color: #1e1e1e;
-  height: 300px;
-  overflow-y: auto;
-  width: 100%; /* Ensure full width */
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative; /* Added to ensure proper positioning of content */
 }
 
 .terminal-header {
   padding: 4px 12px;
   font-size: 12px;
-  background-color: #2d2d2d;
+  background-color: #3c3c3c;
+  display: flex;
+  align-items: center;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .terminal-title {
@@ -339,6 +360,8 @@
 
 .terminal-body {
   padding: 12px 20px; /* Increased horizontal padding */
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
 }
 
 .terminal-line {
@@ -483,6 +506,70 @@
   .skills-description {
     padding: 20px;
   }
+  
+  .skills-container {
+    padding: 0.5rem;
+    overflow-y: visible;
+  }
+  
+  .terminal-container {
+    height: auto;
+    min-height: 150px;
+    margin-bottom: 15px;
+  }
+  
+  .terminal-body {
+    padding: 10px 15px;
+  }
+  
+  .skill-name {
+    width: 100px;
+    margin-right: 10px;
+    font-size: 12px;
+  }
+  
+  .skill-progress {
+    height: 10px;
+    margin-right: 10px;
+  }
+  
+  .skills-description {
+    padding: 15px;
+  }
+  
+  .skills-page {
+    padding-bottom: 60px; /* Space for mobile navigation */
+    overflow-y: auto;
+  }
+  
+  /* Fix ghost space issue */
+  .skills-content {
+    height: auto;
+    min-height: calc(100vh - 95px); /* Adjust for header height */
+  }
+  
+  /* Make category buttons scrollable horizontally */
+  .category-selector {
+    padding: 10px 0;
+  }
+  
+  .selector-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .selector-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Edge */
+  }
+  
+  .category-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
 }
 
 /* Responsive layouts for different screen sizes */
@@ -508,168 +595,167 @@
 
 /* Enhanced mobile styles */
 @media (max-width: 768px) {
-  .specializations {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  /* Remove window-like appearance on mobile */
+  .skills-page {
+    padding-bottom: 60px; /* Add space for mobile navigation */
+    height: auto;
+    min-height: 100%;
+    overflow-y: visible;
   }
-  
-  .skill-name {
-    width: 100px;
-    font-size: 12px;
-    margin-right: 10px;
+
+  /* Improve category selector on mobile */
+  .category-selector {
+    position: sticky;
+    top: 0;
+    z-index: 20;
   }
-  
-  .skill-progress {
-    height: 10px;
-    margin-right: 10px;
+
+  .selector-container {
+    padding: 10px 5px;
+    overflow-x: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar on Firefox */
   }
-  
-  .skill-level {
-    width: 40px;
-    font-size: 11px;
+
+  .selector-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar on Chrome/Safari */
   }
-  
-  .status-item {
-    flex-direction: column;
+
+  .category-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
-  
-  .status-label {
-    margin-bottom: 4px;
+
+  /* Make skill bars fit better on small screens */
+  .skills-list {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 15px;
   }
-  
+
+  /* Make VS Code panel more mobile friendly */
+  .vs-panel-container {
+    position: static;
+    max-height: none;
+  }
+
+  /* Improve skills description for mobile reading */
   .skills-description {
     padding: 15px;
+    overflow-y: auto;
+    height: auto;
   }
-  
-  .description-content h2 {
-    font-size: 22px;
-    margin-bottom: 12px;
-  }
-  
-  .description-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
+
+  /* Adjust terminal container for mobile */
   .terminal-container {
-    height: 200px;
+    height: auto;
+    min-height: 250px; /* Increased minimum height to show full animation */
+    max-height: none; /* Remove max-height to ensure animation is fully visible */
+    overflow: visible; /* Allow content to be fully visible */
+    margin-bottom: 30px; /* Extra space below */
   }
-  
-  .vs-panel-tab {
-    padding: 0 8px;
-    font-size: 10px;
-  }
-  
-  .terminal-header {
-    padding: 3px 10px;
-  }
-  
+
   .terminal-body {
-    padding: 10px;
+    overflow: visible; /* Ensure animation content is fully visible */
+    padding: 15px; /* Adjusted padding */
+    height: auto; /* Let height adjust to content */
+  }
+
+  .terminal-result {
+    margin-left: 10px;
+    margin-bottom: 15px;
+  }
+
+  /* Ensure skill bars and content are fully visible */
+  .skill-bar {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .skills-content {
+    height: auto;
+    overflow-y: visible;
+    flex: 1;
+  }
+
+  /* Fix "ghost space" issues by ensuring containers adjust height */
+  .skills-container {
+    height: auto;
+    overflow-y: visible;
   }
 }
 
-/* Portrait mode specific styles */
+/* Portrait mode adjustments */
 @media (orientation: portrait) and (max-width: 768px) {
+  /* Optimize space usage in portrait mode */
   .skills-title {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
   }
-  
-  .skills-list {
-    max-width: 90vw;
-  }
-  
+
+  /* Reduce skill bars height */
   .skill-bar {
     margin-bottom: 8px;
   }
-  
-  .skill-name {
-    width: 90px;
-    font-size: 11px;
-    margin-right: 8px;
-  }
-  
+
   .skill-progress {
-    height: 8px;
-    margin-right: 8px;
+    height: 10px;
   }
-  
-  .skill-level {
-    width: 30px;
-    font-size: 10px;
-  }
-  
-  .specializations li {
-    padding: 10px;
-    gap: 8px;
-  }
-  
-  .spec-icon {
-    font-size: 16px;
-  }
-  
-  .learning-status {
-    padding: 15px;
-  }
-  
+
   .terminal-container {
-    height: 150px;
+    min-height: 180px;
+    max-height: 250px;
   }
-  
+
+  /* Reduce horizontal padding in portrait to use more width */
+  .skills-description {
+    padding: 15px 10px;
+  }
+
+  /* Skills-specific adaptations for portrait view */
   .vs-panel-container {
-    max-height: 30vh;
+    max-height: 35vh; /* Limit panel height in portrait */
   }
-  
-  .description-content {
-    gap: 20px;
-  }
-  
-  .description-content p {
-    font-size: 13px;
-    margin-bottom: 12px;
+
+  .code-line-numbers {
+    display: none; /* Hide line numbers to save space */
   }
 }
 
-/* Landscape mode specific styles */
+/* Landscape adjustments */
 @media (orientation: landscape) and (max-width: 920px) {
-  .skills-description {
-    padding: 15px 25px;
+  /* Optimize for limited vertical space */
+  .skills-page {
+    padding-bottom: 55px;
   }
-  
-  .skills-list {
-    max-width: 75vw;
+
+  /* Make skill categories more compact */
+  .category-selector {
+    padding: 10px 0;
   }
-  
+
+  .category-button {
+    padding: 6px 12px;
+  }
+
+  /* Use horizontal space more efficiently */
   .specializations {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
   }
-  
+
+  /* Adjust terminal container for landscape */
   .terminal-container {
-    height: 180px;
+    min-height: 180px;
+    max-height: 200px;
   }
-  
-  .vs-panel-container {
-    max-height: 25vh;
-  }
-  
-  .skill-bar {
-    margin-bottom: 10px;
-  }
-  
-  .skill-name {
-    width: 110px;
-  }
-  
-  /* Keep description layout in a grid for landscape */
+
+  /* Use horizontal space better in landscape */
   .description-content {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-  }
-  
-  .description-content h2 {
-    grid-column: 1 / -1;
   }
 }
 
@@ -726,6 +812,172 @@
   
   .terminal-command, .terminal-prompt, .terminal-path {
     font-size: 11px;
+  }
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 768px) {
+  /* Remove window-like appearance on mobile */
+  .skills-page {
+    padding-bottom: 60px; /* Add space for mobile navigation */
+    height: auto;
+    min-height: 100%;
+    overflow-y: visible;
+  }
+
+  /* Improve category selector on mobile */
+  .category-selector {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .selector-container {
+    padding: 10px 5px;
+    overflow-x: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar on Firefox */
+  }
+
+  .selector-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar on Chrome/Safari */
+  }
+
+  .category-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  /* Make skill bars fit better on small screens */
+  .skills-list {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  /* Make VS Code panel more mobile friendly */
+  .vs-panel-container {
+    position: static;
+    max-height: none;
+  }
+
+  /* Improve skills description for mobile reading */
+  .skills-description {
+    padding: 15px;
+    overflow-y: auto;
+    height: auto;
+  }
+
+  /* Adjust terminal container for mobile */
+  .terminal-container {
+    height: auto;
+    min-height: 250px; /* Increased minimum height to show full animation */
+    max-height: none; /* Remove max-height to ensure animation is fully visible */
+    overflow: visible; /* Allow content to be fully visible */
+    margin-bottom: 30px; /* Extra space below */
+  }
+
+  .terminal-body {
+    overflow: visible; /* Ensure animation content is fully visible */
+    padding: 15px; /* Adjusted padding */
+    height: auto; /* Let height adjust to content */
+  }
+
+  .terminal-result {
+    margin-left: 10px;
+    margin-bottom: 15px;
+  }
+
+  /* Ensure skill bars and content are fully visible */
+  .skill-bar {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .skills-content {
+    height: auto;
+    overflow-y: visible;
+    flex: 1;
+  }
+
+  /* Fix "ghost space" issues by ensuring containers adjust height */
+  .skills-container {
+    height: auto;
+    overflow-y: visible;
+  }
+}
+
+/* Portrait mode adjustments */
+@media (orientation: portrait) and (max-width: 768px) {
+  /* Optimize space usage in portrait mode */
+  .skills-title {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  /* Reduce skill bars height */
+  .skill-bar {
+    margin-bottom: 8px;
+  }
+
+  .skill-progress {
+    height: 10px;
+  }
+
+  .terminal-container {
+    min-height: 180px;
+    max-height: 250px;
+  }
+
+  /* Reduce horizontal padding in portrait to use more width */
+  .skills-description {
+    padding: 15px 10px;
+  }
+
+  /* Skills-specific adaptations for portrait view */
+  .vs-panel-container {
+    max-height: 35vh; /* Limit panel height in portrait */
+  }
+
+  .code-line-numbers {
+    display: none; /* Hide line numbers to save space */
+  }
+}
+
+/* Landscape adjustments */
+@media (orientation: landscape) and (max-width: 920px) {
+  /* Optimize for limited vertical space */
+  .skills-page {
+    padding-bottom: 55px;
+  }
+
+  /* Make skill categories more compact */
+  .category-selector {
+    padding: 10px 0;
+  }
+
+  .category-button {
+    padding: 6px 12px;
+  }
+
+  /* Use horizontal space more efficiently */
+  .specializations {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  /* Adjust terminal container for landscape */
+  .terminal-container {
+    min-height: 180px;
+    max-height: 200px;
+  }
+
+  /* Use horizontal space better in landscape */
+  .description-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
   }
 }
 

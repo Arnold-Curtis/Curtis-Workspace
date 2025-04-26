@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
-import SidebarIcons from './components/SidebarIcons';
+// Removed SidebarIcons import
 import DraggableWindow from './components/DraggableWindow';
+import MobileWindowWrapper from './components/MobileWindowWrapper';
+import MobileNav from './components/MobileNav';
 import { WindowManagerProvider, useWindowManager } from './components/WindowManager';
 import Taskbar from './components/Taskbar';
 import MobileOrientationOverlay from './components/MobileOrientationOverlay';
@@ -13,10 +15,40 @@ import Projects from './pages/Projects';
 import { Skills } from './pages/Skills';
 import Resume from './pages/Resume';
 import Contact from './pages/Contact';
+import AdminMessages from './pages/AdminMessages';
+import BookCall from './pages/BookCall';
 import './App.css';
 
 // Wrapper component for pages that should use DraggableWindow
 const WindowWrapper = ({ children, title, icon, windowId }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check if we're on a mobile device
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+  
+  // For mobile devices, use a different wrapper
+  if (isMobile) {
+    return (
+      <div className="mobile-full-wrapper">
+        <MobileWindowWrapper title={title} icon={icon}>
+          {children}
+        </MobileWindowWrapper>
+      </div>
+    );
+  }
+  
+  // For desktop, use the regular draggable window
   return (
     <div className="window-wrapper">
       <DraggableWindow title={title} icon={icon} windowId={windowId}>
@@ -43,14 +75,29 @@ const ContentWrapper = ({ children }) => {
 function AppWithRoutes() {
   // Use the window manager to access window state
   const { windows } = useWindowManager();
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check if we're on a mobile device
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
   
   return (
     <div className="App">
       <MobileOrientationOverlay />
       <TopBar />
       <div className="main-content">
-        <SidebarIcons />
-        <Sidebar />
+        {/* Removed SidebarIcons component */}
+        {!isMobile && <Sidebar />}
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -87,12 +134,25 @@ function AppWithRoutes() {
                 </WindowWrapper>
               } 
             />
+            <Route 
+              path="/book-call" 
+              element={
+                <WindowWrapper title="BookCall.js" icon="fas fa-phone-alt" windowId="book-call">
+                  <BookCall />
+                </WindowWrapper>
+              } 
+            />
+            {/* Hidden admin route with custom URL */}
+            <Route path="/admin10@10" element={<AdminMessages />} />
           </Routes>
         </div>
       </div>
       
-      {/* Only render taskbar if there are windows open */}
-      {windows && windows.length > 0 && <Taskbar />}
+      {/* Only render taskbar if there are windows open and not on mobile */}
+      {windows && windows.length > 0 && !isMobile && <Taskbar />}
+      
+      {/* Render mobile nav on mobile devices */}
+      {isMobile && <MobileNav />}
     </div>
   );
 }

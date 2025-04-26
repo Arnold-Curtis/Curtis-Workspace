@@ -101,20 +101,22 @@
   opacity: 1;
 }
 
+/* Improve Projects layout with proper 15/85% split */
 .projects-content {
   display: flex;
-  height: calc(100% - 35px); /* Subtract header height */
+  height: calc(100% - 35px); /* Adjust for header height */
   overflow: hidden;
   width: 100%; /* Ensure full width */
 }
 
 /* Explorer sidebar */
 .explorer-section {
-  width: 220px; /* Slightly wider for better readability */
-  min-width: 220px; /* Prevent shrinking */
+  width: 15%; /* Reduce to 15% as requested */
+  min-width: 180px; 
+  max-width: 220px;
   background-color: #252526;
-  overflow-y: auto;
   border-right: 1px solid #3c3c3c;
+  overflow-y: auto;
   height: 100%; /* Ensure full height */
 }
 
@@ -129,11 +131,13 @@
 }
 
 .project-list {
-  padding: 10px 0;
+  padding: 8px 0; /* Reduced from 10px */
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 .project-item {
-  padding: 6px 16px;
+  padding: 5px 16px; /* Reduced from 6px */
   font-size: 13px;
   color: #cccccc;
   cursor: pointer;
@@ -160,13 +164,14 @@
 .project-display {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 30px 40px; /* Increased horizontal padding */
+  padding: 30px 40px; /* Keep good padding */
   height: 100%; /* Ensure full height */
   box-sizing: border-box; /* Include padding in height calculation */
+  width: 85%; /* Increase to 85% as requested */
 }
 
 .project-details {
-  max-width: 1200px; /* Increased from 900px */
+  max-width: 1600px; /* Increased from 1400px for even more width */
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr; /* Default for small screens */
@@ -176,16 +181,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px; /* Increased from 30px */
   border-bottom: 1px solid #3c3c3c;
-  padding-bottom: 15px;
+  padding-bottom: 18px; /* Increased padding */
   grid-column: span 1;
 }
 
 .project-header h2 {
   margin: 0;
   color: #4FC1FF;
-  font-size: 28px; /* Increased size */
+  font-size: 36px; /* Increased from 32px */
   font-weight: 500;
 }
 
@@ -203,25 +208,29 @@
   background-color: #2a2d2e;
 }
 
+/* Larger project image */
 .project-image {
-  margin-bottom: 30px;
+  margin-bottom: 40px; /* Increased from 30px */
   border: 1px solid #3c3c3c;
   border-radius: 5px;
   overflow: hidden;
   max-width: 100%;
+  max-height: 600px; /* Increased from 500px */
   grid-column: span 1;
 }
 
 .project-image img {
   width: 100%;
+  height: 100%;
+  object-fit: contain; /* Maintain aspect ratio */
   display: block;
 }
 
 .project-info {
   grid-column: span 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Increased from 300px */
+  gap: 30px; /* Increased from 25px */
 }
 
 .info-section {
@@ -230,13 +239,13 @@
 
 .info-section h3 {
   color: #CE9178;
-  font-size: 16px;
+  font-size: 18px; /* Increased from 16px */
   font-weight: 500;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Increased from 10px */
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px; /* Increased from 8px */
 }
 
 .section-icon {
@@ -245,8 +254,9 @@
 
 .info-section p {
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7; /* Increased from 1.6 */
   color: #cccccc;
+  font-size: 15px; /* Added font size */
 }
 
 .tech-tags {
@@ -330,7 +340,7 @@
   color: #999999;
 }
 
-/* No selection state */
+/* No selection state - make it fill more space */
 .no-selection {
   display: flex;
   justify-content: center;
@@ -341,42 +351,45 @@
 
 .placeholder-content {
   text-align: center;
-  max-width: 500px;
-  padding: 40px;
+  max-width: 800px; /* Increased from 700px */
+  padding: 80px; /* Increased padding */
 }
 
 .placeholder-icon {
-  font-size: 48px;
+  font-size: 90px; /* Increased from 72px */
   color: #61dafb;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Increased from 30px */
 }
 
 .placeholder-content h3 {
   color: #4FC1FF;
-  margin: 0 0 10px 0;
+  margin: 0 0 20px 0; /* Increased bottom margin */
   font-weight: 500;
-  font-size: 20px;
+  font-size: 30px; /* Increased from 26px */
 }
 
 .placeholder-content p {
   color: #cccccc;
   margin: 0;
+  font-size: 20px; /* Increased from 18px */
 }
 
 /* Responsive Design */
 @media (min-width: 1400px) {
   .project-details {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    grid-template-columns: minmax(600px, 1fr) minmax(550px, 1fr); /* Increased column sizes */
+    gap: 60px; /* Increased from 50px */
     align-items: start;
   }
   
   .project-header {
     grid-column: span 2;
+    margin-bottom: 50px; /* Increased from 40px */
   }
   
   .project-image {
     grid-column: 1;
+    max-height: 700px; /* Increased from 600px */
   }
   
   .project-info {
@@ -394,13 +407,48 @@
 @media (max-width: 768px) {
   .projects-content {
     flex-direction: column;
+    height: auto;
+    overflow-y: visible;
   }
   
   .explorer-section {
     width: 100%;
     max-height: 200px;
+    min-width: unset;
+    max-width: unset;
     border-right: none;
     border-bottom: 1px solid #3c3c3c;
+  }
+  
+  /* Make project list horizontal for mobile */
+  .project-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 15px 5px;
+    scrollbar-width: thin;
+    scrollbar-color: #3c3c3c #1e1e1e;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .project-item {
+    flex: 0 0 auto;
+    padding: 8px 15px;
+    margin-right: 10px;
+    background-color: #252526;
+    border-radius: 4px;
+    border: 1px solid #3c3c3c;
+    white-space: normal;
+    width: max-content;
+    max-width: 200px;
+  }
+  
+  .project-display {
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - 200px - 95px); /* Adjust to account for explorer + header */
+    padding: 15px;
   }
   
   .project-display {
@@ -431,6 +479,17 @@
   
   .placeholder-icon {
     font-size: 36px;
+  }
+  
+  /* Fix ghost space issue */
+  .projects-container {
+    height: auto;
+    overflow-y: visible;
+    padding-bottom: 60px; /* Space for mobile navigation */
+  }
+  
+  .explorer-header {
+    display: none; /* Save space on mobile */
   }
 }
 
@@ -483,7 +542,7 @@
   }
   
   .explorer-section {
-    width: 160px;
+    width: 25%;
     min-width: 160px;
     max-height: none;
     border-right: 1px solid #3c3c3c;
@@ -497,7 +556,16 @@
   }
   
   .project-display {
+    width: 75%;
     padding: 15px;
+  }
+  
+  .project-list {
+    padding: 10px 5px;
+  }
+  
+  .project-display {
+    padding-bottom: 55px; /* Account for mobile navigation */
   }
   
   .project-header h2 {
@@ -553,5 +621,462 @@
   .project-links a {
     padding: 6px 12px;
     font-size: 12px;
+  }
+}
+
+/* Mobile enhancements for Projects component */
+@media (max-width: 768px) {
+  /* Adjust the explorer section to be more compact on mobile */
+  .explorer-section {
+    max-height: none;
+    overflow-y: visible;
+    border-bottom: 1px solid #3c3c3c;
+    border-right: none;
+    padding-bottom: 0;
+    width: 100%;
+  }
+  
+  /* Hide the explorer header on mobile to save space */
+  .explorer-header {
+    display: none;
+  }
+  
+  /* Style the project list as horizontally scrollable */
+  .project-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 15px 5px;
+    scrollbar-width: thin;
+    scrollbar-color: #3c3c3c #1e1e1e;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .project-list::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .project-list::-webkit-scrollbar-thumb {
+    background-color: #3c3c3c;
+    border-radius: 4px;
+  }
+  
+  .project-list::-webkit-scrollbar-track {
+    background-color: #1e1e1e;
+  }
+  
+  /* Make project items more like buttons/pills in horizontal list */
+  .project-item {
+    flex: 0 0 auto;
+    padding: 8px 15px;
+    margin-right: 10px;
+    background-color: #252526;
+    border-radius: 4px;
+    border: 1px solid #3c3c3c;
+    white-space: normal;
+    width: max-content;
+    max-width: 200px;
+  }
+  
+  .project-item.active {
+    border-color: #61dafb;
+    background-color: #37373d;
+  }
+  
+  /* Make the project display take the remaining height */
+  .project-display {
+    max-height: calc(100vh - 170px);
+    overflow-y: auto;
+    padding-bottom: 60px;
+  }
+  
+  /* Adjust grid layout for project info */
+  .project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Reduce padding to fit more content */
+  .info-section {
+    padding: 10px 0;
+  }
+  
+  /* Make images responsive */
+  .project-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Make sure the CTA buttons are visible and easy to tap */
+  .project-links {
+    position: sticky;
+    bottom: 0;
+    background-color: rgba(30, 30, 30, 0.95);
+    padding: 10px 0;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .project-link {
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+
+/* Extra styles for portrait mode */
+@media (orientation: portrait) and (max-width: 768px) {
+  .project-display {
+    padding: 0 15px 70px 15px;
+  }
+  
+  .project-header h2 {
+    font-size: 20px;
+  }
+  
+  /* Enhance the no selection message for smaller screens */
+  .no-selection {
+    padding: 20px;
+  }
+  
+  .placeholder-content {
+    padding: 30px 10px;
+  }
+  
+  .placeholder-content h3 {
+    font-size: 18px;
+    margin-top: 15px;
+  }
+  
+  .placeholder-content p {
+    font-size: 14px;
+    max-width: 100%;
+    padding: 0 10px;
+  }
+}
+
+/* Ensure proper spacing in landscape mode */
+@media (orientation: landscape) and (max-width: 920px) {
+  .project-list {
+    padding: 10px 5px;
+  }
+  
+  .project-display {
+    padding-bottom: 55px;
+  }
+  
+  .project-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Fixed layout for projects page with 25/75 split */
+@media (max-width: 768px) {
+  .explorer-section {
+    width: 100%;
+    max-height: 120px; /* reduced height to ~25% of screen */
+    border-right: none;
+    border-bottom: 1px solid #3c3c3c;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  /* Make project list horizontal for better use of space */
+  .project-list {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 10px 5px;
+  }
+  
+  .project-item {
+    flex: 0 0 auto;
+    padding: 8px 15px;
+    margin-right: 10px;
+    white-space: normal;
+    max-width: 150px;
+    min-width: 120px;
+    border-radius: 4px;
+    border: 1px solid #3c3c3c;
+    height: auto;
+  }
+  
+  .project-item.active {
+    border-color: #61dafb;
+    background-color: #37373d;
+  }
+  
+  /* Project display area takes ~75% of space */
+  .project-display {
+    height: calc(100vh - 200px); /* Take remaining space */
+    overflow-y: auto;
+    padding: 15px;
+    padding-bottom: 80px; /* Add space for bottom nav */
+  }
+  
+  /* Improve scrolling and fix "ghost space" issues */
+  .projects-container {
+    overflow-y: auto;
+    height: auto;
+    position: relative;
+    padding-bottom: 60px; /* Make space for mobile nav */
+  }
+  
+  .projects-content {
+    height: auto;
+    overflow-y: visible;
+  }
+}
+
+/* Portrait mode specific improvements */
+@media (orientation: portrait) and (max-width: 768px) {
+  .explorer-section {
+    max-height: 100px; /* Even smaller in portrait mode */
+  }
+  
+  .project-list {
+    padding: 5px;
+  }
+  
+  .project-display {
+    height: calc(100vh - 180px);
+  }
+}
+
+/* Landscape mode improvements */
+@media (orientation: landscape) and (max-width: 920px) {
+  .projects-content {
+    flex-direction: row; /* Stack in landscape too */
+  }
+  
+  .explorer-section {
+    max-height: 90px; /* Smaller in landscape due to less vertical space */
+    width: 100%;
+  }
+  
+  .project-display {
+    height: calc(100vh - 170px);
+    padding-bottom: 55px;
+  }
+}
+
+/* Fixed layout for projects page with 25/75 split in mobile */
+@media (max-width: 768px) {
+  .projects-content {
+    flex-direction: column;
+    height: auto;
+    overflow-y: visible;
+  }
+  
+  /* Projects list takes ~25% of the height */
+  .explorer-section {
+    width: 100%;
+    max-height: 25vh; /* Limit to 25% of viewport height */
+    min-height: 100px; /* Minimum height to ensure visibility */
+    border-right: none;
+    border-bottom: 1px solid #3c3c3c;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  /* Make project list horizontal for mobile */
+  .project-list {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 10px 5px;
+    height: calc(25vh - 20px); /* Account for padding */
+  }
+  
+  .project-item {
+    flex: 0 0 auto;
+    padding: 8px 15px;
+    margin-right: 10px;
+    white-space: normal;
+    max-width: 150px;
+    min-width: 120px;
+    border-radius: 4px;
+    border: 1px solid #3c3c3c;
+    height: auto;
+  }
+  
+  /* Project display area takes ~75% of space */
+  .project-display {
+    height: auto;
+    min-height: 75vh; /* Take 75% of viewport height */
+    width: 100%;
+    overflow-y: auto;
+    padding: 15px;
+    padding-bottom: 80px; /* Add space for bottom nav */
+  }
+}
+
+/* Portrait mode specific improvements */
+@media (orientation: portrait) and (max-width: 768px) {
+  .explorer-section {
+    max-height: 25vh; /* Keep at 25% of height */
+  }
+  
+  .project-display {
+    min-height: calc(75vh - 60px); /* Account for bottom navigation */
+  }
+}
+
+/* Landscape mode improvements */
+@media (orientation: landscape) and (max-width: 920px) {
+  /* Use left/right split in landscape for better use of space */
+  .projects-content {
+    flex-direction: row; /* Side by side layout */
+    height: auto;
+    min-height: calc(100vh - 95px); /* Fill available space */
+  }
+  
+  .explorer-section {
+    width: 25%; /* Take 25% of screen width */
+    max-width: 250px;
+    height: auto;
+    min-height: calc(100vh - 95px); /* Fill available height */
+    max-height: none;
+    border-right: 1px solid #3c3c3c;
+    border-bottom: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .project-list {
+    display: flex;
+    flex-direction: column; /* Stack projects vertically in landscape */
+    white-space: normal;
+    overflow-x: visible;
+    overflow-y: auto;
+    height: auto;
+    padding: 10px 5px;
+  }
+  
+  .project-item {
+    margin-right: 0;
+    margin-bottom: 8px;
+    width: auto;
+    max-width: none;
+  }
+  
+  .project-display {
+    width: 75%;
+    height: auto;
+    min-height: calc(100vh - 95px);
+    padding-bottom: 55px;
+  }
+}
+
+/* Mobile-specific styles for Projects page */
+@media (max-width: 768px) {
+  .projects-content {
+    flex-direction: column;
+    height: auto;
+    overflow-y: visible;
+  }
+  
+  /* Projects list takes ~15% of the height in mobile */
+  .explorer-section {
+    width: 100%;
+    max-height: 15vh; /* Limit to 15% of viewport height */
+    min-height: 80px; /* Minimum height to ensure visibility */
+    border-right: none;
+    border-bottom: 1px solid #3c3c3c;
+  }
+  
+  /* Stack projects vertically for mobile as requested */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 5px;
+    max-height: 15vh;
+  }
+  
+  .project-item {
+    padding: 8px 15px;
+    margin-bottom: 5px;
+    margin-right: 0;
+    width: auto;
+    max-width: none;
+    white-space: normal;
+    border-radius: 4px;
+    border: 1px solid #3c3c3c;
+  }
+  
+  /* Project display area takes ~85% of space */
+  .project-display {
+    height: auto;
+    min-height: 85vh; /* Take 85% of viewport height */
+    width: 100%;
+    overflow-y: auto;
+    padding: 15px;
+    padding-bottom: 80px; /* Add space for bottom nav */
+  }
+}
+
+/* Portrait mode specific improvements */
+@media (orientation: portrait) and (max-width: 768px) {
+  .explorer-section {
+    max-height: 15vh; /* Keep at 15% of height */
+  }
+  
+  .project-display {
+    min-height: calc(85vh - 60px); /* Account for bottom navigation */
+  }
+}
+
+/* Landscape mode improvements */
+@media (orientation: landscape) and (max-width: 920px) {
+  /* Use left/right split in landscape for better use of space */
+  .projects-content {
+    flex-direction: row; /* Side by side layout */
+    height: auto;
+    min-height: calc(100vh - 95px); /* Fill available space */
+  }
+  
+  .explorer-section {
+    width: 15%; /* Take 15% of screen width */
+    max-width: 200px;
+    height: auto;
+    min-height: calc(100vh - 95px); /* Fill available height */
+    max-height: none;
+    border-right: 1px solid #3c3c3c;
+    border-bottom: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .project-list {
+    display: flex;
+    flex-direction: column; /* Stack projects vertically in landscape */
+    white-space: normal;
+    overflow-x: visible;
+    overflow-y: auto;
+    height: auto;
+    padding: 10px 5px;
+  }
+  
+  .project-item {
+    margin-right: 0;
+    margin-bottom: 8px;
+    width: auto;
+    max-width: none;
+  }
+  
+  .project-display {
+    width: 85%;
+    height: auto;
+    min-height: calc(100vh - 95px);
+    padding-bottom: 55px;
   }
 }

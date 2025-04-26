@@ -8,7 +8,7 @@ const About = () => {
     {
       "role": "Full Stack Developer",
       "company": "Self-employed",
-      "date": "2023 - Present",
+      "date": "2024 - Present",
       "description": "Full stack developer building robust applications and exploring AI-powered solutions. Skilled in both front-end and back-end technologies, with a strong foundation in software engineering and a growing focus on intelligent systems.",
       "technologies": [
         "Java", "JavaScript", "React", "Node.js", "MongoDB",

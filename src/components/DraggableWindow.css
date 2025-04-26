@@ -19,10 +19,10 @@
 .draggable-window.fullscreen {
   position: fixed !important;
   top: 60px !important; /* Position below the top bar */
-  left: 50px !important; /* Position to the right of sidebar icons */
+  left: 0 !important; /* Changed from 50px to 0 as we removed SidebarIcons */
   right: 0 !important;
   bottom: 40px !important; /* Leave space for taskbar */
-  width: calc(100% - 50px) !important; /* Adjust for sidebar icons */
+  width: 100% !important; /* Removed subtraction of 50px for sidebar icons */
   height: calc(100% - 100px) !important; /* Adjust for top bar and taskbar */
   transform: none !important;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);

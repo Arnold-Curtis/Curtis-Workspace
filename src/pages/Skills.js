@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import '../stylings/Skills.css';
 
 export const Skills = () => {
@@ -9,22 +9,22 @@ export const Skills = () => {
   const [isTyping, setIsTyping] = useState(false);
   const typeIntervalRef = useRef(null);
   
-  // Terminal interaction strings
-  const terminalLines = [
+  // Terminal interaction strings - wrapped in useMemo to prevent recreation on each render
+  const terminalLines = useMemo(() => [
     { command: "skills.show('technical')", delay: 30 },
     { command: "skills.show('frameworks')", delay: 1500 },
     { command: "skills.show('tools')", delay: 1500 },
     { command: "skills.show('languages')", delay: 1500 },
     { command: "skills.show('softSkills')", delay: 1500 }
-  ];
+  ], []);
 
   // All skills data
   const skillsData = {
     technical: [
       { name: 'Frontend Development', level: 60 },
       { name: 'Backend Development', level: 70 },
-      { name: 'Machine Learning Incorporation', level: 50 },
-      { name: 'Database Design', level: 40 },
+      { name: 'Machine Learning Incorporation', level: 70 },
+      { name: 'Database Design', level: 50 },
       { name: 'Prompt Engineering', level: 80 }
     ],
     frameworks: [
@@ -42,27 +42,27 @@ export const Skills = () => {
       { name: 'Premiere Pro', level: 72 }
     ],
     languages: [
-      { name: 'JavaScript', level: 95 },
-      { name: 'Python', level: 90 },
+      { name: 'JavaScript', level: 75 },
+      { name: 'Python', level: 80 },
       { name: 'C#', level: 85 },
-      { name: 'Java', level: 75 },
-      { name: 'C++', level: 75 },
-      { name: 'SQL', level: 80 }
+      { name: 'Java', level: 95 },
+      { name: 'C++', level: 70 },
+      { name: 'SQL', level: 60 }
     ],
     softSkills: [
       { name: 'Problem Solving', level: 95 },
       { name: 'Communication', level: 90 },
       { name: 'Team Collaboration', level: 92 },
       { name: 'Project Management', level: 85 },
-      { name: 'Willingness to Learn', level: 88 }
+      { name: 'Willingness to Learn', level: 88 } 
     ]
   };
 
   // Current category being displayed
   const [currentCategory, setCurrentCategory] = useState(null);
   
-  // Function to animate typing in the terminal
-  const animateTyping = (command, onComplete) => {
+  // Function to animate typing in the terminal - wrapped in useCallback to prevent recreation on each render
+  const animateTyping = useCallback((command, onComplete) => {
     if (isTyping) {
       // Clear existing typing animation if one is in progress
       clearInterval(typeIntervalRef.current);
@@ -82,7 +82,7 @@ export const Skills = () => {
         if (onComplete) onComplete();
       }
     }, 50); // Faster typing speed for better UX when manually selecting
-  };
+  }, [isTyping, typeIntervalRef, setTypedText, setIsTyping]);
   
   // Typing animation for initial sequence
   useEffect(() => {
@@ -114,7 +114,7 @@ export const Skills = () => {
         clearInterval(typeIntervalRef.current);
       };
     }
-  }, [currentLine, terminalLines.length]);
+  }, [currentLine, terminalLines.length, animateTyping, terminalLines]);
 
   // Handle category selection
   const handleCategorySelect = (category) => {
@@ -222,14 +222,14 @@ export const Skills = () => {
           <div className="description-content">
             <h2>Technical Proficiencies</h2>
             <p>
-              I began programming in 2023, and in that time, I've evolved from writing basic code to engineering intelligent systems. My strength lies in designing full-stack applications that go beyond functionality — I specialize in embedding machine learning to create software that's not only usable, but smart, intuitive, and impactful. With a solid foundation in Java, React, Spring Boot, and SQLite, I focus on making systems feel effortless and intelligent by integrating cloud and local AI services. Every line of code I write is driven by curiosity, continuous learning, and a desire to innovate through automation and intelligence.
+              I began programming in 2022, and in that time, I've evolved from writing basic code to engineering intelligent systems. My strength lies in designing full-stack applications that go beyond functionality — I specialize in embedding machine learning to create software that's not only usable, but smart, intuitive, and impactful. With a solid foundation in Java, React, Spring Boot, and SQLite, I focus on making systems feel effortless and intelligent by integrating cloud and local AI services. Every line of code I write is driven by curiosity, continuous learning, and a desire to innovate through automation and intelligence.
             </p>
 
             <h3>Specializations</h3>
             <ul className="specializations">
               <li>
                 <i className="fas fa-brain spec-icon"></i>
-                <span>AI-Driven System Design</span>
+                <span>Adaptive Machine Learning Integration</span>
               </li>
               <li>
                 <i className="fas fa-code spec-icon"></i>

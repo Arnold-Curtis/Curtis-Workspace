@@ -1,0 +1,628 @@
+.resume-page-container {
+  width: 100%;
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Fira Code', monospace;
+  border-radius: 8px;
+  overflow-y: auto !important; /* Force scrolling at container level */
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- HEADER STYLING ---- */
+.resume-header {
+  background-color: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.file-tab {
+  display: inline-flex;
+  align-items: center;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: default;
+  border-right: 1px solid #3c3c3c;
+}
+
+.tab-icon {
+  margin-right: 5px;
+  color: #61dafb;
+}
+
+.close-icon {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.close-icon:hover {
+  color: #e27e8d;
+}
+
+/* ---- CONTENT STYLING ---- */
+.resume-content {
+  display: flex;
+  flex: 1;
+  position: relative;
+  height: auto;
+  min-height: calc(100vh - 95px);
+  overflow: visible; /* Allow content to be visible */
+}
+
+.code-line-numbers {
+  background-color: #1e1e1e;
+  padding: 10px 10px 10px 20px;
+  color: #6a737d;
+  text-align: right;
+  user-select: none;
+  min-width: 40px;
+  overflow-y: hidden; /* Prevent scrolling */
+}
+
+.line-number {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.resume-main {
+  padding: 10px 20px;
+  flex: 1;
+  font-family: 'Fira Code', monospace;
+  line-height: 1.6;
+  overflow: visible; /* Let parent handle scrolling */
+  height: auto;
+  padding-bottom: 60px; /* Add space at the bottom */
+}
+
+/* ---- CODE COMMENT ---- */
+.code-comment {
+  color: #6A9955;
+  white-space: pre;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* ---- SECTION STYLING ---- */
+.section-container {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  margin-bottom: 15px;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.keyword {
+  color: #569cd6;
+}
+
+.variable {
+  color: #4fc1ff;
+}
+
+.function-call {
+  color: #dcdcaa;
+}
+
+.component {
+  color: #4ec9b0;
+}
+
+.code-line {
+  color: #d4d4d4;
+  margin: 10px 0;
+}
+
+/* ---- RESUME STYLING ---- */
+.resume-section {
+  padding: 0 20px 15px;
+  margin-bottom: 10px;
+}
+
+.resume-header-content {
+  background-color: #252526;
+  padding: 20px;
+  border-radius: 4px;
+  border-left: 3px solid #4FC1FF;
+  margin: 15px 0;
+}
+
+.resume-name {
+  font-size: 24px;
+  color: #CE9178;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.resume-title {
+  font-size: 16px;
+  color: #9CDCFE;
+  margin-bottom: 15px;
+}
+
+.resume-contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d4d4d4;
+  font-size: 14px;
+}
+
+.contact-item i {
+  color: #61dafb;
+}
+
+/* Resume Entry */
+.resume-entry {
+  background-color: #252526;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border-left: 3px solid #61dafb;
+}
+
+.entry-header {
+  margin-bottom: 10px;
+}
+
+.position, .degree, .certification {
+  font-size: 16px;
+  color: #CE9178;
+  margin-bottom: 5px;
+}
+
+.company-date, .school-date {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.company, .school {
+  color: #9CDCFE;
+  font-size: 14px;
+}
+
+.date, .cert-date {
+  color: #6A9955;
+  font-size: 14px;
+}
+
+.responsibilities {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.responsibilities li {
+  margin-bottom: 5px;
+  color: #d4d4d4;
+}
+
+.specialization, .achievements {
+  color: #d4d4d4;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+/* Skills Section */
+.skills-category {
+  margin-bottom: 20px;
+}
+
+.category-name {
+  color: #9CDCFE;
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: normal;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag {
+  background-color: #2d2d2d;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 13px;
+  position: relative;
+  padding-left: 12px;
+  border: 1px solid #3c3c3c;
+}
+
+.skill-tag::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.skill-tag.advanced {
+  color: #73c991;
+}
+
+.skill-tag.advanced::before {
+  background-color: #73c991;
+}
+
+.skill-tag.intermediate {
+  color: #4FC1FF;
+}
+
+.skill-tag.intermediate::before {
+  background-color: #4FC1FF;
+}
+
+.skill-tag.beginner {
+  color: #ce9178;
+}
+
+.skill-tag.beginner::before {
+  background-color: #ce9178;
+}
+
+/* Export Section */
+.export-section {
+  margin-top: 40px;
+}
+
+.export-content {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.export-line {
+  margin: 5px 0;
+  color: #d4d4d4;
+}
+
+/* Download Button */
+.resume-download {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #0e639c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.download-button:hover {
+  background-color: #1177bb;
+}
+
+/* ---- RESPONSIVE STYLING ---- */
+@media (max-width: 992px) {
+  .resume-contact-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .resume-main {
+    padding: 10px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .code-line-numbers {
+    display: none;
+  }
+  
+  .resume-main {
+    padding: 15px;
+  }
+  
+  .company-date, .school-date {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .resume-header-content {
+    padding: 15px;
+  }
+  
+  .resume-name {
+    font-size: 20px;
+  }
+  
+  .resume-title {
+    font-size: 14px;
+  }
+  
+  .resume-section {
+    padding: 0 10px 10px;
+  }
+  
+  .position, .degree, .certification {
+    font-size: 14px;
+  }
+  
+  .skills-category {
+    margin-bottom: 15px;
+  }
+  
+  /* Make sure the page is scrollable on mobile */
+  .resume-page-container {
+    padding-bottom: 60px; /* Make room for mobile nav */
+    overflow-y: auto !important; /* Ensure content is fully visible */
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+/* Portrait mode specific styles */
+@media (orientation: portrait) and (max-width: 768px) {
+  .code-line-numbers {
+    display: none; /* Hide line numbers on small screens to save space */
+  }
+  
+  .resume-main {
+    padding: 10px;
+  }
+  
+  .resume-header-content, .resume-entry {
+    padding: 12px;
+  }
+  
+  .skill-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .download-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Landscape adjustments */
+@media (orientation: landscape) and (max-width: 920px) {
+  .resume-page-container {
+    padding-bottom: 55px;
+  }
+  
+  .resume-content {
+    min-height: calc(100vh - 95px);
+  }
+}
+
+/* Make sure the export section at the bottom is visible */
+.export-section:last-child {
+  margin-bottom: 50px;
+}
+
+/* Resume modal styles */
+.resume-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.resume-modal {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #3c3c3c;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  color: #d4d4d4;
+  font-family: 'Fira Code', monospace;
+}
+
+.resume-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #3c3c3c;
+  background-color: #252526;
+}
+
+.resume-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #61dafb;
+  font-weight: normal;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #d4d4d4;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-close:hover {
+  color: #e27e8d;
+}
+
+/* Form styles */
+.resume-request-form {
+  padding: 20px;
+}
+
+.form-description {
+  margin-bottom: 20px;
+  color: #d4d4d4;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #9cdcfe;
+  font-size: 14px;
+}
+
+.required {
+  color: #e27e8d;
+}
+
+.form-group input, 
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #252526;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  color: #d4d4d4;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  outline: none;
+  border-color: #61dafb;
+}
+
+.form-group input.error, 
+.form-group textarea.error {
+  border-color: #e27e8d;
+}
+
+.error-message {
+  color: #e27e8d;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.submit-error {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.resume-submit-button {
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+  font-family: 'Fira Code', monospace;
+}
+
+.resume-submit-button:hover {
+  background-color: #1177bb;
+}
+
+.resume-submit-button:disabled {
+  background-color: #4d4d4d;
+  cursor: not-allowed;
+}
+
+/* Success message */
+.success-message {
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.success-message i {
+  font-size: 48px;
+  color: #73c991;
+  margin-bottom: 15px;
+}
+
+.success-message h4 {
+  font-size: 18px;
+  color: #73c991;
+  margin-bottom: 15px;
+  font-weight: normal;
+}
+
+.success-message p {
+  color: #d4d4d4;
+  line-height: 1.5;
+}
+
+/* Update download button styles */
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #0e639c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Fira Code', monospace;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+/* Mobile styles for modal */
+@media (max-width: 768px) {
+  .resume-modal {
+    max-width: 95%;
+  }
+  
+  .resume-request-form {
+    padding: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}

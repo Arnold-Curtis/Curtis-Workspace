@@ -1,0 +1,101 @@
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #1e1e1e;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  border-top: 1px solid #3c3c3c;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8b8b8b;
+  text-decoration: none;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-item i {
+  font-size: 20px;
+  margin-bottom: 3px;
+}
+
+.mobile-nav-label {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.mobile-nav-item.active {
+  color: #61dafb;
+}
+
+.mobile-nav-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #61dafb;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+  }
+  
+  /* More space on smaller screens */
+  .mobile-nav-item i {
+    font-size: 16px;
+  }
+  
+  .mobile-nav-label {
+    font-size: 9px;
+  }
+}
+
+/* Landscape orientation - more horizontal space */
+@media (orientation: landscape) and (max-width: 920px) {
+  .mobile-nav {
+    height: 50px;
+  }
+  
+  .mobile-nav-item {
+    flex-direction: row;
+    gap: 5px;
+  }
+  
+  .mobile-nav-item i {
+    margin-bottom: 0;
+  }
+  
+  .mobile-nav-item i {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  
+  .mobile-nav-label {
+    font-size: 10px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 320px) {
+  .mobile-nav-label {
+    font-size: 9px;
+  }
+  
+  .mobile-nav-item i {
+    font-size: 16px;
+  }
+}

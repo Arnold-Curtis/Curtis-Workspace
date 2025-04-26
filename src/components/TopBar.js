@@ -70,7 +70,7 @@ function TopBar() {
             <Link to="/contact" className="menu-link">
               <i className="fas fa-envelope menu-icon"></i> Contact
             </Link>
-            <a href="#book-call" className="book-call-btn mobile">Book a Call</a>
+            <Link to="/book-call" className="book-call-btn mobile">Book a Call</Link>
           </div>
         </>
       ) : (
@@ -108,7 +108,7 @@ function TopBar() {
               <i className="fas fa-arrow-right action-icon"></i>
             </button>
             <input type="text" placeholder="Search..." className="search-bar" />
-            <a href="#book-call" className="book-call-btn">Book a Call</a>
+            <Link to="/book-call" className="book-call-btn">Book a Call</Link>
             <button className="window-button">_</button>
             <button className="window-button">□</button>
             <button className="window-button">×</button>
