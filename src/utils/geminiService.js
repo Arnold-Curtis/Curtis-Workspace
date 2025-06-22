@@ -1,8 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getCurrentChatId } from './chatDatabase';
 
-// Initialize the Gemini API with the API key
-const API_KEY = 'AIzaSyB-cWVEdHGdHfFhtMhQCB9xboRiqlt3dZA';
+// Initialize the Gemini API with the API key from environment variables
+const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+
+if (!API_KEY) {
+  console.error('REACT_APP_GEMINI_API_KEY is not set in environment variables');
+  console.error('Please create a .env file with your Gemini API key');
+}
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Get the Gemini model
@@ -186,6 +191,12 @@ Return up to 3 most relevant pages, ordered by relevance.
 // Function to generate a response from Gemini with contextual links
 export const generateResponse = async (userMessage, chatId = getCurrentChatId()) => {
   try {
+    // Check if API key is available
+    if (!API_KEY) {
+      console.error('Gemini API key is not configured');
+      return 'Sorry, the AI assistant is not properly configured. Please check that the REACT_APP_GEMINI_API_KEY environment variable is set.';
+    }
+
     // Initialize chat history for this chat if it doesn't exist
     if (!chatHistories.has(chatId)) {
       await initializeNewChat(chatId);

@@ -1,8 +1,97 @@
-# Getting Started with Create React App
+# Curtis' Professional Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, interactive portfolio website built with React, featuring an AI assistant powered by Google's Gemini API.
 
-## Available Scripts
+## 🚀 Features
+
+- **Interactive AI Assistant**: Chat with an AI that knows about Curtis's skills and projects
+- **Responsive Design**: Optimized for both desktop and mobile devices  
+- **Modern UI**: Clean, professional interface with smooth animations
+- **Single Page Application**: Fast navigation with React Router
+
+## 🔧 Setup Instructions
+
+### Prerequisites
+- Node.js (version 14 or higher)
+- npm or yarn
+- Google Gemini API key
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd curtisworkspace
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   ```
+   
+   Then edit the `.env` file and add your Gemini API key:
+   ```
+   REACT_APP_GEMINI_API_KEY=your_actual_gemini_api_key_here
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+
+### Getting a Gemini API Key
+
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create a new API key
+3. Copy the key and add it to your `.env` file
+
+## 🚀 Deployment
+
+### Build for production
+```bash
+npm run build
+```
+
+### Environment Variables for Production
+Make sure to set the `REACT_APP_GEMINI_API_KEY` environment variable in your hosting platform:
+
+- **Netlify**: Add it in Site Settings > Environment Variables
+- **Vercel**: Add it in Project Settings > Environment Variables  
+- **Heroku**: Use `heroku config:set REACT_APP_GEMINI_API_KEY=your_key`
+
+## 🔐 Security
+
+### API Key Protection
+- Your Gemini API key is stored in a `.env` file that is excluded from version control
+- Never commit your `.env` file to GitHub
+- Use `.env.example` as a template for setting up environment variables
+- For production deployments, set environment variables through your hosting platform's dashboard
+
+### Environment Variables
+This project uses the following environment variables:
+- `REACT_APP_GEMINI_API_KEY`: Your Google Gemini API key (required for AI functionality)
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── AiOrb.js        # AI chat assistant
+│   ├── TopBar.js       # Navigation bar
+│   └── ...
+├── pages/              # Page components
+├── utils/              # Utility functions
+│   └── geminiService.js # AI service integration
+└── stylings/           # CSS files
+```
+
+## 🛠️ Available Scripts
 
 In the project directory, you can run:
 
@@ -68,3 +157,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## 📝 Notes
