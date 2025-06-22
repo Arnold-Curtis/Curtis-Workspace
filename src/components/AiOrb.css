@@ -1,0 +1,1067 @@
+/* AI Orb Container */
+.ai-orb-container {
+  position: fixed;
+  top: 50px; /* Position below the TopBar */
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  background: transparent; /* Ensure container is transparent */
+  pointer-events: auto; /* Ensure orb receives pointer events */
+}
+
+.ai-orb-container:hover {
+  transform: scale(1.1);
+}
+
+/* Drag area for the chat window */
+.drag-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto; /* Changed from none to auto to capture clicks */
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent; /* Ensure area is transparent */
+  touch-action: auto; /* Enable touch events */
+}
+
+/* Disable pointer events on drag area when AI is snapped */
+.drag-area.snapped {
+  pointer-events: none !important;
+}
+
+/* AI Orb Styling */
+.ai-orb {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 25px rgba(88, 101, 242, 0.7);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 6s ease-in-out infinite; /* Add floating animation */
+  transform-origin: center center;
+}
+
+/* Inner orb with pulsating animation */
+.orb-inner {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, 
+    rgba(156, 86, 255, 0.9) 0%, 
+    rgba(76, 110, 245, 0.8) 40%,
+    rgba(43, 74, 242, 0.5) 60%,
+    rgba(17, 0, 255, 0.3) 80%);
+  filter: blur(2px);
+  animation: pulse 4s infinite alternate, rotate 15s linear infinite;
+  z-index: 2;
+}
+
+/* Glow effect */
+.orb-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, 
+    rgba(156, 86, 255, 0.8) 0%, 
+    rgba(76, 110, 245, 0.6) 30%, 
+    rgba(43, 74, 242, 0.3) 60%, 
+    rgba(17, 0, 255, 0) 100%);
+  animation: glow 4s infinite alternate;
+  z-index: 1;
+  opacity: 0.8;
+  filter: blur(3px); /* Add blur for enhanced glow */
+}
+
+/* Particle effects */
+.orb-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.orb-particles::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(156, 86, 255, 0.1) 40%,
+    rgba(76, 110, 245, 0.1) 50%,
+    rgba(43, 74, 242, 0.1) 60%,
+    rgba(17, 0, 255, 0.1) 70%,
+    transparent 100%
+  );
+  opacity: 0.5;
+  animation: rotate-reverse 20s linear infinite;
+}
+
+.orb-particles::after {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 5%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 5%),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 5%),
+    radial-gradient(circle at 80% 60%, rgba(255, 255, 255, 0.3) 0%, transparent 5%),
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 5%);
+  animation: rotate 30s linear infinite;
+  opacity: 0.7;
+}
+
+/* Greeting bubble */
+.ai-greeting {
+  position: absolute;
+  top: -10px;
+  right: 40px;
+  min-width: 150px;
+  z-index: 1001;
+}
+
+.greeting-bubble {
+  position: relative;
+  background-color: #2d2d2d;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.greeting-bubble::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #2d2d2d;
+}
+
+.ai-greeting.initial {
+  right: 40px;
+}
+
+.ai-greeting.tooltip {
+  right: 40px;
+}
+
+/* AI Chat Window - ChatGPT style */
+.ai-chat-window {
+  position: absolute;
+  width: 90%;
+  max-width: 800px;
+  height: 600px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1002;
+  border: 1px solid #444;
+  resize: both;
+  min-width: 400px;
+  min-height: 400px;
+  pointer-events: auto;
+  will-change: transform, opacity, width, height, top, right, left;
+  touch-action: auto; /* Enable touch events */
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ai-chat-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #252526;
+  border-bottom: 1px solid #444;
+  cursor: move; /* Indicate draggable */
+}
+
+.ai-chat-orb {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(88, 101, 242, 0.5);
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.orb-inner-small {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, 
+    rgba(156, 86, 255, 0.9) 0%, 
+    rgba(76, 110, 245, 0.8) 40%,
+    rgba(43, 74, 242, 0.5) 60%,
+    rgba(17, 0, 255, 0.3) 80%);
+  filter: blur(1px);
+  animation: pulse 4s infinite alternate, rotate 15s linear infinite;
+}
+
+.orb-inner-tiny {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, 
+    rgba(156, 86, 255, 0.9) 0%, 
+    rgba(76, 110, 245, 0.8) 40%,
+    rgba(43, 74, 242, 0.5) 60%,
+    rgba(17, 0, 255, 0.3) 80%);
+  filter: blur(1px);
+  animation: pulse 4s infinite alternate, rotate 15s linear infinite;
+}
+
+.ai-chat-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  flex-grow: 1;
+}
+
+.ai-chat-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Header action buttons */
+.new-chat-btn,
+.chat-history-btn,
+.close-chat {
+  background: none;
+  border: 1px solid rgba(114, 137, 218, 0.3);
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(114, 137, 218, 0.1);
+}
+
+.new-chat-btn:hover,
+.chat-history-btn:hover,
+.close-chat:hover {
+  background-color: rgba(114, 137, 218, 0.3);
+  border-color: rgba(114, 137, 218, 0.5);
+  color: #fff;
+}
+
+.close-chat {
+  color: #e0e0e0;
+}
+
+.close-chat:hover {
+  color: #fff;
+  background-color: rgba(255, 99, 71, 0.3);
+  border-color: rgba(255, 99, 71, 0.5);
+}
+
+.ai-chat-content {
+  flex-grow: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #1e1e1e;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1e1e1e;
+}
+
+.ai-intro-message {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: rgba(88, 101, 242, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-left: 3px solid rgba(88, 101, 242, 0.6);
+}
+
+.ai-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Message bubbles */
+.ai-message {
+  display: flex;
+  width: 100%;
+  animation: fade-in 0.3s ease;
+}
+
+.ai-message.user {
+  justify-content: flex-end;
+}
+
+.ai-message.assistant {
+  justify-content: flex-start;
+}
+
+.message-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #2d2d2d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.ai-message.user .message-avatar {
+  order: 2;
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.message-avatar i {
+  color: #e0e0e0;
+  font-size: 14px;
+}
+
+.ai-avatar-orb {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px rgba(88, 101, 242, 0.5);
+  overflow: hidden;
+}
+
+.message-content {
+  max-width: 80%;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 18px;
+  position: relative;
+}
+
+.ai-message.assistant .message-content {
+  background-color: #2d2d2d;
+  border-bottom-left-radius: 4px;
+}
+
+.ai-message.user .message-content {
+  background: linear-gradient(145deg, #7289da, #5865f2);
+  border-bottom-right-radius: 4px;
+  text-align: right;
+}
+
+.ai-response {
+  white-space: pre-wrap;
+}
+
+/* AI Link styling - improved */
+.ai-link {
+  color: #7289da;
+  text-decoration: underline;
+  cursor: pointer;
+  position: relative;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.ai-message.user .ai-link {
+  color: #70a9f7;
+}
+
+.ai-link:hover {
+  background-color: rgba(114, 137, 218, 0.1);
+  color: #5c6bc0;
+  text-decoration: none;
+}
+
+.ai-message.user .ai-link:hover {
+  background-color: rgba(112, 169, 247, 0.1);
+}
+
+.ai-link::after {
+  content: '\f0c1';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  margin-left: 4px;
+  font-size: 0.8em;
+  opacity: 0.7;
+  vertical-align: super;
+  transition: all 0.2s ease;
+}
+
+.ai-link:active {
+  transform: translateY(1px);
+}
+
+/* Mobile-specific AI link improvements */
+@media (max-width: 768px) {
+  .ai-link {
+    /* Increase touch target size for mobile */
+    min-height: 32px;
+    padding: 4px 6px;
+    margin: 2px 0;
+    border-radius: 6px;
+    line-height: 1.4;
+    /* Improve touch handling */
+    -webkit-tap-highlight-color: rgba(114, 137, 218, 0.2);
+    touch-action: manipulation;
+    user-select: none;
+    /* Ensure it's above other elements */
+    position: relative;
+    z-index: 10;
+  }
+  
+  .ai-link:active {
+    background-color: rgba(114, 137, 218, 0.3);
+    transform: scale(0.98);
+  }
+  
+  /* Remove hover effects on mobile */
+  .ai-link:hover::before {
+    display: none;
+  }
+  
+  /* Better visual feedback for mobile taps */
+  .ai-link::after {
+    font-size: 0.9em;
+    margin-left: 6px;
+  }
+}
+
+@keyframes tooltip-fade-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -5px);
+  }
+}
+
+/* Typing indicator */
+.ai-typing {
+  display: flex;
+  margin-top: 8px;
+  animation: fade-in 0.3s ease;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #2d2d2d;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  margin-left: 8px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #7289da;
+  animation: bounce 1s infinite;
+  opacity: 0.7;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.ai-chat-input {
+  display: flex;
+  padding: 12px 16px;
+  background-color: #252526;
+  border-top: 1px solid #444;
+  gap: 8px;
+}
+
+.ai-chat-input textarea {
+  flex-grow: 1;
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: #e0e0e0;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  resize: none;
+  height: 40px;
+  max-height: 120px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.ai-chat-input textarea:focus {
+  outline: none;
+  border-color: #7289da;
+  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
+}
+
+.ai-chat-input textarea::placeholder {
+  color: #999;
+}
+
+.ai-chat-input textarea:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.send-message {
+  background: linear-gradient(145deg, #7289da, #5865f2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.send-message:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(88, 101, 242, 0.4);
+}
+
+.send-message:active {
+  transform: translateY(0);
+}
+
+.send-message:disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile close button */
+.mobile-close-chat {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #7289da, #5865f2);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+}
+
+/* Mobile orb specific styling */
+.mobile-orb {
+  position: fixed !important;
+  bottom: 80px !important; /* Consistent with the media query */
+  right: 20px !important;
+  z-index: 1500 !important; /* Extremely high z-index to ensure visibility */
+  pointer-events: auto !important;
+  background: transparent !important; /* Ensure container is transparent */
+}
+
+.mobile-orb .ai-orb {
+  box-shadow: 0 0 30px rgba(88, 101, 242, 1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  animation: float 6s ease-in-out infinite !important; /* Add floating animation */
+}
+
+@media (max-width: 768px) {
+  .ai-orb-container {
+    position: fixed;
+    top: auto;
+    bottom: 80px; /* Position above bottom nav bar */
+    right: 20px;
+    z-index: 1010; /* Ensure it's above everything */
+    width: 45px;
+    height: 45px;
+    pointer-events: auto;
+    background: transparent; /* Ensure container is transparent */
+  }
+  
+  /* Make orb more visible on mobile */
+  .ai-orb {
+    width: 45px;
+    height: 45px;
+    box-shadow: 0 0 25px rgba(88, 101, 242, 0.9);
+    animation: float 6s ease-in-out infinite; /* Add floating animation */
+  }
+  
+  /* Floating chat window styling for mobile */
+  .ai-chat-window {
+    position: fixed;
+    top: 60px; /* Position right below the top bar */
+    bottom: 140px; /* Position above the orb */
+    left: 10px;
+    right: 10px;
+    width: calc(100% - 20px); /* Fill the entire width with small margins */
+    max-width: calc(100% - 20px);
+    height: calc(100vh - 200px); /* Span from top bar to above orb */
+    max-height: calc(100vh - 200px); /* Span from top bar to above orb */
+    border-radius: 12px;
+    resize: none;
+    min-width: calc(100% - 20px);
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    z-index: 1005; /* Ensure it's above other elements */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  /* Add arrow pointing to the orb */
+  .ai-chat-window::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #252526;
+    z-index: 1006;
+  }
+  
+  .ai-chat-header {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #252526;
+    border-bottom: 1px solid #444;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    height: 56px; /* Increased height for better touch targets */
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .ai-chat-orb {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  
+  .orb-inner-small {
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    left: 2px;
+  }
+  
+  .ai-chat-header h3 {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px; /* Increased max-width for title to show full text */
+    margin: 0;
+    flex-shrink: 1;
+  }
+  
+  .ai-chat-actions {
+    gap: 8px; /* Increased gap between buttons */
+    display: flex;
+    flex-shrink: 0;
+  }
+  
+  /* Make buttons larger on mobile for better touch targets */
+  .new-chat-btn,
+  .chat-history-btn,
+  .close-chat {
+    padding: 8px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-width: 1px;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+
+  /* Add close button for mobile that's always visible */
+  .close-chat {
+    display: flex;
+    background-color: rgba(255, 99, 71, 0.2);
+    border-color: rgba(255, 99, 71, 0.4);
+  }
+  
+  .ai-chat-content {
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 290px); /* Adjusted to fill most of the available space */
+    pointer-events: auto; /* Ensure pointer events are captured */
+    -webkit-overflow-scrolling: touch; /* Improve scrolling on iOS */
+  }
+  
+  .ai-messages {
+    gap: 12px;
+    width: 100%;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .message-content {
+    max-width: 85%;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .ai-chat-input {
+    padding: 8px;
+    background-color: #252526;
+    border-top: 1px solid #444;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    height: 60px; /* Increased height for input area */
+    display: flex;
+    align-items: center;
+    z-index: 1005;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .ai-chat-input textarea {
+    padding: 8px;
+    font-size: 0.95rem;
+    height: 44px;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .send-message {
+    width: 44px;
+    height: 44px;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  .ai-intro-message {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    pointer-events: auto; /* Ensure pointer events are captured */
+  }
+  
+  /* Show mobile navigation when chat is open */
+  body.chat-open .MobileNav,
+  body.chat-open .bottom-nav,
+  body.chat-open .footer-mobile {
+    display: block !important;
+    z-index: 1000; /* Below the chat but still visible */
+  }
+  
+  /* Adjust link tooltip for mobile */
+  .ai-link:hover::before {
+    left: 0;
+    transform: none;
+    font-size: 0.75em;
+  }
+
+  /* Ensure drag area doesn't interfere with chat window interactions */
+  .drag-area {
+    pointer-events: none; /* Only capture clicks outside the chat window */
+  }
+
+  /* But allow clicks on the drag area itself to close the chat */
+  .drag-area.chat-open {
+    pointer-events: auto;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 380px) {
+  .ai-chat-header {
+    padding: 8px;
+    height: 50px;
+  }
+  
+  .ai-chat-orb {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+  }
+  
+  .orb-inner-small {
+    width: 14px;
+    height: 14px;
+    top: 2px;
+    left: 2px;
+  }
+  
+  .ai-chat-header h3 {
+    font-size: 0.85rem;
+    max-width: 140px; /* Increased to show more of the title */
+  }
+  
+  .ai-chat-actions {
+    gap: 6px; /* Increased from 2px */
+  }
+  
+  .new-chat-btn,
+  .chat-history-btn,
+  .close-chat {
+    padding: 6px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 0.85rem;
+  }
+  
+  .message-content {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .ai-chat-input {
+    height: 50px;
+    padding: 6px;
+    z-index: 1005;
+  }
+  
+  .ai-chat-input textarea {
+    padding: 6px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+  
+  .send-message {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+  
+  .ai-chat-window {
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    min-width: calc(100% - 20px);
+    min-height: calc(100vh - 210px);
+    bottom: 130px;
+    top: 60px;
+    left: 10px;
+    right: 10px;
+    height: calc(100vh - 190px);
+  }
+  
+  /* Adjust arrow position for smaller screens */
+  .ai-chat-window::after {
+    right: 25px;
+  }
+  
+  .ai-chat-content {
+    max-height: calc(100vh - 300px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(88, 101, 242, 0.6),
+                0 0 10px rgba(88, 101, 242, 0.4),
+                0 0 15px rgba(88, 101, 242, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(88, 101, 242, 0.8),
+                0 0 20px rgba(88, 101, 242, 0.6),
+                0 0 30px rgba(88, 101, 242, 0.4);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Add floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+    box-shadow: 0 5px 15px 0px rgba(88, 101, 242, 0.6);
+  }
+  50% {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px 0px rgba(88, 101, 242, 0.8);
+  }
+  100% {
+    transform: translateY(0px);
+    box-shadow: 0 5px 15px 0px rgba(88, 101, 242, 0.6);
+  }
+}
+
+/* Snapped chat styling - COMPLETELY REVAMPED for new animation system */
+.snapped-chat {
+  position: fixed !important;
+  right: 10px !important;
+  top: 80px !important;
+  width: 40vw !important;
+  height: calc(100vh - 100px) !important;
+  left: auto !important;
+  transform: none !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid #555 !important;
+  z-index: 1500 !important;
+  resize: none !important;
+  min-width: 0;
+  min-height: 0;
+  /* NO default transitions - animation is controlled manually via JavaScript */
+  transition: none !important;
+  /* Disable drag when snapped */
+  cursor: default !important;
+}
+
+/* Disable drag on snapped chat */
+.snapped-chat:hover {
+  cursor: default !important;
+}
+
+/* Remove old animation keyframes as they're not used in new system */
+/* @keyframes snap-in removed - animation is now handled by JavaScript */
+
+/* Styles for the snapped chat window - removed duplicate rules as they're now in .snapped-chat */
+
+/* Header for snapped chat */
+.snapped-chat .ai-chat-header {
+  padding: 8px 12px !important;
+}
+
+/* Minimize button for snapped chat */
+.chat-minimize-btn {
+  background: transparent;
+  border: 1px solid rgba(114, 137, 218, 0.3);
+  color: #aaa;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 8px;
+  margin-right: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(114, 137, 218, 0.1);
+}
+
+.chat-minimize-btn:hover {
+  color: white;
+  background-color: rgba(114, 137, 218, 0.3);
+  border-color: rgba(114, 137, 218, 0.5);
+}
+
+/* Animation for page content when in split view */
+.content-split-animation {
+  width: 55% !important;
+  transform: translateX(-5px);
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}

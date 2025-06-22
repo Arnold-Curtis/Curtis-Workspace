@@ -1,0 +1,120 @@
+# SKILLS PAGE CONTENT INDEX
+
+## SECTION: TERMINAL INTERFACE [LINES 1-15]
+1. skills.show('technical')
+2. skills.show('frameworks')
+3. skills.show('tools')
+4. skills.show('languages')
+5. skills.show('softSkills')
+6. 
+7. // Terminal interface rendered as VS Code terminal panel
+8. // Component ID: terminal-container
+9. // Terminal header class: terminal-header
+10. // Terminal body class: terminal-body
+11. // Terminal prompt class: terminal-prompt
+12. // Terminal command class: terminal-command
+13. // Terminal result class: terminal-result
+14. // Commands execute with typing animation
+15. // Cursor has blinking animation
+
+## SECTION: TECHNICAL SKILLS [LINES 16-30]
+16. Frontend Development - 60%
+17. Backend Development - 70%
+18. Machine Learning Incorporation - 70%
+19. Database Design - 50%
+20. Prompt Engineering - 80%
+21. 
+22. // Technical skills rendered as animated progress bars
+23. // Component ID: terminal-result when category is 'technical'
+24. // Each skill has class: skill-bar
+25. // Skill name class: skill-name
+26. // Skill progress container class: skill-progress
+27. // Skill progress fill class: skill-fill
+28. // Skill percentage class: skill-level
+29. // Progress bars animate on load
+30. // Skills appear after typing command
+
+## SECTION: FRAMEWORKS [LINES 31-45]
+31. React - 80%
+32. Node.js - 80%
+33. TensorFlow - 60%
+34. Flutter - 50%
+35. Spring Framework - 70%
+36. 
+37. // Frameworks rendered as animated progress bars
+38. // Component ID: terminal-result when category is 'frameworks'
+39. // Each framework has class: skill-bar
+40. // Framework name class: skill-name
+41. // Framework progress container class: skill-progress
+42. // Framework progress fill class: skill-fill
+43. // Framework percentage class: skill-level
+44. // Progress bars animate on load
+45. // Frameworks appear after typing command
+
+## SECTION: TOOLS [LINES 46-60]
+46. Git - 60%
+47. MySQL - 80%
+48. LLMs - 78%
+49. VS Code - 95%
+50. Premiere Pro - 72%
+51. 
+52. // Tools rendered as animated progress bars
+53. // Component ID: terminal-result when category is 'tools'
+54. // Each tool has class: skill-bar
+55. // Tool name class: skill-name
+56. // Tool progress container class: skill-progress
+57. // Tool progress fill class: skill-fill
+58. // Tool percentage class: skill-level
+59. // Progress bars animate on load
+60. // Tools appear after typing command
+
+## SECTION: PROGRAMMING LANGUAGES [LINES 61-76]
+61. JavaScript - 75%
+62. Python - 80%
+63. C# - 85%
+64. Java - 95%
+65. C++ - 70%
+66. SQL - 60%
+67. 
+68. // Programming languages rendered as animated progress bars
+69. // Component ID: terminal-result when category is 'languages'
+70. // Each language has class: skill-bar
+71. // Language name class: skill-name
+72. // Language progress container class: skill-progress
+73. // Language progress fill class: skill-fill
+74. // Language percentage class: skill-level
+75. // Progress bars animate on load
+76. // Languages appear after typing command
+
+## SECTION: SOFT SKILLS [LINES 77-91]
+77. Problem Solving - 95%
+78. Communication - 90%
+79. Team Collaboration - 92%
+80. Project Management - 85%
+81. Willingness to Learn - 88%
+82. 
+83. // Soft skills rendered as animated progress bars
+84. // Component ID: terminal-result when category is 'softSkills'
+85. // Each soft skill has class: skill-bar
+86. // Soft skill name class: skill-name
+87. // Soft skill progress container class: skill-progress
+88. // Soft skill progress fill class: skill-fill
+89. // Soft skill percentage class: skill-level
+90. // Progress bars animate on load
+91. // Soft skills appear after typing command
+
+## SECTION: CATEGORY SELECTOR [LINES 92-105]
+92. Technical
+93. Frameworks
+94. Tools
+95. Languages
+96. Soft Skills
+97. 
+98. // Category selector appears after animation completes
+99. // Component ID: category-selector
+100. // Container class: selector-container
+101. // Each category has class: category-button
+102. // Active category has class: active
+103. // Clicking category executes corresponding command
+104. // Categories have hover effect
+105. // Selector has fade-in animation 

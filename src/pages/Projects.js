@@ -129,13 +129,13 @@ const Projects = () => {
 
   return (
     <div className="projects-container">
-      <div className="projects-header">
-        <div className="file-tab">
+      <div className="projects-header" id="projects-header" data-line="86-95">
+        <div className="file-tab" data-line="86">
           <i className="fas fa-file-code tab-icon"></i>
           <span>Projects.js</span>
           <i className="fas fa-times close-icon"></i>
         </div>
-        <div className="github-redirect-button" onClick={redirectToGitHub}>
+        <div className="github-redirect-button" onClick={redirectToGitHub} data-line="87">
           <i className="fas fa-external-link-alt redirect-icon"></i>
           <i className="fab fa-github github-icon"></i>
           <span className="redirect-text">Explore My Work</span>
@@ -143,16 +143,17 @@ const Projects = () => {
       </div>
       
       <div className="projects-content">
-        <div className="explorer-section">
-          <div className="explorer-header">
+        <div className="explorer-section" id="explorer-section" data-line="1-15">
+          <div className="explorer-header" data-line="1">
             <span>PROJECTS EXPLORER</span>
           </div>
           <div className="project-list">
-            {projectsData.map(project => (
+            {projectsData.map((project, index) => (
               <div 
                 key={project.id} 
                 className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
                 onClick={() => openProject(project)}
+                data-line={2 + index}
               >
                 <i className="fas fa-code-branch"></i>
                 <span>{project.title}</span>
@@ -168,9 +169,11 @@ const Projects = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
+              id={`project-details-${selectedProject.id}`}
+              data-line={selectedProject.id === 1 ? "16-50" : "51-85"}
             >
               <div className="project-header">
-                <h2>{selectedProject.title}</h2>
+                <h2 data-line={selectedProject.id === 1 ? 16 : 51}>{selectedProject.title}</h2>
                 <button className="close-btn" onClick={closeProject}>
                   <i className="fas fa-times"></i>
                 </button>
@@ -186,7 +189,9 @@ const Projects = () => {
                     <i className="fas fa-info-circle section-icon"></i>
                     Description
                   </h3>
-                  <p>{selectedProject.description}</p>
+                  <p data-line={selectedProject.id === 1 ? "18-23" : "53-55"}>
+                    {selectedProject.description}
+                  </p>
                 </div>
                 
                 <div className="info-section">
@@ -196,7 +201,13 @@ const Projects = () => {
                   </h3>
                   <div className="tech-tags">
                     {selectedProject.technologies.map((tech, index) => (
-                      <span key={index} className="tech-tag">{tech}</span>
+                      <span 
+                        key={index} 
+                        className="tech-tag"
+                        data-line={selectedProject.id === 1 ? (26 + index) : (58 + index)}
+                      >
+                        {tech}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -208,7 +219,11 @@ const Projects = () => {
                   </h3>
                   <ul className="feature-list">
                     {selectedProject.features.map((feature, index) => (
-                      <li key={index} className="feature-item">
+                      <li 
+                        key={index} 
+                        className="feature-item"
+                        data-line={selectedProject.id === 1 ? (35 + index) : (69 + index)}
+                      >
                         <i className="fas fa-check-circle feature-icon"></i>
                         {feature}
                       </li>
@@ -217,7 +232,13 @@ const Projects = () => {
                 </div>
                 
                 <div className="project-links">
-                  <a href={selectedProject.github} className="project-link github-link" target="_blank" rel="noopener noreferrer">
+                  <a 
+                    href={selectedProject.github} 
+                    className="project-link github-link" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    data-line={selectedProject.id === 1 ? 49 : 83}
+                  >
                     <i className="fab fa-github"></i> View Code
                   </a>
                   <a className="project-link demo-link disabled">
@@ -228,7 +249,7 @@ const Projects = () => {
             </motion.div>
           ) : (
             <div className="no-selection">
-              <div className="placeholder-content">
+              <div className="placeholder-content" data-line="12-13">
                 <i className="fas fa-laptop-code placeholder-icon"></i>
                 <h3>Select a project from the sidebar to view details</h3>
                 <p>Browse through my portfolio of web applications, machine learning projects, and more</p>

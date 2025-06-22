@@ -78,6 +78,17 @@ html, body {
   padding: 0;
   box-sizing: border-box;
   overflow: hidden; /* Changed from auto to hidden to prevent unwanted scrolling */
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: width, transform; /* Optimize for animations */
+}
+
+/* Content split animation for AI assistant snapped mode */
+.content-split-animation {
+  width: 55% !important;
+  transform: translateX(-5px);
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 /* Window Wrapper - Container for draggable windows */
@@ -111,6 +122,7 @@ html, body {
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   position: relative;
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Special case for Home page */
@@ -119,6 +131,28 @@ html, body {
   margin: 0;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* Adjust content containers in split view */
+.content-split-animation .centered-content,
+.content-split-animation .window-wrapper,
+.content-split-animation .draggable-window {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Ensure draggable windows fill the split content area */
+.content-split-animation .draggable-window {
+  height: calc(100% - 20px) !important;
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+}
+
+/* Ensure window content fills the available space */
+.content-split-animation .window-content {
+  height: calc(100% - 30px) !important;
 }
 
 .top-bar {

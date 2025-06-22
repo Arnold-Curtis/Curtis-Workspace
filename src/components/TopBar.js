@@ -90,8 +90,7 @@ function TopBar() {
             </Link>
             <Link to="/resume" className="menu-link">
               <i className="fas fa-file-alt menu-icon"></i> Resume
-            </Link>
-            <Link to="/contact" className="menu-link">
+            </Link>            <Link to="/contact" className="menu-link">
               <i className="fas fa-envelope menu-icon"></i> Contact
             </Link>
           </div>
@@ -101,10 +100,10 @@ function TopBar() {
           </div>
           
           <div className="actions">
-            <button className="action-button">
+            <button className="action-button" onClick={() => window.history.back()}>
               <i className="fas fa-arrow-left action-icon"></i>
             </button>
-            <button className="action-button">
+            <button className="action-button" onClick={() => window.history.forward()}>
               <i className="fas fa-arrow-right action-icon"></i>
             </button>
             <input type="text" placeholder="Search..." className="search-bar" />

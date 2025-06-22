@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import '../stylings/Skills.css';
+import { checkForHighlightRequest, highlightElement, injectHighlightStyles } from '../utils/highlightService';
 
 export const Skills = () => {
   const [terminalActive, setTerminalActive] = useState(true);
@@ -135,6 +136,36 @@ export const Skills = () => {
   const toggleTerminal = () => {
     setTerminalActive(!terminalActive);
   };
+
+  // Check for highlight requests when component mounts
+  useEffect(() => {
+    // Inject highlight styles
+    injectHighlightStyles();
+    
+    // Check if there's a highlight request
+    const highlightLine = checkForHighlightRequest();
+    if (highlightLine) {
+      // If animation is not complete, wait for it
+      if (!animationComplete) {
+        const waitForAnimation = setInterval(() => {
+          if (animationComplete) {
+            clearInterval(waitForAnimation);
+            setTimeout(() => {
+              highlightElement(highlightLine);
+            }, 500);
+          }
+        }, 500);
+        
+        // Cleanup interval if component unmounts
+        return () => clearInterval(waitForAnimation);
+      } else {
+        // If animation is already complete, highlight immediately
+        setTimeout(() => {
+          highlightElement(highlightLine);
+        }, 500);
+      }
+    }
+  }, [animationComplete]);
   
   return (
     <div className="skills-page">
@@ -156,7 +187,7 @@ export const Skills = () => {
           </div>
           
           {terminalActive && (
-            <div className="terminal-container">
+            <div className="terminal-container" id="terminal-container" data-line="1-15">
               <div className="terminal-header">
                 <span className="terminal-title">
                   <i className="fas fa-terminal"></i> bash
@@ -175,8 +206,56 @@ export const Skills = () => {
                     <div className="result-title">
                       {currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Skills:
                     </div>
-                    {skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar">
+                    {currentCategory === 'technical' && skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar" data-line={16 + index}>
+                        <span className="skill-name">{skill.name}</span>
+                        <div className="skill-progress">
+                          <div
+                            className="skill-fill"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                        <span className="skill-level">{skill.level}%</span>
+                      </div>
+                    ))}
+                    {currentCategory === 'frameworks' && skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar" data-line={31 + index}>
+                        <span className="skill-name">{skill.name}</span>
+                        <div className="skill-progress">
+                          <div
+                            className="skill-fill"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                        <span className="skill-level">{skill.level}%</span>
+                      </div>
+                    ))}
+                    {currentCategory === 'tools' && skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar" data-line={46 + index}>
+                        <span className="skill-name">{skill.name}</span>
+                        <div className="skill-progress">
+                          <div
+                            className="skill-fill"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                        <span className="skill-level">{skill.level}%</span>
+                      </div>
+                    ))}
+                    {currentCategory === 'languages' && skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar" data-line={61 + index}>
+                        <span className="skill-name">{skill.name}</span>
+                        <div className="skill-progress">
+                          <div
+                            className="skill-fill"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                        <span className="skill-level">{skill.level}%</span>
+                      </div>
+                    ))}
+                    {currentCategory === 'softSkills' && skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar" data-line={77 + index}>
                         <span className="skill-name">{skill.name}</span>
                         <div className="skill-progress">
                           <div
@@ -196,13 +275,14 @@ export const Skills = () => {
         
         {/* Category Selector - appears after animation completes */}
         {animationComplete && (
-          <div className="category-selector">
+          <div className="category-selector" id="category-selector" data-line="92-105">
             <div className="selector-container">
-              {Object.keys(skillsData).map((category) => (
+              {Object.keys(skillsData).map((category, index) => (
                 <button
                   key={category}
                   className={`category-button ${currentCategory === category ? 'active' : ''}`}
                   onClick={() => handleCategorySelect(category)}
+                  data-line={92 + index}
                 >
                   <i className={`fas ${
                     category === 'technical' ? 'fa-cogs' :
@@ -247,7 +327,7 @@ export const Skills = () => {
 
             <h3>Continuous Learning</h3>
             <p>
-              I believe true growth comes from staying curious. I’m constantly building, exploring, and refining my craft. I hold a foundational certification in C# from a bootcamp that sparked my journey into tech, and since then, I’ve taught myself technologies like Flutter, JavaScript, React, and backend Java frameworks through hands-on projects and practice. While I’m confident in my ability to build and deliver, I continue sharpening my skills daily — from deepening my understanding of Java through LeetCode, to mastering the dynamics of neural networks in Python to truly grasp AI from the ground up.
+              I believe true growth comes from staying curious. I'm constantly building, exploring, and refining my craft. I hold a foundational certification in C# from a bootcamp that sparked my journey into tech, and since then, I've taught myself technologies like Flutter, JavaScript, React, and backend Java frameworks through hands-on projects and practice. While I'm confident in my ability to build and deliver, I continue sharpening my skills daily — from deepening my understanding of Java through LeetCode, to mastering the dynamics of neural networks in Python to truly grasp AI from the ground up.
             </p>
 
             <div className="learning-status">

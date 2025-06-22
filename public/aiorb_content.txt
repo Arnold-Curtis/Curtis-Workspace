@@ -1,0 +1,79 @@
+# AI ORB COMPONENT CONTENT INDEX
+
+## SECTION: AI ORB [LINES 1-15]
+1. [AI Orb Icon]
+2. 
+3. Hello! I'm Arnold's AI assistant. How can I help you today?
+4. 
+5. // AI Orb rendered as floating, clickable orb
+6. // Component ID: ai-orb-container
+7. // Orb has pulsing animation
+8. // Orb has tooltip on hover
+9. // Clicking orb opens chat interface
+10. // Orb appears in bottom right corner
+11. // Orb has different states:
+12. // - Default: blue glow
+13. // - Hover: brighter blue glow
+14. // - Active: expanded chat
+15. // Initial greeting shows after 3 seconds on page load
+
+## SECTION: CHAT INTERFACE [LINES 16-40]
+16. Chat with Arnold's AI
+17. 
+18. [Message history]
+19. 
+20. Type your message here...
+21. 
+22. // Chat interface rendered as draggable window
+23. // Component ID: ai-chat-container
+24. // Chat header class: chat-header
+25. // Chat body class: chat-body
+26. // Message container class: messages-container
+27. // Each user message has class: user-message
+28. // Each AI message has class: ai-message
+29. // Input container class: chat-input-container
+30. // Input field class: chat-input
+31. // Send button class: send-button
+32. // New chat button class: new-chat-button
+33. // History button class: history-button
+34. // Close button class: close-button
+35. // Loading indicator shows while AI is responding
+36. // Chat is draggable on desktop
+37. // Chat is full screen on mobile
+38. // Messages scroll automatically to bottom
+39. // Chat history stored in IndexedDB
+40. // Messages encrypted with session-specific key
+
+## SECTION: CHAT HISTORY [LINES 41-55]
+41. Chat History
+42. 
+43. [List of previous chats]
+44. 
+45. New Chat
+46. 
+47. // Chat history rendered as sidebar panel
+48. // Component ID: chat-history-container
+49. // History header class: history-header
+50. // History list class: history-list
+51. // Each history item has class: history-item
+52. // Active chat has class: active
+53. // New chat button class: new-chat-button
+54. // Each chat has timestamp and preview
+55. // Clicking chat loads that conversation
+
+## SECTION: AI INTEGRATION [LINES 56-70]
+56. // AI powered by Google's Gemini 2.0 Flash model
+57. // API Key stored in geminiService.js
+58. // Chat history stored in chatHistories Map
+59. // Each chat has unique ID
+60. // Messages stored in IndexedDB database "CurtisChatDB"
+61. // Database has two object stores:
+62. // - chats: stores individual messages
+63. // - chatMetadata: stores chat session info
+64. // Messages encrypted with CryptoJS.AES
+65. // Encryption key is session-specific
+66. // AI has context awareness through chat history
+67. // AI configured with:
+68. // - maxOutputTokens: 1000
+69. // - temperature: 0.7
+ 

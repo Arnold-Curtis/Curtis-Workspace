@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
 // This wrapper component solves the findDOMNode deprecation issue in React 19
@@ -107,21 +106,6 @@ const ResizableWrapper = forwardRef((props, ref) => {
     );
   };
 
-  const handleResizeStart = (e, data) => {
-    // Prevent events from bubbling to parent DraggableCore
-    if (e && e.stopPropagation) {
-      e.stopPropagation();
-    }
-    
-    // Call the original onResizeStart if provided
-    if (onResizeStart) {
-      onResizeStart(e, data);
-    }
-  };
-
-  // Use a stable ref object for the handle function to avoid re-renders causing ref issues
-  const handleRef = useRef(renderHandle);
-  
   // Create a direct ResizableBox instead of using Resizable with handle prop
   // This prevents the DraggableCore mount/unmount issues
   return (

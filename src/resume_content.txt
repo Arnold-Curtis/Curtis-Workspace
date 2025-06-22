@@ -1,0 +1,121 @@
+# RESUME PAGE CONTENT INDEX
+
+## SECTION: RESUME HEADER [LINES 1-10]
+1. Resume of Arnold Curtis
+2. Full-Stack Engineer & Machine Learning Innovator
+3. Nairobi, Kenya
+4. 
+5. // Resume header rendered with professional styling
+6. // Component ID: resume-header
+7. // Title class: resume-title
+8. // Subtitle class: resume-subtitle
+9. // Location class: resume-location
+10. // Has fade-in animation
+
+## SECTION: EXPERIENCE [LINES 11-30]
+11. Experience
+12. 
+13. Full Stack Developer
+14. Self-employed (2024 - Present)
+15. 
+16. Full stack developer building robust applications and exploring AI-powered solutions
+17. Developed the AI Personal Assistant (AIPA/PLANAZ) using React.js, Spring Boot, and Java
+18. Created a Natural Language Review System for academic evaluations using Java and NLP
+19. Skilled in both front-end and back-end technologies with a focus on intelligent systems
+20. Implemented database designs and optimized queries for MySQL, MongoDB, and SQLite
+21. 
+22. // Experience section rendered as timeline
+23. // Component ID: experience-section
+24. // Section title class: section-title
+25. // Each role has class: role-entry
+26. // Role title class: role-title
+27. // Company and period class: company-period
+28. // Achievements rendered as bullet list
+29. // Each achievement has class: achievement-item
+30. // Has staggered fade-in animation
+
+## SECTION: EDUCATION [LINES 31-50]
+31. Education
+32. 
+33. Bachelor of Business Information Technology
+34. Strathmore University (July 2024 - Present)
+35. 
+36. Diploma in Business Information Technology
+37. Strathmore University (March 2023 - December 2024)
+38. 
+39. Certificate in Programming Languages
+40. St Nicholas College (January 2023 - March 2023)
+41. Specialization: C# Programming Language
+42. 
+43. // Education section rendered as timeline
+44. // Component ID: education-section
+45. // Section title class: section-title
+46. // Each education entry has class: education-entry
+47. // Degree class: degree
+48. // Institution and period class: institution-period
+49. // Specialization class: specialization
+50. // Has staggered fade-in animation
+
+## SECTION: SKILLS [LINES 51-75]
+51. Skills
+52. 
+53. Programming Languages:
+54. JavaScript, Python, Java, C#, SQL
+55. 
+56. Frontend Technologies:
+57. React.js, Flutter, HTML5/CSS3, JavaFX
+58. 
+59. Backend Technologies:
+60. Node.js, Express, Spring Boot, REST APIs, JavaFX
+61. 
+62. Databases:
+63. MySQL, MongoDB, SQLite, PostgreSQL
+64. 
+65. Machine Learning & AI:
+66. TensorFlow, PyTorch, NLP, Large Language Models (LLMs)
+67. 
+68. DevOps & Tools:
+69. Git, GitHub, Agile-Scrum
+70. 
+71. // Skills section rendered as categorized lists
+72. // Component ID: skills-section
+73. // Section title class: section-title
+74. // Each category has class: skill-category
+75. // Skills rendered as comma-separated lists with syntax highlighting
+
+## SECTION: RESUME REQUEST [LINES 76-110]
+76. Request Official Resume
+77. 
+78. Please provide your details to receive my official resume with verified certifications.
+79. This helps me ensure my resume is shared with genuine opportunities.
+80. 
+81. Name*
+82. [Your full name]
+83. 
+84. Email*
+85. [Your work email]
+86. 
+87. Company*
+88. [Your company name]
+89. 
+90. Position*
+91. [Your position at the company]
+92. 
+93. Additional Information (Optional)
+94. [Any specific information you'd like to know or why you're interested]
+95. 
+96. Request Resume
+97. 
+98. Thank you! Your request has been received. The resume will be sent to your email shortly.
+99. 
+100. // Resume request rendered as modal form
+101. // Component ID: resume-modal
+102. // Modal overlay class: resume-modal-overlay
+103. // Modal container class: resume-modal
+104. // Modal header class: resume-modal-header
+105. // Form class: resume-request-form
+106. // Each form group has class: form-group
+107. // Required fields marked with asterisk and class: required
+108. // Error messages have class: error-message
+109. // Submit button changes to "Submitting..." while submitting
+110. // Form data stored in localStorage under "resumeRequests" 

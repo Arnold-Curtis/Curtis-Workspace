@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
 // Removed SidebarIcons import
@@ -9,6 +9,7 @@ import MobileNav from './components/MobileNav';
 import { WindowManagerProvider, useWindowManager } from './components/WindowManager';
 import Taskbar from './components/Taskbar';
 import MobileOrientationOverlay from './components/MobileOrientationOverlay';
+import AiOrb from './components/AiOrb';
 import Home from './pages/Home';
 import About from './pages/About';
 import Projects from './pages/Projects';
@@ -17,7 +18,18 @@ import Resume from './pages/Resume';
 import Contact from './pages/Contact';
 import AdminMessages from './pages/AdminMessages';
 import BookCall from './pages/BookCall';
+import withHighlighting from './hoc/withHighlighting';
 import './App.css';
+
+// Apply the highlighting HOC to all page components
+const HighlightedHome = withHighlighting(Home);
+const HighlightedAbout = withHighlighting(About);
+const HighlightedProjects = withHighlighting(Projects);
+// Skills already has highlighting functionality
+const HighlightedResume = withHighlighting(Resume);
+const HighlightedContact = withHighlighting(Contact);
+const HighlightedBookCall = withHighlighting(BookCall);
+const HighlightedAdminMessages = withHighlighting(AdminMessages);
 
 // Wrapper component for pages that should use DraggableWindow
 const WindowWrapper = ({ children, title, icon, windowId }) => {
@@ -58,18 +70,7 @@ const WindowWrapper = ({ children, title, icon, windowId }) => {
   );
 };
 
-// Regular wrapper component for other pages
-const ContentWrapper = ({ children }) => {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-  const contentClass = isHomePage ? 'home-content' : 'centered-content';
-
-  return (
-    <div className={`content-container ${contentClass}`}>
-      {children}
-    </div>
-  );
-};
+// Removed ContentWrapper as it's no longer used
 
 // The main application with routes
 function AppWithRoutes() {
@@ -95,17 +96,18 @@ function AppWithRoutes() {
     <div className="App">
       <MobileOrientationOverlay />
       <TopBar />
+      <AiOrb />
       <div className="main-content">
         {/* Removed SidebarIcons component */}
         {!isMobile && <Sidebar />}
         <div className="content">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HighlightedHome />} />
             <Route 
               path="/about" 
               element={
                 <WindowWrapper title="About.js" icon="fas fa-file-code" windowId="about">
-                  <About />
+                  <HighlightedAbout />
                 </WindowWrapper>
               } 
             />
@@ -113,7 +115,7 @@ function AppWithRoutes() {
               path="/projects" 
               element={
                 <WindowWrapper title="Projects.js" icon="fas fa-file-code" windowId="projects">
-                  <Projects />
+                  <HighlightedProjects />
                 </WindowWrapper>
               } 
             />
@@ -125,12 +127,19 @@ function AppWithRoutes() {
                 </WindowWrapper>
               } 
             />
-            <Route path="/resume" element={<ContentWrapper><Resume /></ContentWrapper>} />
+            <Route 
+              path="/resume" 
+              element={
+                <WindowWrapper title="Resume.js" icon="fas fa-file-alt" windowId="resume">
+                  <HighlightedResume />
+                </WindowWrapper>
+              } 
+            />
             <Route 
               path="/contact" 
               element={
                 <WindowWrapper title="Contact.js" icon="fas fa-file-code" windowId="contact">
-                  <Contact />
+                  <HighlightedContact />
                 </WindowWrapper>
               } 
             />
@@ -138,12 +147,12 @@ function AppWithRoutes() {
               path="/book-call" 
               element={
                 <WindowWrapper title="BookCall.js" icon="fas fa-phone-alt" windowId="book-call">
-                  <BookCall />
+                  <HighlightedBookCall />
                 </WindowWrapper>
               } 
             />
             {/* Hidden admin route with custom URL */}
-            <Route path="/admin10@10" element={<AdminMessages />} />
+            <Route path="/admin10@10" element={<HighlightedAdminMessages />} />
           </Routes>
         </div>
       </div>

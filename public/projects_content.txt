@@ -1,0 +1,104 @@
+# PROJECTS PAGE CONTENT INDEX
+
+## SECTION: PROJECT EXPLORER [LINES 1-15]
+1. PROJECTS EXPLORER
+2. AI Personal Assistant (AIPA) (PLANAZ)
+3. Natural Language Review System
+4. 
+5. // Project explorer rendered as IDE sidebar
+6. // Component ID: explorer-section
+7. // Explorer header class: explorer-header
+8. // Project list class: project-list
+9. // Each project item has class: project-item
+10. // Active project has class: active
+11. // Each project has icon: code-branch
+12. // Empty state message: "Select a project from the sidebar to view details."
+13. // Empty state subtext: "Browse through my portfolio of web applications, machine learning projects, and more."
+14. // GitHub link button available with text: "Explore My Work"
+15. // GitHub link: github.com/Arnold-Curtis
+
+## SECTION: PROJECT 1 - AIPA [LINES 16-50]
+16. AI Personal Assistant (AIPA) (PLANAZ)
+17. 
+18. AIPA, also known as PLANAZ, is an intelligent AI-powered personal assistant built to help users
+19. seamlessly manage their daily lives through natural conversation and smart automation.
+20. It uses large language models (LLMs), both locally and via cloud APIs,
+21. to understand user input, generate personalized plans, and handle events.
+22. Built with a modern React frontend and a robust Spring Boot + SQLite backend,
+23. AIPA combines conversational AI with productivity tools.
+24. 
+25. Technologies:
+26. React.js
+27. Spring Boot
+28. Java
+29. SQLite
+30. Large Language Models (LLMs)
+31. Cloud & Local AI Integration
+32. REST APIs
+33. 
+34. Key Features:
+35. Natural language understanding using LLMs
+36. Cloud and local LLM integration
+37. Calendar system for event scheduling
+38. Context-aware event creation
+39. Smart planning and task breakdown
+40. Auto-assignment of subtasks
+41. Dynamic reminder system
+42. Conversational interface
+43. Responsive UI in React
+44. Spring Boot backend with SQLite
+45. 
+46. // Project 1 rendered as detailed card when selected
+47. // Component ID: project-details when Project 1 is active
+48. // Project has sections for description, technologies, and features
+49. // GitHub link: github.com/Arnold-Curtis/AI-Personal-Assistant
+50. // Has fade-in animation when selected
+
+## SECTION: PROJECT 2 - NLRS [LINES 51-85]
+51. Natural Language Review System
+52. 
+53. A desktop Java application that transforms academic evaluations using NLP
+54. to analyze open-ended student feedback. It replaces rigid survey forms
+55. with natural language input to provide deeper, unbiased insights.
+56. 
+57. Technologies:
+58. Java
+59. JavaFX
+60. Scene Builder
+61. MySQL
+62. Natural Language Processing (NLP)
+63. JUnit
+64. TestNG
+65. Agile-Scrum
+66. Object-Oriented Design
+67. 
+68. Key Features:
+69. Accepts natural language student reviews
+70. Analyzes feedback using NLP
+71. Reduces bias by removing predefined survey options
+72. Role-based access for students, lecturers, and admins
+73. Performance reporting and sentiment analysis
+74. Authentication to prevent fake reviews
+75. Lecturer feedback on reviews
+76. Modular and scalable design
+77. Unit testing with JUnit and TestNG
+78. 
+79. // Project 2 rendered as detailed card when selected
+80. // Component ID: project-details when Project 2 is active
+81. // Project has sections for description, technologies, and features
+82. // Technologies and features rendered as tag pills
+83. // GitHub link: github.com/Arnold-Curtis/NaturalLanguageReviewSystem
+84. // Project image placeholder used
+85. // Has fade-in animation when selected
+
+## SECTION: PROJECT HEADER [LINES 86-95]
+86. Projects.js
+87. Explore My Work
+88. 
+89. // Project header rendered as file tab
+90. // Component ID: projects-header
+91. // File tab class: file-tab
+92. // Tab icon: file-code
+93. // GitHub redirect button class: github-redirect-button
+94. // GitHub icon: github
+95. // External link icon: external-link-alt 

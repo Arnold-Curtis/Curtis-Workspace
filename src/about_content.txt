@@ -1,0 +1,115 @@
+# ABOUT PAGE CONTENT INDEX
+
+## SECTION: BIO [LINES 1-10]
+1. I'm a passionate software engineer with expertise in full-stack development and machine learning.
+2. With a strong foundation in computer engineering and hands-on experience,
+3. I create elegant, efficient, and impactful solutions to complex problems.
+4. 
+5. My approach combines technical precision with creative problem-solving,
+6. allowing me to build applications that not only function flawlessly
+7. but also provide exceptional user experiences.
+8. 
+9. // Bio section rendered as JavaScript code with syntax highlighting
+10. // Component ID: bio-section
+
+## SECTION: EXPERIENCE [LINES 11-25]
+11. Full Stack Developer
+12. Self-employed
+13. 2024 - Present
+14. 
+15. Full stack developer building robust applications and exploring AI-powered solutions.
+16. Skilled in both front-end and back-end technologies,
+17. with a strong foundation in software engineering and a growing focus on intelligent systems.
+18. 
+19. Technologies:
+20. Java, JavaScript, React, Node.js, MongoDB,
+21. MySQL, SQLite, Python, Flutter
+22. 
+23. // Experience section rendered as timeline with code-styled cards
+24. // Component ID: experience-timeline
+25. // Each experience has class: experience-card
+
+## SECTION: EDUCATION [LINES 26-45]
+26. Bachelor of Business Information Technology
+27. Strathmore University
+28. July 2024 - Present
+29. 
+30. Diploma in Business Information Technology
+31. Strathmore University
+32. March 2023 - December 2024
+33. 
+34. Certificate in Programming Languages
+35. St Nicholas College
+36. January 2023 - March 2023
+37. Specialization: C# Programming Language
+38. 
+39. // Education section rendered as function component
+40. // Component ID: education-section
+41. // Each education entry has class: education-card
+42. // Institution class: institution
+43. // Date class: edu-date
+44. // Specialization class: specialization
+45. // Rendered with fade-in animation
+
+## SECTION: INTERESTS [LINES 46-65]
+46. Open Source Contribution
+47. Machine Learning Innovations
+48. Cars and Driving
+49. Gyming
+50. Gaming
+51. Competitive Programming
+52. 
+53. // Interests section rendered as grid with icons
+54. // Component ID: interests-container
+55. // Each interest has class: interest-item
+56. // Icons used:
+57. // - Open Source: code-branch
+58. // - Machine Learning: brain
+59. // - Cars: car
+60. // - Gyming: dumbbell
+61. // - Gaming: gamepad
+62. // - Competitive Programming: code
+63. 
+64. // Each interest has animation on hover
+65. // Interests section has fade-in animation
+
+## SECTION: TECHNICAL JOURNEY [LINES 66-80]
+66. I began programming in 2022, and in that time,
+67. I've evolved from writing basic code to engineering intelligent systems.
+68. My strength lies in designing full-stack applications that go beyond functionality —
+69. I specialize in embedding machine learning to create software that's not only usable,
+70. but smart, intuitive, and impactful.
+71. 
+72. With a solid foundation in Java, React, Spring Boot, and SQLite,
+73. I focus on making systems feel effortless and intelligent by integrating cloud and local AI services.
+74. Every line of code I write is driven by curiosity, continuous learning,
+75. and a desire to innovate through automation and intelligence.
+76. 
+77. // Technical journey section rendered as code comment block
+78. // Component ID: technical-journey
+79. // Has syntax highlighting
+80. // Animated fade-in effect
+
+## SECTION: LEARNING PHILOSOPHY [LINES 81-95]
+81. I believe true growth comes from staying curious.
+82. I'm constantly building, exploring, and refining my craft.
+83. I hold a foundational certification in C# from a bootcamp that sparked my journey into tech,
+84. and since then, I've taught myself technologies like Flutter, JavaScript, React,
+85. and backend Java frameworks through hands-on projects and practice.
+86. 
+87. While I'm confident in my ability to build and deliver,
+88. I continue sharpening my skills daily —
+89. from deepening my understanding of Java through LeetCode,
+90. to mastering the dynamics of neural networks in Python to truly grasp AI from the ground up.
+91. 
+92. // Learning philosophy section rendered as code comment block
+93. // Component ID: learning-philosophy
+94. // Has syntax highlighting
+95. // Animated fade-in effect
+
+## SECTION: CURRENT LEARNING [LINES 96-100]
+96. Current Focus: Neural Networks in Python
+97. Latest Certification: C# Programming – Fundamentals (Bootcamp)
+98. 
+99. // Current learning section rendered as variable declaration
+100. // Component ID: current-learning 

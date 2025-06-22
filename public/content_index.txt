@@ -1,0 +1,89 @@
+# CONTENT INDEX GUIDE FOR AI INTEGRATION
+
+## OVERVIEW
+This document serves as a guide for AI integration with Arnold Curtis's portfolio website. The website is structured as an IDE-themed portfolio with multiple pages, each containing different components and content. This index explains how to use the line-indexed content files to provide precise references when responding to user queries.
+
+## CONTENT FILES
+1. webcont.txt - Main content map of the entire website
+2. home_content.txt - Line-indexed content for the Home page
+3. about_content.txt - Line-indexed content for the About page
+4. skills_content.txt - Line-indexed content for the Skills page
+5. projects_content.txt - Line-indexed content for the Projects page
+6. contact_content.txt - Line-indexed content for the Contact page
+7. resume_content.txt - Line-indexed content for the Resume page
+8. aiorb_content.txt - Line-indexed content for the AI Orb component
+
+## HOW TO USE LINE REFERENCES
+When referring to specific content on the website, use the following format:
+[PAGE_NAME:LINE_NUMBER] "quoted content"
+
+Examples:
+- [ABOUT:3] "I create elegant, efficient, and impactful solutions to complex problems."
+- [SKILLS:16-20] for referencing the Technical Skills section
+- [PROJECTS:18-23] for referencing the AIPA project description
+
+## PAGE COMPONENTS REFERENCE
+
+### HOME PAGE
+- Hero section: lines 1-15
+- Navigation buttons: lines 16-25
+
+### ABOUT PAGE
+- Bio section: lines 1-10
+- Experience section: lines 11-25
+- Education section: lines 26-45
+- Interests section: lines 46-65
+- Technical journey section: lines 66-80
+- Learning philosophy section: lines 81-95
+- Current learning section: lines 96-100
+
+### SKILLS PAGE
+- Terminal interface: lines 1-15
+- Technical skills: lines 16-30
+- Frameworks: lines 31-45
+- Tools: lines 46-60
+- Programming languages: lines 61-76
+- Soft skills: lines 77-91
+- Category selector: lines 92-105
+
+### PROJECTS PAGE
+- Project explorer: lines 1-15
+- Project 1 (AIPA): lines 16-50
+- Project 2 (NLRS): lines 51-85
+- Project header: lines 86-95
+
+### CONTACT PAGE
+- Contact info: lines 1-20
+- Contact form: lines 21-50
+- Contact header: lines 51-60
+
+### RESUME PAGE
+- Resume header: lines 1-10
+- Experience section: lines 11-30
+- Education section: lines 31-50
+- Skills section: lines 51-75
+- Resume request form: lines 76-110
+
+### AI ORB COMPONENT
+- AI Orb: lines 1-15
+- Chat interface: lines 16-40
+- Chat history: lines 41-55
+- AI integration details: lines 56-70
+
+## GUIDELINES FOR AI RESPONSES
+1. When answering questions about specific content, reference the exact line numbers
+2. When highlighting features or sections, provide the component ID or class name
+3. For technical questions, reference the AI integration details in aiorb_content.txt
+4. For website structure questions, reference the main content map in webcont.txt
+5. When explaining how components work, include both content and technical implementation details
+
+## EXAMPLE RESPONSES
+
+User: "Tell me about Arnold's experience."
+AI: "Arnold is a Full Stack Developer [ABOUT:11-13], self-employed since 2024. He builds robust applications with AI-powered solutions [ABOUT:15-17] and has developed projects like the AI Personal Assistant using React.js, Spring Boot, and Java [ABOUT:17]."
+
+User: "What skills does Arnold have in machine learning?"
+AI: "Arnold has strong skills in Machine Learning Incorporation [SKILLS:18] with a proficiency of 70%. He works with TensorFlow [SKILLS:33] at 60% proficiency and has experience with LLMs [SKILLS:48] at 78% proficiency. His technical journey shows he specializes in embedding machine learning to create software that's not only usable but smart and intuitive [ABOUT:68-70]."
+
+User: "How can I contact Arnold?"
+AI: "You can contact Arnold through email at mbicidev@gmail.com [CONTACT:2], by phone at +254723393075 [CONTACT:5], or through his GitHub and LinkedIn profiles [CONTACT:7-11]. You can also use the contact form on the website [CONTACT:21-37], where he promises an average response time of 1 hour [CONTACT:26]." 

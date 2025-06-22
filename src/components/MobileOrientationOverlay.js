@@ -1,4 +1,4 @@
-import React from 'react';
+// Component doesn't use JSX directly, so no React import needed
 import './MobileOrientationOverlay.css';
 
 // Completely disabled component - will never show the overlay

@@ -417,3 +417,17 @@
     overflow-y: auto;
   }
 }
+
+/* Snapped window styles */
+.draggable-window.snapped {
+  position: absolute !important;
+  transition: all 0.3s ease-in-out;
+  left: 10px !important;
+  top: 10px !important;
+  z-index: 1500 !important;
+}
+
+.draggable-window.snapped .window-container {
+  border-radius: 8px;
+  overflow: hidden;
+}

@@ -309,3 +309,26 @@
     overflow-y: auto;
   }
 }
+
+.history-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #5865f2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 10px;
+}
+
+.history-button:hover {
+  background-color: #4752c4;
+}
+
+.history-button i {
+  font-size: 1rem;
+}

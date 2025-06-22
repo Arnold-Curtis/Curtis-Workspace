@@ -1,0 +1,391 @@
+# WEBSITE CONTENT MAP: ARNOLD CURTIS PORTFOLIO
+
+## METADATA
+- WEBSITE_TYPE: Personal Portfolio / Developer Portfolio
+- OWNER: Arnold Curtis
+- PRIMARY_ROLE: Full-Stack Engineer & Machine Learning Innovator
+- LOCATION: Nairobi, Kenya
+- AVAILABILITY: Available for Freelance (Full-time, Contract, Remote)
+- CONTACT_EMAIL: mbicidev@gmail.com
+- CONTACT_PHONE: +254723393075
+- GITHUB: github.com/Arnold-Curtis
+- LINKEDIN: linkedin.com/in/arnold-curtis
+- WEBSITE_THEME: Developer IDE/Code Editor Interface
+
+## SITE_ARCHITECTURE
+- FRAMEWORK: React (v19.0.0)
+- ROUTING: React Router DOM (v7.0.2)
+- ANIMATIONS: Framer Motion
+- UI_COMPONENTS: Custom IDE-themed components (DraggableWindow, Sidebar, TopBar)
+- RESPONSIVE: Mobile and Desktop layouts with conditional rendering
+- AI_INTEGRATION: Google Generative AI (Gemini 2.0 Flash)
+- DATA_STORAGE: IndexedDB with CryptoJS encryption for chat history
+
+## NAVIGATION_STRUCTURE
+- HOME: Landing page with introduction
+- ABOUT: Professional background and interests
+- PROJECTS: Portfolio of completed projects
+- SKILLS: Technical skills visualization
+- RESUME: Professional resume with request form
+- CONTACT: Contact form and information
+- ADMIN: Hidden admin panel (route: /admin10@10)
+
+## PAGE:HOME
+### COMPONENT:HERO
+- HEADING_1: "Hello👋, my name is"
+- HEADING_2: "Arnold Curtis."
+- HEADING_3: "Full-Stack Engineer & Machine Learning Innovator."
+- DESCRIPTION: "I'm a passionate software engineer who loves building seamless applications, from intuitive front-end interfaces to robust back-end systems, integrating machine learning, and creating impactful solutions. Programming is my true passion, and I'm always excited for new challenges."
+- CTA_BUTTONS:
+  - "Discover My Journey!" [LINKS_TO: About]
+  - "What I Bring to the Table?" [LINKS_TO: Skills]
+
+## PAGE:ABOUT
+### COMPONENT:BIO
+- TITLE: "Bio"
+- CONTENT: "I'm a passionate software engineer with expertise in full-stack development and machine learning. With a strong foundation in computer engineering and hands-on experience, I create elegant, efficient, and impactful solutions to complex problems. My approach combines technical precision with creative problem-solving, allowing me to build applications that not only function flawlessly but also provide exceptional user experiences."
+- PRESENTATION: Styled as JavaScript code with syntax highlighting
+
+### COMPONENT:EXPERIENCE
+- TITLE: "Experience"
+- ROLE: "Full Stack Developer"
+- COMPANY: "Self-employed"
+- PERIOD: "2024 - Present"
+- DESCRIPTION: "Full stack developer building robust applications and exploring AI-powered solutions. Skilled in both front-end and back-end technologies, with a strong foundation in software engineering and a growing focus on intelligent systems."
+- TECHNOLOGIES: "Java, JavaScript, React, Node.js, MongoDB, MySQL, SQLite, Python, Flutter"
+- PRESENTATION: Timeline with code-styled cards
+
+### COMPONENT:EDUCATION
+- TITLE: "Education"
+- ENTRIES:
+  - DEGREE: "Bachelor of Business Information Technology"
+    INSTITUTION: "Strathmore University"
+    PERIOD: "July 2024 - Present"
+  - DEGREE: "Diploma in Business Information Technology"
+    INSTITUTION: "Strathmore University"
+    PERIOD: "March 2023 - December 2024"
+  - DEGREE: "Certificate in Programming Languages"
+    INSTITUTION: "St Nicholas College"
+    PERIOD: "January 2023 - March 2023"
+    SPECIALIZATION: "C# Programming Language"
+- PRESENTATION: Styled as function component with education cards
+
+### COMPONENT:INTERESTS
+- TITLE: "Interests"
+- ITEMS:
+  - "Open Source Contribution" [ICON: code-branch]
+  - "Machine Learning Innovations" [ICON: brain]
+  - "Cars and Driving" [ICON: car]
+  - "Gyming" [ICON: dumbbell]
+  - "Gaming" [ICON: gamepad]
+  - "Competitive Programming" [ICON: code]
+- PRESENTATION: Grid with icons and labels
+
+## PAGE:SKILLS
+### COMPONENT:TERMINAL_INTERFACE
+- TITLE: "Skills"
+- PRESENTATION: Interactive terminal interface with typed commands
+- COMMANDS:
+  - "skills.show('technical')"
+  - "skills.show('frameworks')"
+  - "skills.show('tools')"
+  - "skills.show('languages')"
+  - "skills.show('softSkills')"
+
+### COMPONENT:TECHNICAL_SKILLS
+- TITLE: "Technical Skills"
+- ITEMS:
+  - "Frontend Development" [PROFICIENCY: 60%]
+  - "Backend Development" [PROFICIENCY: 70%]
+  - "Machine Learning Incorporation" [PROFICIENCY: 70%]
+  - "Database Design" [PROFICIENCY: 50%]
+  - "Prompt Engineering" [PROFICIENCY: 80%]
+- PRESENTATION: Animated progress bars
+
+### COMPONENT:FRAMEWORKS
+- TITLE: "Frameworks"
+- ITEMS:
+  - "React" [PROFICIENCY: 80%]
+  - "Node.js" [PROFICIENCY: 80%]
+  - "TensorFlow" [PROFICIENCY: 60%]
+  - "Flutter" [PROFICIENCY: 50%]
+  - "Spring Framework" [PROFICIENCY: 70%]
+- PRESENTATION: Animated progress bars
+
+### COMPONENT:TOOLS
+- TITLE: "Tools"
+- ITEMS:
+  - "Git" [PROFICIENCY: 60%]
+  - "MySQL" [PROFICIENCY: 80%]
+  - "LLMs" [PROFICIENCY: 78%]
+  - "VS Code" [PROFICIENCY: 95%]
+  - "Premiere Pro" [PROFICIENCY: 72%]
+- PRESENTATION: Animated progress bars
+
+### COMPONENT:PROGRAMMING_LANGUAGES
+- TITLE: "Programming Languages"
+- ITEMS:
+  - "JavaScript" [PROFICIENCY: 75%]
+  - "Python" [PROFICIENCY: 80%]
+  - "C#" [PROFICIENCY: 85%]
+  - "Java" [PROFICIENCY: 95%]
+  - "C++" [PROFICIENCY: 70%]
+  - "SQL" [PROFICIENCY: 60%]
+- PRESENTATION: Animated progress bars
+
+### COMPONENT:SOFT_SKILLS
+- TITLE: "Soft Skills"
+- ITEMS:
+  - "Problem Solving" [PROFICIENCY: 95%]
+  - "Communication" [PROFICIENCY: 90%]
+  - "Team Collaboration" [PROFICIENCY: 92%]
+  - "Project Management" [PROFICIENCY: 85%]
+  - "Willingness to Learn" [PROFICIENCY: 88%]
+- PRESENTATION: Animated progress bars
+
+## PAGE:PROJECTS
+### COMPONENT:PROJECT_EXPLORER
+- TITLE: "Projects Explorer"
+- EMPTY_STATE: "Select a project from the sidebar to view details."
+- EMPTY_SUBTEXT: "Browse through my portfolio of web applications, machine learning projects, and more."
+- GITHUB_LINK: "github.com/Arnold-Curtis"
+- PRESENTATION: IDE-style file explorer with project list
+
+### COMPONENT:PROJECT_1
+- TITLE: "AI Personal Assistant (AIPA) (PLANAZ)"
+- DESCRIPTION: "AIPA, also known as PLANAZ, is an intelligent AI-powered personal assistant built to help users seamlessly manage their daily lives through natural conversation and smart automation. It uses large language models (LLMs), both locally and via cloud APIs, to understand user input, generate personalized plans, and handle events. Built with a modern React frontend and a robust Spring Boot + SQLite backend, AIPA combines conversational AI with productivity tools."
+- TECHNOLOGIES:
+  - "React.js"
+  - "Spring Boot"
+  - "Java"
+  - "SQLite"
+  - "Large Language Models (LLMs)"
+  - "Cloud & Local AI Integration"
+  - "REST APIs"
+- KEY_FEATURES:
+  - "Natural language understanding using LLMs"
+  - "Cloud and local LLM integration"
+  - "Calendar system for event scheduling"
+  - "Context-aware event creation"
+  - "Smart planning and task breakdown"
+  - "Auto-assignment of subtasks"
+  - "Dynamic reminder system"
+  - "Conversational interface"
+  - "Responsive UI in React"
+  - "Spring Boot backend with SQLite"
+- GITHUB_LINK: "github.com/Arnold-Curtis/AI-Personal-Assistant"
+- PRESENTATION: Detailed project card with sections for description, technologies, and features
+
+### COMPONENT:PROJECT_2
+- TITLE: "Natural Language Review System"
+- DESCRIPTION: "A desktop Java application that transforms academic evaluations using NLP to analyze open-ended student feedback. It replaces rigid survey forms with natural language input to provide deeper, unbiased insights."
+- TECHNOLOGIES:
+  - "Java"
+  - "JavaFX"
+  - "Scene Builder"
+  - "MySQL"
+  - "Natural Language Processing (NLP)"
+  - "JUnit"
+  - "TestNG"
+  - "Agile-Scrum"
+  - "Object-Oriented Design"
+- KEY_FEATURES:
+  - "Accepts natural language student reviews"
+  - "Analyzes feedback using NLP"
+  - "Reduces bias by removing predefined survey options"
+  - "Role-based access for students, lecturers, and admins"
+  - "Performance reporting and sentiment analysis"
+  - "Authentication to prevent fake reviews"
+  - "Lecturer feedback on reviews"
+  - "Modular and scalable design"
+  - "Unit testing with JUnit and TestNG"
+- GITHUB_LINK: "github.com/Arnold-Curtis/NaturalLanguageReviewSystem"
+- PRESENTATION: Detailed project card with sections for description, technologies, and features
+
+## PAGE:CONTACT
+### COMPONENT:CONTACT_INFO
+- TITLE: "Contact Info"
+- ITEMS:
+  - TYPE: "Email"
+    VALUE: "mbicidev@gmail.com"
+    ICON: "envelope"
+  - TYPE: "Phone"
+    VALUE: "+254723393075"
+    ICON: "phone-alt"
+  - TYPE: "GitHub"
+    VALUE: "github.com/Arnold-Curtis"
+    ICON: "github"
+    LINK: "https://github.com/Arnold-Curtis"
+  - TYPE: "LinkedIn"
+    VALUE: "linkedin.com/in/arnold-curtis"
+    ICON: "linkedin"
+    LINK: "https://linkedin.com/in/arnold-curtis"
+- PRESENTATION: Grid of contact cards with icons
+
+### COMPONENT:CONTACT_FORM
+- TITLE: "Get in Touch"
+- DESCRIPTION: "Have a project in mind or want to discuss potential opportunities? I'd love to hear from you! Fill out the form, and I'll get back to you as soon as possible."
+- RESPONSE_TIME: "Average response time: 1 hour"
+- FIELDS:
+  - LABEL: "Name"
+    TYPE: "text"
+    PLACEHOLDER: "Your Name"
+    REQUIRED: true
+  - LABEL: "Email"
+    TYPE: "email"
+    PLACEHOLDER: "your.email@example.com"
+    REQUIRED: true
+  - LABEL: "Message"
+    TYPE: "textarea"
+    PLACEHOLDER: "Your message here..."
+    REQUIRED: true
+- BUTTON_STATES:
+  - DEFAULT: "Submit"
+  - SUBMITTING: "Sending..."
+- SUCCESS_MESSAGE: "Your message has been sent successfully!"
+- ERROR_MESSAGE: [Dynamic based on error]
+- STORAGE: LocalStorage under "contactSubmissions"
+- PRESENTATION: Terminal-styled form with animated submission states
+
+## PAGE:RESUME
+### COMPONENT:RESUME_HEADER
+- TITLE: "Resume of Arnold Curtis"
+- SUBTITLE: "Full-Stack Engineer & Machine Learning Innovator"
+- LOCATION: "Nairobi, Kenya"
+- PRESENTATION: Professional header with title and subtitle
+
+### COMPONENT:RESUME_EXPERIENCE
+- TITLE: "Experience"
+- ENTRIES:
+  - ROLE: "Full Stack Developer"
+    COMPANY: "Self-employed"
+    PERIOD: "2024 - Present"
+    ACHIEVEMENTS:
+      - "Full stack developer building robust applications and exploring AI-powered solutions"
+      - "Developed the AI Personal Assistant (AIPA/PLANAZ) using React.js, Spring Boot, and Java"
+      - "Created a Natural Language Review System for academic evaluations using Java and NLP"
+      - "Skilled in both front-end and back-end technologies with a focus on intelligent systems"
+      - "Implemented database designs and optimized queries for MySQL, MongoDB, and SQLite"
+- PRESENTATION: Timeline with bullet points for achievements
+
+### COMPONENT:RESUME_EDUCATION
+- TITLE: "Education"
+- ENTRIES:
+  - DEGREE: "Bachelor of Business Information Technology"
+    INSTITUTION: "Strathmore University"
+    PERIOD: "July 2024 - Present"
+  - DEGREE: "Diploma in Business Information Technology"
+    INSTITUTION: "Strathmore University"
+    PERIOD: "March 2023 - December 2024"
+  - DEGREE: "Certificate in Programming Languages"
+    INSTITUTION: "St Nicholas College"
+    PERIOD: "January 2023 - March 2023"
+    SPECIALIZATION: "C# Programming Language"
+- PRESENTATION: Timeline with institution details
+
+### COMPONENT:RESUME_SKILLS
+- TITLE: "Skills"
+- CATEGORIES:
+  - PROGRAMMING_LANGUAGES: "JavaScript, Python, Java, C#, SQL"
+  - FRONTEND_TECHNOLOGIES: "React.js, Flutter, HTML5/CSS3, JavaFX"
+  - BACKEND_TECHNOLOGIES: "Node.js, Express, Spring Boot, REST APIs, JavaFX"
+  - DATABASES: "MySQL, MongoDB, SQLite, PostgreSQL"
+  - AI_ML: "TensorFlow, PyTorch, NLP, Large Language Models (LLMs)"
+  - DEVOPS_TOOLS: "Git, GitHub, Agile-Scrum"
+- PRESENTATION: Categorized skill lists with icons
+
+### COMPONENT:RESUME_REQUEST_FORM
+- TITLE: "Request Official Resume"
+- DESCRIPTION: "Please provide your details to receive my official resume with verified certifications. This helps me ensure my resume is shared with genuine opportunities."
+- FIELDS:
+  - LABEL: "Name"
+    TYPE: "text"
+    PLACEHOLDER: "Your full name"
+    REQUIRED: true
+  - LABEL: "Email"
+    TYPE: "email"
+    PLACEHOLDER: "Your work email"
+    REQUIRED: true
+  - LABEL: "Company"
+    TYPE: "text"
+    PLACEHOLDER: "Your company name"
+    REQUIRED: true
+  - LABEL: "Position"
+    TYPE: "text"
+    PLACEHOLDER: "Your position at the company"
+    REQUIRED: true
+  - LABEL: "Additional Information"
+    TYPE: "textarea"
+    PLACEHOLDER: "Any specific information you'd like to know or why you're interested"
+    REQUIRED: false
+- BUTTON_STATES:
+  - DEFAULT: "Request Resume"
+  - SUBMITTING: "Submitting..."
+- SUCCESS_MESSAGE: "Thank you! Your request has been received. The resume will be sent to your email shortly."
+- STORAGE: LocalStorage under "resumeRequests"
+- PRESENTATION: Modal form with validation
+
+## COMPONENT:AI_ORB
+### FUNCTIONALITY:AI_ASSISTANT
+- TITLE: "AI Assistant"
+- DESCRIPTION: "Interactive AI assistant powered by Google's Gemini 2.0 Flash model"
+- FEATURES:
+  - "Natural language conversation"
+  - "Persistent chat history using IndexedDB"
+  - "Multiple chat sessions support"
+  - "Encrypted message storage"
+  - "Responsive design for mobile and desktop"
+- API_INTEGRATION: "Google Generative AI"
+- MODEL: "gemini-2.0-flash"
+- PRESENTATION: Floating orb that expands into a chat interface
+
+### COMPONENT:CHAT_INTERFACE
+- GREETING: "Hello! I'm Arnold's AI assistant. How can I help you today?"
+- INPUT_PLACEHOLDER: "Type your message here..."
+- FEATURES:
+  - "New chat button"
+  - "Chat history access"
+  - "Draggable chat window (desktop)"
+  - "Full-screen mode (mobile)"
+- STORAGE:
+  - DATABASE: "IndexedDB (CurtisChatDB)"
+  - ENCRYPTION: "CryptoJS AES with session-specific keys"
+  - STORES: "chats, chatMetadata"
+- PRESENTATION: Expandable chat interface with message bubbles
+
+## DESIGN_ELEMENTS
+### THEME:IDE_INTERFACE
+- INSPIRATION: Visual Studio Code / Modern IDE
+- COLOR_SCHEME:
+  - PRIMARY: "#1e1e1e" (Dark background)
+  - SECONDARY: "#252526" (Slightly lighter background)
+  - ACCENT: "#61dafb" (React blue for highlights)
+  - TEXT_PRIMARY: "#ffffff" (White text)
+  - TEXT_SECONDARY: "#cccccc" (Light gray text)
+- UI_ELEMENTS:
+  - "File tabs with icons"
+  - "Code line numbers"
+  - "Syntax highlighting"
+  - "Terminal interface"
+  - "Draggable windows"
+  - "Sidebar navigation"
+  - "Explorer panels"
+- ANIMATIONS:
+  - "Typing effect for code"
+  - "Smooth transitions between sections"
+  - "Progress bar animations"
+  - "Draggable window interactions"
+
+### RESPONSIVE_BEHAVIOR
+- DESKTOP:
+  - "Multiple draggable windows"
+  - "Taskbar for open windows"
+  - "Sidebar navigation"
+  - "Terminal-style interfaces"
+- MOBILE:
+  - "Fullscreen modal windows"
+  - "Bottom navigation bar"
+  - "Simplified layouts"
+  - "Touch-optimized controls"
+  - "Orientation warning for landscape mode"
+

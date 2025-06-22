@@ -1,0 +1,30 @@
+# HOME PAGE CONTENT INDEX
+
+## SECTION: HERO [LINES 1-15]
+1. Hello👋, my name is
+2. Arnold Curtis.
+3. Full-Stack Engineer & Machine Learning Innovator.
+4. 
+5. I'm a passionate software engineer who loves building seamless applications,
+6. from intuitive front-end interfaces to robust back-end systems,
+7. integrating machine learning, and creating impactful solutions.
+8. Programming is my true passion, and I'm always excited for new challenges.
+9. 
+10. // Hero section rendered with staggered text animation
+11. // Component ID: main
+12. // Heading 1 ID: hellophrase
+13. // Heading 2 ID: namephrase
+14. // Heading 3 ID: whatido
+15. // Description ID: whatido1
+
+## SECTION: NAVIGATION BUTTONS [LINES 16-25]
+16. Discover My Journey!
+17. What I Bring to the Table?
+18. 
+19. // Navigation buttons rendered with hover effects
+20. // Component ID: button-container
+21. // Button 1 class: about-button
+22. // Button 2 class: skills-button
+23. // Button 1 links to: /about
+24. // Button 2 links to: /skills
+25. // Buttons have animated hover state 

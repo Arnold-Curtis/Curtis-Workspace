@@ -72,6 +72,7 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+            data-line="51-60"
           >
             {`/**
  * Contact.js
@@ -86,18 +87,19 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
+            data-line="1-20"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ContactInfo</span> = () =&gt; &#123;
             </h2>
-            <div className="contact-info-grid">
+            <div className="contact-info-grid" id="contact-info-grid">
               <div className="contact-card">
                 <div className="contact-icon">
                   <i className="fas fa-envelope"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type">Email</h3>
-                  <p className="contact-value">mbicidev@gmail.com</p>
+                  <h3 className="contact-type" data-line="1">Email</h3>
+                  <p className="contact-value" data-line="2">mbicidev@gmail.com</p>
                 </div>
               </div>
               
@@ -106,8 +108,8 @@ const Contact = () => {
                   <i className="fas fa-phone-alt"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type">Phone</h3>
-                  <p className="contact-value"> +254723393075 </p>
+                  <h3 className="contact-type" data-line="4">Phone</h3>
+                  <p className="contact-value" data-line="5"> +254723393075 </p>
                 </div>
               </div>
               
@@ -116,8 +118,8 @@ const Contact = () => {
                   <i className="fab fa-github"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type">GitHub</h3>
-                  <a href="https://github.com/Arnold-Curtis" target="_blank" rel="noopener noreferrer" className="contact-value link">github.com/Arnold-Curtis</a>
+                  <h3 className="contact-type" data-line="7">GitHub</h3>
+                  <a href="https://github.com/Arnold-Curtis" target="_blank" rel="noopener noreferrer" className="contact-value link" data-line="8">github.com/Arnold-Curtis</a>
                 </div>
               </div>
               
@@ -126,8 +128,8 @@ const Contact = () => {
                   <i className="fab fa-linkedin"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type">LinkedIn</h3>
-                  <a href="https://linkedin.com/in/arnold-curtis" target="_blank" rel="noopener noreferrer" className="contact-value link">linkedin.com/in/arnold-curtis</a>
+                  <h3 className="contact-type" data-line="10">LinkedIn</h3>
+                  <a href="https://linkedin.com/in/arnold-curtis" target="_blank" rel="noopener noreferrer" className="contact-value link" data-line="11">linkedin.com/in/arnold-curtis</a>
                 </div>
               </div>
             </div>
@@ -139,32 +141,33 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
+            data-line="21-50"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ContactForm</span> = () =&gt; &#123;
             </h2>
             <div className="terminal-like-container">
-              <div className="terminal-header">
+              <div className="terminal-header" data-line="44">
                 <span className="terminal-title">
                   <i className="fas fa-terminal"></i> message.send
                 </span>
               </div>
               <div className="terminal-body">
-                <div className="contact-form-wrapper">
+                <div className="contact-form-wrapper" id="contact-form-wrapper">
                   <div className="get-in-touch">
-                    <h2>Get in Touch</h2>
-                    <p>
+                    <h2 data-line="21">Get in Touch</h2>
+                    <p data-line="23-24">
                       Have a project in mind or want to discuss potential opportunities? 
                       I'd love to hear from you! Fill out the form, and I'll get back to you as soon as possible.
                     </p>
-                    <div className="response-time">
+                    <div className="response-time" data-line="26">
                       <i className="fas fa-clock"></i>
                       <span>Average response time: <strong>1 hour</strong></span>
                     </div>
                   </div>
                   
                   <form className="contact-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="form-group" data-line="28-29">
                       <label htmlFor="name">
                         <i className="fas fa-user"></i> Name
                       </label>
@@ -180,7 +183,7 @@ const Contact = () => {
                       />
                     </div>
                     
-                    <div className="form-group">
+                    <div className="form-group" data-line="31-32">
                       <label htmlFor="email">
                         <i className="fas fa-envelope"></i> Email
                       </label>
@@ -196,7 +199,7 @@ const Contact = () => {
                       />
                     </div>
                     
-                    <div className="form-group">
+                    <div className="form-group" data-line="34-35">
                       <label htmlFor="message">
                         <i className="fas fa-comment-alt"></i> Message
                       </label>
@@ -216,6 +219,7 @@ const Contact = () => {
                       type="submit" 
                       className={`submit-button ${submitting ? 'submitting' : ''}`}
                       disabled={submitting}
+                      data-line="37"
                     >
                       {submitting ? (
                         <>
@@ -229,7 +233,7 @@ const Contact = () => {
                     </button>
                     
                     {submitted && (
-                      <div className="success-message">
+                      <div className="success-message" data-line="39">
                         <i className="fas fa-check-circle"></i>
                         <span>Your message has been sent successfully!</span>
                       </div>
@@ -249,45 +253,10 @@ const Contact = () => {
           </motion.div>
           
           <motion.div 
-            className="section-container"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-          >
-            <h2 className="section-title">
-              <span className="keyword">const</span> <span className="variable">Availability</span> = () =&gt; &#123;
-            </h2>
-            <div className="availability-container">
-              <div className="availability-header">
-                <i className="fas fa-calendar-check"></i>
-                <h3>Current Availability</h3>
-              </div>
-              <div className="status-indicators">
-                <div className="status-item">
-                  <span className="status-label">Status:</span>
-                  <span className="status-value available">
-                    <span className="status-dot"></span>
-                    Available for Freelance
-                  </span>
-                </div>
-                <div className="status-item">
-                  <span className="status-label">Open to:</span>
-                  <span className="status-value">Full-time, Contract, Remote</span>
-                </div>
-                <div className="status-item">
-                  <span className="status-label">Preferred Contact:</span>
-                  <span className="status-value">Email or Form Submission</span>
-                </div>
-              </div>
-            </div>
-            <div className="code-line">&#125;;</div>
-          </motion.div>
-          
-          <motion.div 
             className="section-container export-section"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
+            transition={{ delay: 0.9 }}
           >
             <div className="code-line">
               <span className="keyword">export default</span> <span className="function-call">() =&gt; (</span>
@@ -295,7 +264,6 @@ const Contact = () => {
             <div className="export-content">
               <div className="export-line">&lt;<span className="component">ContactInfo</span> /&gt;</div>
               <div className="export-line">&lt;<span className="component">ContactForm</span> /&gt;</div>
-              <div className="export-line">&lt;<span className="component">Availability</span> /&gt;</div>
             </div>
             <div className="code-line"><span className="function-call">)</span>;</div>
           </motion.div>

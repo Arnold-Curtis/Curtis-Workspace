@@ -9,6 +9,28 @@ export const WindowManagerProvider = ({ children }) => {
   const [windows, setWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
   const [minimizedWindows, setMinimizedWindows] = useState([]);
+  // State for snapped layout
+  const [isAiSnapped, setIsAiSnapped] = useState(false);
+  const [snappedWindowId, setSnappedWindowId] = useState(null);
+  const [previousWindowState, setPreviousWindowState] = useState(null);
+
+  // Check if we should restore snapped state on page load
+  useEffect(() => {
+    const savedSnappedState = sessionStorage.getItem('aiSnappedState');
+    if (savedSnappedState) {
+      try {
+        const { isSnapped, windowId } = JSON.parse(savedSnappedState);
+        if (isSnapped && windowId) {
+          setIsAiSnapped(isSnapped);
+          setSnappedWindowId(windowId);
+          console.log(`WindowManager: Restored snapped state with window ID ${windowId}`);
+        }
+      } catch (error) {
+        console.error('Error parsing saved snapped state:', error);
+        sessionStorage.removeItem('aiSnappedState');
+      }
+    }
+  }, []);
 
   // Register a new window
   const registerWindow = (windowId, windowProps) => {
@@ -36,6 +58,13 @@ export const WindowManagerProvider = ({ children }) => {
 
     // Remove from minimized windows if it was minimized
     setMinimizedWindows(prev => prev.filter(id => id !== windowId));
+
+    // If snapped window is closed, exit snapped mode
+    if (snappedWindowId === windowId) {
+      setSnappedWindowId(null);
+      setIsAiSnapped(false);
+      sessionStorage.removeItem('aiSnappedState');
+    }
   };
 
   // Minimize a window
@@ -51,6 +80,13 @@ export const WindowManagerProvider = ({ children }) => {
     // Set active to null if minimizing active window
     if (activeWindowId === windowId) {
       setActiveWindowId(null);
+    }
+
+    // If snapped window is minimized, exit snapped mode
+    if (snappedWindowId === windowId) {
+      setSnappedWindowId(null);
+      setIsAiSnapped(false);
+      sessionStorage.removeItem('aiSnappedState');
     }
   };
 
@@ -68,16 +104,94 @@ export const WindowManagerProvider = ({ children }) => {
     setActiveWindowId(windowId);
   };
 
+  // Snap window with AI assistant
+  const snapWithAi = (windowId) => {
+    // Save the previous state before snapping
+    if (!isAiSnapped) {
+      setPreviousWindowState({
+        activeWindowId,
+        minimizedWindows: [...minimizedWindows]
+      });
+    }
+    
+    // Set the window as active and snapped
+    setSnappedWindowId(windowId);
+    setIsAiSnapped(true);
+    setActiveWindowId(windowId);
+    
+    // Save snapped state to session storage for persistence across page loads
+    sessionStorage.setItem('aiSnappedState', JSON.stringify({
+      isSnapped: true,
+      windowId
+    }));
+    
+    // Apply split view animation to content with a small delay
+    setTimeout(() => {
+      const contentElement = document.querySelector('.content');
+      if (contentElement) {
+        // Ensure smooth animation
+        contentElement.style.transition = 'width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        contentElement.classList.add('content-split-animation');
+      }
+    }, 50);
+    
+    return true;
+  };
+
+  // Exit snapped mode
+  const exitSnappedMode = () => {
+    // Remove split view animation from content with a smooth transition
+    const contentElement = document.querySelector('.content');
+    if (contentElement) {
+      // Ensure smooth animation
+      contentElement.style.transition = 'width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      
+      // First change transform to create a smooth animation
+      contentElement.style.transform = 'translateX(0)';
+      
+      // Then remove the class after the animation completes
+      setTimeout(() => {
+        contentElement.classList.remove('content-split-animation');
+        // Clear the transition after animation completes
+        contentElement.style.transition = '';
+      }, 500); // Match the transition duration
+    }
+    
+    // Restore previous window state if available
+    if (previousWindowState) {
+      setActiveWindowId(previousWindowState.activeWindowId);
+      setMinimizedWindows(previousWindowState.minimizedWindows);
+      setPreviousWindowState(null);
+    }
+    
+    // Exit snapped mode
+    setIsAiSnapped(false);
+    setSnappedWindowId(null);
+    
+    // Remove saved state from session storage
+    sessionStorage.removeItem('aiSnappedState');
+    
+    // Clear any lingering highlight states
+    sessionStorage.removeItem('highlightLine');
+    sessionStorage.removeItem('preservedChatState');
+    
+    return true;
+  };
+
   // Window manager context value
   const value = {
     windows,
     activeWindowId,
     minimizedWindows,
+    isAiSnapped,
+    snappedWindowId,
     registerWindow,
     closeWindow,
     minimizeWindow,
     restoreWindow,
-    setActiveWindow
+    setActiveWindow,
+    snapWithAi,
+    exitSnappedMode
   };
 
   return (

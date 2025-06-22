@@ -1,0 +1,145 @@
+# SKILLS PAGE CONTENT INDEX
+
+## SECTION: TERMINAL INTERFACE [LINES 1-15]
+1. skills.show('technical')
+2. skills.show('frameworks')
+3. skills.show('tools')
+4. skills.show('languages')
+5. skills.show('softSkills')
+6. 
+7. // Terminal interface rendered as VS Code terminal panel
+8. // Component ID: terminal-container
+9. // Terminal header class: terminal-header
+10. // Terminal body class: terminal-body
+11. // Terminal prompt class: terminal-prompt
+12. // Terminal command class: terminal-command
+13. // Terminal result class: terminal-result
+14. // Commands execute with typing animation
+15. // Cursor has blinking animation
+
+## SECTION: TECHNICAL SKILLS [LINES 16-30]
+16. Frontend Development - 60%
+17. Backend Development - 70%
+18. Machine Learning Incorporation - 70%
+19. Database Design - 50%
+20. Prompt Engineering - 80%
+21. 
+22. // Technical skills rendered as animated progress bars
+23. // Component ID: technical-skill-0, technical-skill-1, etc.
+24. // Skill name class: skill-name
+25. // Skill progress container class: skill-progress
+26. // Skill progress fill class: skill-fill
+27. // Skill percentage class: skill-level
+28. // Progress bars animate on load
+29. // Skills appear after typing command
+30. // Java is found in the Languages section
+
+## SECTION: FRAMEWORKS [LINES 31-45]
+31. React - 80%
+32. Node.js - 80%
+33. TensorFlow - 60%
+34. Flutter - 50%
+35. Spring Framework - 70%
+36. 
+37. // Frameworks rendered as animated progress bars
+38. // Component ID: framework-skill-0, framework-skill-1, etc.
+39. // Framework name class: skill-name
+40. // Framework progress container class: skill-progress
+41. // Framework progress fill class: skill-fill
+42. // Framework percentage class: skill-level
+43. // Progress bars animate on load
+44. // Frameworks appear after typing command
+45. // Spring Framework is used for Java backend development
+
+## SECTION: TOOLS [LINES 46-60]
+46. Git - 60%
+47. MySQL - 80%
+48. LLMs - 78%
+49. VS Code - 95%
+50. Premiere Pro - 72%
+51. 
+52. // Tools rendered as animated progress bars
+53. // Component ID: tool-skill-0, tool-skill-1, etc.
+54. // Tool name class: skill-name
+55. // Tool progress container class: skill-progress
+56. // Tool progress fill class: skill-fill
+57. // Tool percentage class: skill-level
+58. // Progress bars animate on load
+59. // Tools appear after typing command
+60. // MySQL is used for database management
+
+## SECTION: PROGRAMMING LANGUAGES [LINES 61-76]
+61. JavaScript - 75%
+62. Python - 80%
+63. C# - 85%
+64. Java - 95%
+65. C++ - 70%
+66. SQL - 60%
+67. 
+68. // Programming languages rendered as animated progress bars
+69. // Component ID: language-skill-0, language-skill-1, etc.
+70. // Language name class: skill-name
+71. // Language progress container class: skill-progress
+72. // Language progress fill class: skill-fill
+73. // Language percentage class: skill-level
+74. // Progress bars animate on load
+75. // Languages appear after typing command
+76. // Java is Curtis' strongest programming language at 95% proficiency
+
+## SECTION: SOFT SKILLS [LINES 77-91]
+77. Problem Solving - 95%
+78. Communication - 90%
+79. Team Collaboration - 92%
+80. Project Management - 85%
+81. Willingness to Learn - 88%
+82. 
+83. // Soft skills rendered as animated progress bars
+84. // Component ID: soft-skill-0, soft-skill-1, etc.
+85. // Soft skill name class: skill-name
+86. // Soft skill progress container class: skill-progress
+87. // Soft skill progress fill class: skill-fill
+88. // Soft skill percentage class: skill-level
+89. // Progress bars animate on load
+90. // Soft skills appear after typing command
+91. // Problem Solving is Curtis' strongest soft skill
+
+## SECTION: CATEGORY SELECTOR [LINES 92-105]
+92. Technical
+93. Frameworks
+94. Tools
+95. Languages
+96. Soft Skills
+97. 
+98. // Category selector appears after animation completes
+99. // Component ID: category-selector
+100. // Container class: selector-container
+101. // Each category has ID: category-technical, category-frameworks, etc.
+102. // Active category has class: active
+103. // Clicking category executes corresponding command
+104. // Categories have hover effect
+105. // Selector has fade-in animation
+
+## SECTION: SKILLS DESCRIPTION [LINES 106-150]
+106. Technical Proficiencies
+107. I began programming in 2022, and in that time, I've evolved from writing basic code to engineering intelligent systems. My strength lies in designing full-stack applications that go beyond functionality — I specialize in embedding machine learning to create software that's not only usable, but smart, intuitive, and impactful. With a solid foundation in Java, React, Spring Boot, and SQLite, I focus on making systems feel effortless and intelligent by integrating cloud and local AI services. Every line of code I write is driven by curiosity, continuous learning, and a desire to innovate through automation and intelligence.
+108.
+109. Specializations
+110. - Adaptive Machine Learning Integration
+111. - Full Stack Development (React & Java Spring Boot)
+112. - Cloud AI Integration & RESTful APIs
+113. - Applied Machine Learning & Prompt Engineering
+114.
+115. Continuous Learning
+116. I believe true growth comes from staying curious. I'm constantly building, exploring, and refining my craft. I hold a foundational certification in C# from a bootcamp that sparked my journey into tech, and since then, I've taught myself technologies like Flutter, JavaScript, React, and backend Java frameworks through hands-on projects and practice. While I'm confident in my ability to build and deliver, I continue sharpening my skills daily — from deepening my understanding of Java through LeetCode, to mastering the dynamics of neural networks in Python to truly grasp AI from the ground up.
+117.
+118. Current Focus: Neural Networks in Python
+119. Latest Certification: C# Programming – Fundamentals (Bootcamp)
+120.
+121. // Skills description section
+122. // Component ID: skills-description
+123. // Specializations list ID: specializations
+124. // Learning status ID: learning-status
+125. // Contains detailed information about Curtis' technical background
+126. // Mentions Java as a primary skill with solid foundation
+127. // Describes focus on machine learning integration
+128. // Mentions continuous learning and current focus 
