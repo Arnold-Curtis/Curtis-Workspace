@@ -61,12 +61,9 @@
   - DEGREE: "Bachelor of Business Information Technology"
     INSTITUTION: "Strathmore University"
     PERIOD: "July 2024 - Present"
-  - DEGREE: "Diploma in Business Information Technology"
-    INSTITUTION: "Strathmore University"
-    PERIOD: "March 2023 - December 2024"
   - DEGREE: "Certificate in Programming Languages"
     INSTITUTION: "St Nicholas College"
-    PERIOD: "January 2023 - March 2023"
+    PERIOD: "January 2023 - July 2023"
     SPECIALIZATION: "C# Programming Language"
 - PRESENTATION: Styled as function component with education cards
 
@@ -274,12 +271,9 @@
   - DEGREE: "Bachelor of Business Information Technology"
     INSTITUTION: "Strathmore University"
     PERIOD: "July 2024 - Present"
-  - DEGREE: "Diploma in Business Information Technology"
-    INSTITUTION: "Strathmore University"
-    PERIOD: "March 2023 - December 2024"
   - DEGREE: "Certificate in Programming Languages"
     INSTITUTION: "St Nicholas College"
-    PERIOD: "January 2023 - March 2023"
+    PERIOD: "January 2023 - July 2023"
     SPECIALIZATION: "C# Programming Language"
 - PRESENTATION: Timeline with institution details
 

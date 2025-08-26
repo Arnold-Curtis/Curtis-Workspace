@@ -241,9 +241,9 @@ const Projects = () => {
                   >
                     <i className="fab fa-github"></i> View Code
                   </a>
-                  <a className="project-link demo-link disabled">
+                  <button className="project-link demo-link disabled" disabled>
                     <i className="fas fa-external-link-alt"></i> Live Demo
-                  </a>
+                  </button>
                 </div>
               </div>
             </motion.div>

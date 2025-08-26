@@ -40,12 +40,9 @@
 33. Bachelor of Business Information Technology
 34. Strathmore University (July 2024 - Present)
 35. 
-36. Diploma in Business Information Technology
-37. Strathmore University (March 2023 - December 2024)
-38. 
-39. Certificate in Programming Languages
-40. St Nicholas College (January 2023 - March 2023)
-41. Specialization: C# Programming Language
+36. Certificate in Programming Languages
+37. St Nicholas College (January 2023 - July 2023)
+38. Specialization: C# Programming Language
 42. 
 43. // Education section rendered as timeline
 44. // Component ID: education-section

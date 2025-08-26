@@ -342,22 +342,12 @@ const Resume = () => {
                 </div>
               </div>
               
-              <div className="resume-entry education-entry" data-line="36-37">
-                <div className="entry-header">
-                  <div className="degree" data-line="36">Diploma in Business Information Technology</div>
-                  <div className="school-date institution-period" data-line="37">
-                    <span className="school">Strathmore University</span>
-                    <span class="date">March 2023 - December 2024</span>
-                  </div>
-                </div>
-              </div>
-
               <div className="resume-entry education-entry" data-line="39-41">
                 <div className="entry-header">
                   <div className="degree" data-line="39">Certificate in Programming Languages</div>
                   <div className="school-date institution-period" data-line="40">
                     <span className="school">St Nicholas College</span>
-                    <span className="date">January 2023 - March 2023</span>
+                    <span className="date">January 2023 - July 2023</span>
                   </div>
                 </div>
                 <div className="specialization" data-line="41">Specialization: C# Programming Language</div>

@@ -21,11 +21,9 @@ export const highlightElement = (lineNumber) => {
   
   // Handle range format (e.g., "16-30")
   let startLine, endLine;
-  let isSection = false;
   
   // Check if this is a section reference (e.g., "section:about")
   if (lineNumber.includes('section:')) {
-    isSection = true;
     const sectionId = lineNumber.replace('section:', '');
     console.log(`Looking for section: ${sectionId}`);
     
@@ -314,4 +312,4 @@ export const setupHighlightEventListener = () => {
       highlightElement(lineNumber);
     }
   });
-}; 
+};

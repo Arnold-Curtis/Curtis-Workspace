@@ -126,15 +126,9 @@ const About = () => {
                 <p className="specialization"></p>
               </div>
               <div className="education-card">
-                <h3>Diploma in Business Information Technology</h3>
-                <p className="institution">Strathmore University</p>
-                <p className="edu-date">March 2023 - December 2024</p>
-                <p className="specialization"></p>
-              </div>
-              <div className="education-card">
                 <h3>Certificate in Programming Languages</h3>
                 <p className="institution">St Nicholas College</p>
-                <p className="edu-date">January 2023 - March 2023</p>
+                <p className="edu-date">January 2023 - July 2023</p>
                 <p className="specialization">C# Programming Language</p>
               </div>
             </div>
