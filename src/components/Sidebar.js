@@ -82,6 +82,11 @@ function Sidebar() {
                 <i className="fas fa-file-code file-icon"></i> Contact.js
               </Link>
             </li>
+            <li className={`sidebar-item ${location.pathname === '/guestbook' ? 'active' : ''}`}>
+              <Link to="/guestbook" className="sidebar-link">
+                <i className="fas fa-comments file-icon"></i> Guestbook.js
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="sidebar-section">

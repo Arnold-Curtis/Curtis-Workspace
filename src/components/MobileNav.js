@@ -11,6 +11,7 @@ const MobileNav = () => {
     { path: '/about', label: 'About', icon: 'fas fa-user' },
     { path: '/projects', label: 'Projects', icon: 'fas fa-code-branch' },
     { path: '/skills', label: 'Skills', icon: 'fas fa-tools' },
+    { path: '/guestbook', label: 'Guestbook', icon: 'fas fa-comments' },
     { path: '/contact', label: 'Contact', icon: 'fas fa-envelope' }
   ];
   

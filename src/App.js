@@ -16,6 +16,7 @@ import Projects from './pages/Projects';
 import { Skills } from './pages/Skills';
 import Resume from './pages/Resume';
 import Contact from './pages/Contact';
+import Guestbook from './pages/Guestbook';
 import AdminMessages from './pages/AdminMessages';
 import BookCall from './pages/BookCall';
 import withHighlighting from './hoc/withHighlighting';
@@ -28,6 +29,7 @@ const HighlightedProjects = withHighlighting(Projects);
 // Skills already has highlighting functionality
 const HighlightedResume = withHighlighting(Resume);
 const HighlightedContact = withHighlighting(Contact);
+const HighlightedGuestbook = withHighlighting(Guestbook);
 const HighlightedBookCall = withHighlighting(BookCall);
 const HighlightedAdminMessages = withHighlighting(AdminMessages);
 
@@ -142,6 +144,14 @@ function AppWithRoutes() {
                   <HighlightedContact />
                 </WindowWrapper>
               } 
+            />
+            <Route
+              path="/guestbook"
+              element={
+                <WindowWrapper title="Guestbook.js" icon="fas fa-comments" windowId="guestbook">
+                  <HighlightedGuestbook />
+                </WindowWrapper>
+              }
             />
             <Route 
               path="/book-call" 
