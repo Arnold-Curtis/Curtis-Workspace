@@ -1,0 +1,10 @@
+
+> curtisworkspace@0.1.0 server
+> node server.js
+
+Server running on port 5000
+Connected to the SQLite database.
+Contacts table ready
+Bookings table ready
+Guestbook entries table ready
+Terminated

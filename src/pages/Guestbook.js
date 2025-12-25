@@ -15,13 +15,19 @@ const Guestbook = () => {
 
   // Load testimonials on mount
   useEffect(() => {
-    const savedEntries = localStorage.getItem('guestbookEntries');
-    if (savedEntries) {
-      const allEntries = JSON.parse(savedEntries);
-      // Only show approved entries
-      const approvedEntries = allEntries.filter(entry => entry.status === 'approved');
-      setTestimonials(approvedEntries);
-    }
+    fetch('/api/guestbook')
+      .then(response => {
+        if (!response.ok) {
+           throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setTestimonials(data);
+      })
+      .catch(error => {
+        console.error('Error fetching guestbook entries:', error);
+      });
   }, []);
 
   // Handle input changes
@@ -47,28 +53,35 @@ const Guestbook = () => {
       status: 'pending' // Default status is pending
     };
 
-    try {
-      // Save to localStorage
-      const savedEntries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
-      const updatedEntries = [newEntry, ...savedEntries];
-      localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
+    // Send to API
+    fetch('/api/guestbook', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newEntry),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setSubmitting(false);
+      setSubmitted(true);
+      setFormData({ name: '', role: '', message: '' });
 
-      // Simulate network request
+      // Reset success message
       setTimeout(() => {
-        setSubmitting(false);
-        setSubmitted(true);
-        setFormData({ name: '', role: '', message: '' });
-
-        // Reset success message
-        setTimeout(() => {
-          setSubmitted(false);
-        }, 5000);
-      }, 1000);
-    } catch (err) {
+        setSubmitted(false);
+      }, 5000);
+    })
+    .catch(err => {
       setSubmitting(false);
       setError('Failed to submit entry. Please try again.');
       console.error(err);
-    }
+    });
   };
 
   return (

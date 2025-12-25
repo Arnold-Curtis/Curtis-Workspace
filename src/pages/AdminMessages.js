@@ -13,28 +13,48 @@ const AdminMessages = () => {
   const [showCallDetails, setShowCallDetails] = useState(null);
   const [showRequestDetails, setShowRequestDetails] = useState(null);
 
-  // Load submissions, call bookings, and resume requests from localStorage on component mount
+  // Load data from API
+  const fetchData = async () => {
+    try {
+        const contactsRes = await fetch('/api/contacts');
+        if (contactsRes.ok) setSubmissions(await contactsRes.json());
+
+        const bookingsRes = await fetch('/api/bookings');
+        if (bookingsRes.ok) setCallBookings(await bookingsRes.json());
+
+        const guestbookRes = await fetch('/api/admin/guestbook');
+        if (guestbookRes.ok) setGuestbookEntries(await guestbookRes.json());
+
+        // Resume requests might not be implemented in backend yet based on instructions,
+        // but let's keep it for now as empty or fetch if exists.
+        // The instructions didn't explicitly ask for resume requests API, but they are in the component.
+        // I will assume for now they are not refactored or part of the requirement to be refactored fully
+        // OR I should use localStorage for them if not in scope?
+        // The prompt says: "Refactor the current client-side React application into a monolithic Node.js application ... The goal is to replace the current localStorage implementation with a shared database"
+        // But only specified endpoints for contacts, bookings, and guestbook.
+        // I'll leave resume requests as is (localStorage) or empty if not critical, or better,
+        // I'll check if I should persist them. The prompt says "Refactor the current client-side React application...".
+        // However, I only created tables for contacts, bookings, and guestbook_entries.
+        // I will keep resume requests on localStorage for now to avoid breaking it completely, or just empty if not used.
+        // Wait, "Resume.js" is in pages, maybe it uses localStorage too.
+        // Let's check if I missed Resume requests in the plan.
+        // The prompt only listed API routes for contacts, bookings, guestbook.
+        // So I will only fetch what is available.
+
+        const savedResumeRequests = localStorage.getItem('resumeRequests');
+        if (savedResumeRequests) {
+            setResumeRequests(JSON.parse(savedResumeRequests));
+        }
+    } catch (err) {
+        console.error("Error fetching data", err);
+    }
+  };
+
   useEffect(() => {
-    const savedSubmissions = localStorage.getItem('contactSubmissions');
-    if (savedSubmissions) {
-      setSubmissions(JSON.parse(savedSubmissions));
+    if (accessGranted) {
+        fetchData();
     }
-    
-    const savedBookings = localStorage.getItem('callBookings');
-    if (savedBookings) {
-      setCallBookings(JSON.parse(savedBookings));
-    }
-
-    const savedResumeRequests = localStorage.getItem('resumeRequests');
-    if (savedResumeRequests) {
-      setResumeRequests(JSON.parse(savedResumeRequests));
-    }
-
-    const savedGuestbookEntries = localStorage.getItem('guestbookEntries');
-    if (savedGuestbookEntries) {
-      setGuestbookEntries(JSON.parse(savedGuestbookEntries));
-    }
-  }, []);
+  }, [accessGranted]);
 
   // Handle code verification
   const verifyAccessCode = (e) => {
@@ -63,10 +83,18 @@ const AdminMessages = () => {
   };
 
   // Clear all submissions
-  const clearSubmissions = () => {
+  const clearSubmissions = async () => {
     if (window.confirm('Are you sure you want to delete all submissions? This action cannot be undone.')) {
-      localStorage.setItem('contactSubmissions', '[]');
-      setSubmissions([]);
+      try {
+          const res = await fetch('/api/admin/contacts', { method: 'DELETE' });
+          if (res.ok) {
+              setSubmissions([]);
+          } else {
+              alert("Failed to delete contacts");
+          }
+      } catch (err) {
+          console.error(err);
+      }
     }
   };
   
@@ -97,10 +125,18 @@ const AdminMessages = () => {
   };
 
   // Clear all call bookings
-  const clearBookings = () => {
+  const clearBookings = async () => {
     if (window.confirm('Are you sure you want to delete all call bookings? This action cannot be undone.')) {
-      localStorage.setItem('callBookings', '[]');
-      setCallBookings([]);
+        try {
+            const res = await fetch('/api/admin/bookings', { method: 'DELETE' });
+            if (res.ok) {
+                setCallBookings([]);
+            } else {
+                alert("Failed to delete bookings");
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
   };
   
@@ -113,24 +149,42 @@ const AdminMessages = () => {
   };
 
   // Clear all guestbook entries
-  const clearGuestbookEntries = () => {
+  const clearGuestbookEntries = async () => {
     if (window.confirm('Are you sure you want to delete all guestbook entries? This action cannot be undone.')) {
-      localStorage.setItem('guestbookEntries', '[]');
-      setGuestbookEntries([]);
+        try {
+            const res = await fetch('/api/admin/guestbook', { method: 'DELETE' });
+            if (res.ok) {
+                setGuestbookEntries([]);
+            } else {
+                alert("Failed to delete guestbook entries");
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
   };
   
   // Update call status
-  const updateCallStatus = (id, newStatus) => {
-    const updatedBookings = callBookings.map(booking => {
-      if (booking.id === id) {
-        return { ...booking, status: newStatus };
-      }
-      return booking;
-    });
-    
-    localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-    setCallBookings(updatedBookings);
+  const updateCallStatus = async (id, newStatus) => {
+    try {
+        const res = await fetch(`/api/bookings/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (res.ok) {
+            const updatedBookings = callBookings.map(booking => {
+              if (booking.id === id) {
+                return { ...booking, status: newStatus };
+              }
+              return booking;
+            });
+            setCallBookings(updatedBookings);
+        }
+    } catch (err) {
+        console.error(err);
+    }
   };
   
   // Update resume request status
@@ -147,28 +201,43 @@ const AdminMessages = () => {
   };
 
   // Update guestbook entry status
-  const updateGuestbookStatus = (id, newStatus) => {
-    const updatedEntries = guestbookEntries.map(entry => {
-      if (entry.id === id) {
-        return { ...entry, status: newStatus };
-      }
-      return entry;
-    });
+  const updateGuestbookStatus = async (id, newStatus) => {
+    try {
+        const res = await fetch(`/api/admin/guestbook/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
 
-    localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
-    setGuestbookEntries(updatedEntries);
+        if (res.ok) {
+            const updatedEntries = guestbookEntries.map(entry => {
+              if (entry.id === id) {
+                return { ...entry, status: newStatus };
+              }
+              return entry;
+            });
+            setGuestbookEntries(updatedEntries);
+        }
+    } catch (err) {
+        console.error(err);
+    }
   };
   
   // Delete a specific call booking
-  const deleteCallBooking = (id) => {
+  const deleteCallBooking = async (id) => {
     if (window.confirm('Are you sure you want to delete this booking?')) {
-      const updatedBookings = callBookings.filter(booking => booking.id !== id);
-      localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-      setCallBookings(updatedBookings);
-      
-      if (showCallDetails === id) {
-        setShowCallDetails(null);
-      }
+        try {
+            const res = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                const updatedBookings = callBookings.filter(booking => booking.id !== id);
+                setCallBookings(updatedBookings);
+                if (showCallDetails === id) {
+                  setShowCallDetails(null);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
   };
   
@@ -186,11 +255,17 @@ const AdminMessages = () => {
   };
 
   // Delete a specific guestbook entry
-  const deleteGuestbookEntry = (id) => {
+  const deleteGuestbookEntry = async (id) => {
     if (window.confirm('Are you sure you want to delete this guestbook entry?')) {
-      const updatedEntries = guestbookEntries.filter(entry => entry.id !== id);
-      localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
-      setGuestbookEntries(updatedEntries);
+        try {
+            const res = await fetch(`/api/admin/guestbook/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                const updatedEntries = guestbookEntries.filter(entry => entry.id !== id);
+                setGuestbookEntries(updatedEntries);
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
   };
   
