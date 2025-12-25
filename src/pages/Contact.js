@@ -34,13 +34,21 @@ const Contact = () => {
       id: Date.now()
     };
 
-    // Save to localStorage
-    const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
-    const updatedSubmissions = [submissionData, ...savedSubmissions];
-    localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
-
-    // Simulate form submission
-    setTimeout(() => {
+    // Send to API
+    fetch('/api/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submissionData),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
       setSubmitting(false);
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
@@ -49,7 +57,12 @@ const Contact = () => {
       setTimeout(() => {
         setSubmitted(false);
       }, 5000);
-    }, 1500);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      setSubmitting(false);
+      setError('Failed to send message. Please try again.');
+    });
   };
 
   return (

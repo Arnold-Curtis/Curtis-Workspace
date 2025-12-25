@@ -1,0 +1,39 @@
+
+> curtisworkspace@0.1.0 dev
+> concurrently "npm run server" "npm run start"
+
+[0]
+[0] > curtisworkspace@0.1.0 server
+[0] > node server.js
+[0]
+[1]
+[1] > curtisworkspace@0.1.0 start
+[1] > react-scripts start
+[1]
+[0] Server running on port 5000
+[0] Connected to the SQLite database.
+[0] Contacts table ready
+[0] Bookings table ready
+[0] Guestbook entries table ready
+[1] (node:6257) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+[1] (Use `node --trace-deprecation ...` to show where the warning was created)
+[1] (node:6257) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+[1] Starting the development server...
+[1]
+[1] Compiled with warnings.
+[1]
+[1] [eslint]
+[1] src/components/DraggableWindow.js
+[1]   Line 82:6:   React Hook useEffect has a missing dependency: 'bringToFront'. Either include it or remove the dependency array                                                                                                                                                                           react-hooks/exhaustive-deps
+[1]   Line 196:6:  React Hook useEffect has missing dependencies: 'isFullscreen', 'position', 'previousState', and 'size'. Either include them or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setPreviousState' needs the current value of 'position'  react-hooks/exhaustive-deps
+[1]
+[1] Search for the keywords to learn more about each warning.
+[1] To ignore, add // eslint-disable-next-line to the line before.
+[1]
+[1] WARNING in [eslint]
+[1] src/components/DraggableWindow.js
+[1]   Line 82:6:   React Hook useEffect has a missing dependency: 'bringToFront'. Either include it or remove the dependency array                                                                                                                                                                           react-hooks/exhaustive-deps
+[1]   Line 196:6:  React Hook useEffect has missing dependencies: 'isFullscreen', 'position', 'previousState', and 'size'. Either include them or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setPreviousState' needs the current value of 'position'  react-hooks/exhaustive-deps
+[1]
+[1] webpack compiled with 1 warning
+[1] (node:6257) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
