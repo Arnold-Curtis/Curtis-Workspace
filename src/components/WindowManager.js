@@ -13,6 +13,9 @@ export const WindowManagerProvider = ({ children }) => {
   const [isAiSnapped, setIsAiSnapped] = useState(false);
   const [snappedWindowId, setSnappedWindowId] = useState(null);
   const [previousWindowState, setPreviousWindowState] = useState(null);
+  // State for fullscreen
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenWindowId, setFullscreenWindowId] = useState(null);
 
   // Check if we should restore snapped state on page load
   useEffect(() => {
@@ -104,6 +107,12 @@ export const WindowManagerProvider = ({ children }) => {
     setActiveWindowId(windowId);
   };
 
+  // Set fullscreen mode for a window
+  const setWindowFullscreen = (windowId, fullscreen) => {
+    setIsFullscreen(fullscreen);
+    setFullscreenWindowId(fullscreen ? windowId : null);
+  };
+
   // Snap window with AI assistant
   const snapWithAi = (windowId) => {
     // Save the previous state before snapping
@@ -185,11 +194,14 @@ export const WindowManagerProvider = ({ children }) => {
     minimizedWindows,
     isAiSnapped,
     snappedWindowId,
+    isFullscreen,
+    fullscreenWindowId,
     registerWindow,
     closeWindow,
     minimizeWindow,
     restoreWindow,
     setActiveWindow,
+    setWindowFullscreen,
     snapWithAi,
     exitSnappedMode
   };

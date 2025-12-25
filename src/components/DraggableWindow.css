@@ -18,15 +18,33 @@
 
 .draggable-window.fullscreen {
   position: fixed !important;
-  top: 60px !important; /* Position below the top bar */
-  left: 0 !important; /* Changed from 50px to 0 as we removed SidebarIcons */
-  right: 0 !important;
-  bottom: 40px !important; /* Leave space for taskbar */
-  width: 100% !important; /* Removed subtraction of 50px for sidebar icons */
-  height: calc(100% - 100px) !important; /* Adjust for top bar and taskbar */
   transform: none !important;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border-radius: 0;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 9999 !important;
+  /* Position and dimensions set via JavaScript based on .content area */
+}
+
+/* Force fullscreen to override all sizing on all child elements */
+.draggable-window.fullscreen > div,
+.draggable-window.fullscreen .react-resizable,
+.draggable-window.fullscreen .react-draggable {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  transform: translate(0, 0) !important; /* Override any translate transforms */
+  left: 0 !important;
+  top: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Override react-draggable positioning for fullscreen windows */
+[style*="transform"] .draggable-window.fullscreen {
+  transform: translate(0, 0) !important;
 }
 
 /* Active window styling */

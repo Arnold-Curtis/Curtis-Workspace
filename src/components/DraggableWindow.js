@@ -15,7 +15,8 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
     activeWindowId, 
     setActiveWindow, 
     isAiSnapped, 
-    snappedWindowId 
+    snappedWindowId,
+    setWindowFullscreen 
   } = useWindowManager();
   
   const [position, setPosition] = useState({ x: 50, y: 50 });
@@ -25,6 +26,7 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [zIndex, setZIndex] = useState(globalZIndex++);
+  const [bounds, setBounds] = useState({ left: 0, top: 0, right: 0, bottom: 0 });
   
   const windowRef = useRef(null);
   const draggableRef = useRef(null);
@@ -35,6 +37,35 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
   
   // Check if this window is in snapped mode
   const isSnapped = isAiSnapped && snappedWindowId === windowId;
+  
+  // Calculate bounds to keep window within the content area
+  useEffect(() => {
+    const updateBounds = () => {
+      const windowWrapper = document.querySelector('.window-wrapper');
+      
+      if (windowWrapper) {
+        const wrapperRect = windowWrapper.getBoundingClientRect();
+        
+        // Calculate the actual available space accounting for wrapper padding
+        const availableWidth = wrapperRect.width;
+        const availableHeight = wrapperRect.height;
+        
+        // Set bounds to keep entire window visible
+        // Subtract 10px from right/bottom to ensure window doesn't get cut off
+        setBounds({
+          left: 0,
+          top: 0,
+          right: Math.max(0, availableWidth - size.width - 10),
+          bottom: Math.max(0, availableHeight - size.height - 10)
+        });
+      }
+    };
+
+    updateBounds();
+    window.addEventListener('resize', updateBounds);
+    
+    return () => window.removeEventListener('resize', updateBounds);
+  }, [size.width, size.height]);
   
   // Register with window manager when mounted
   useEffect(() => {
@@ -50,14 +81,68 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
     }
   }, [isActive]);
 
+  // Force fullscreen positioning to override react-draggable transforms
+  useEffect(() => {
+    const updateFullscreenPosition = () => {
+      if (isFullscreen && windowRef.current) {
+        const draggableElement = windowRef.current.closest('.draggable-window');
+        const contentElement = document.querySelector('.content');
+        
+        if (draggableElement && contentElement) {
+          const contentRect = contentElement.getBoundingClientRect();
+          
+          // Position fixed relative to viewport, but aligned with content area
+          draggableElement.style.position = 'fixed';
+          draggableElement.style.top = `${contentRect.top}px`;
+          draggableElement.style.left = `${contentRect.left}px`;
+          draggableElement.style.width = `${contentRect.width}px`;
+          draggableElement.style.height = `${contentRect.height}px`;
+          draggableElement.style.transform = 'none';
+          draggableElement.style.margin = '0';
+          draggableElement.style.padding = '0';
+          draggableElement.style.right = 'auto';
+          draggableElement.style.bottom = 'auto';
+        }
+      } else if (!isFullscreen && windowRef.current) {
+        // Clear inline styles when exiting fullscreen
+        const draggableElement = windowRef.current.closest('.draggable-window');
+        if (draggableElement) {
+          draggableElement.style.position = '';
+          draggableElement.style.top = '';
+          draggableElement.style.left = '';
+          draggableElement.style.right = '';
+          draggableElement.style.bottom = '';
+          draggableElement.style.width = '';
+          draggableElement.style.height = '';
+          draggableElement.style.transform = '';
+          draggableElement.style.margin = '';
+          draggableElement.style.padding = '';
+        }
+      }
+    };
+
+    updateFullscreenPosition();
+    
+    // Update position on window resize
+    if (isFullscreen) {
+      window.addEventListener('resize', updateFullscreenPosition);
+      return () => window.removeEventListener('resize', updateFullscreenPosition);
+    }
+  }, [isFullscreen]);
+
   // Handle window resize when the browser window resizes
   useEffect(() => {
     const handleResize = () => {
       if (isFullscreen) {
-        setSize({
-          width: window.innerWidth - 100,
-          height: window.innerHeight - 100
-        });
+        // Update fullscreen dimensions to match content area
+        const contentElement = document.querySelector('.content');
+        if (contentElement) {
+          const contentRect = contentElement.getBoundingClientRect();
+          setSize({
+            width: contentRect.width,
+            height: contentRect.height
+          });
+        }
       } else if (isSnapped) {
         // Calculate dimensions for snapped window - half of available space
         const contentSpace = document.querySelector('.content');
@@ -110,6 +195,14 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
     }
   }, [isSnapped]);
 
+  // Bring window to front
+  const bringToFront = useCallback(() => {
+    setZIndex(globalZIndex++);
+    if (windowId && !isActive && setActiveWindow) {
+      setActiveWindow(windowId);
+    }
+  }, [windowId, isActive, setActiveWindow]);
+
   // Toggle fullscreen mode
   const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
@@ -119,35 +212,40 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
         size: { ...size }
       });
       
-      // Calculate dimensions for fullscreen - ensuring it stays visible
-      const newWidth = Math.min(window.innerWidth - 20, 2000);
-      const newHeight = Math.min(window.innerHeight - 20, 1200);
+      // Set position to (0,0) relative to content area
+      setPosition({ x: 0, y: 0 });
       
-      // Set to fullscreen
-      setPosition({ x: 10, y: 10 });
-      setSize({
-        width: newWidth,
-        height: newHeight
-      });
+      // Get the content area dimensions
+      const contentElement = document.querySelector('.content');
+      if (contentElement) {
+        const contentRect = contentElement.getBoundingClientRect();
+        // Set size to fill the content area
+        setSize({
+          width: contentRect.width,
+          height: contentRect.height
+        });
+      }
+      
+      // Set to fullscreen - CSS will handle the actual dimensions
       setIsFullscreen(true);
+      // Notify window manager
+      if (setWindowFullscreen && windowId) {
+        setWindowFullscreen(windowId, true);
+      }
     } else {
       // Restore previous position and size
       setPosition(previousState.position);
       setSize(previousState.size);
       setIsFullscreen(false);
+      // Notify window manager
+      if (setWindowFullscreen && windowId) {
+        setWindowFullscreen(windowId, false);
+      }
     }
     
     // Always bring to front when toggling fullscreen
     bringToFront();
-  }, [isFullscreen, position, size, previousState]);
-
-  // Bring window to front
-  const bringToFront = useCallback(() => {
-    setZIndex(globalZIndex++);
-    if (windowId && !isActive && setActiveWindow) {
-      setActiveWindow(windowId);
-    }
-  }, [windowId, isActive, setActiveWindow]);
+  }, [isFullscreen, position, size, previousState, setWindowFullscreen, windowId, bringToFront]);
 
   // Handle window click to bring to front
   const handleWindowClick = useCallback((e) => {
@@ -158,12 +256,51 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
 
   // Handle drag start
   const handleDragStart = useCallback((e, data) => {
+    // If window is fullscreen and user tries to drag, restore it to normal size
+    if (isFullscreen) {
+      // Get the wrapper element to calculate relative positions
+      const windowWrapper = document.querySelector('.window-wrapper');
+      if (!windowWrapper) return;
+      
+      const wrapperRect = windowWrapper.getBoundingClientRect();
+      
+      // Calculate mouse position relative to the wrapper area
+      const mouseX = e.clientX - wrapperRect.left;
+      const mouseY = e.clientY - wrapperRect.top;
+      
+      // Restore to previous size
+      const restoredWidth = previousState.size.width;
+      const restoredHeight = previousState.size.height;
+      
+      // Position the window so the mouse is at the same relative position on the title bar
+      // Center the window horizontally under the cursor
+      let newX = mouseX - (restoredWidth / 2);
+      let newY = mouseY - 15; // 15px is roughly half the title bar height
+      
+      // Ensure the window stays within bounds (accounting for the 10px buffer)
+      const maxX = wrapperRect.width - restoredWidth - 10;
+      const maxY = wrapperRect.height - restoredHeight - 10;
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
+      
+      setPosition({ x: newX, y: newY });
+      setSize(previousState.size);
+      setIsFullscreen(false);
+      // Notify window manager
+      if (setWindowFullscreen && windowId) {
+        setWindowFullscreen(windowId, false);
+      }
+      setIsDragging(true);
+      bringToFront();
+      return;
+    }
+    
     // Only set dragging state if not already resizing
     if (!isResizing) {
       setIsDragging(true);
       bringToFront();
     }
-  }, [bringToFront, isResizing]);
+  }, [bringToFront, isResizing, isFullscreen, previousState, setWindowFullscreen, windowId]);
 
   // Handle drag
   const handleDrag = useCallback((e, data) => {
@@ -234,8 +371,8 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
       onStart={handleDragStart}
       onDrag={handleDrag}
       onStop={handleDragStop}
-      disabled={isFullscreen || isSnapped}
-      bounds="parent"
+      disabled={isSnapped}
+      bounds={bounds}
       cancel=".window-controls *, .resize-handle"
       ref={draggableRef}
     >
@@ -245,9 +382,7 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
                   ${isActive ? 'active' : ''}
                   ${isSnapped ? 'snapped' : ''}`}
         style={{ 
-          zIndex,
-          // Ensure these styles don't override the fullscreen class
-          ...(isFullscreen || isSnapped ? {} : {})
+          zIndex
         }}
       >
         <ResizableWrapper
@@ -260,6 +395,7 @@ const DraggableWindow = ({ children, title, icon, windowId }) => {
           maxConstraints={[window.innerWidth - 20, window.innerHeight - 20]}
           resizeHandles={['se', 'sw', 'ne', 'nw', 'e', 's', 'w', 'n']}
           disabled={isFullscreen || isDragging || isSnapped}
+          style={isFullscreen ? { width: '100%', height: '100%' } : {}}
           ref={resizableRef}
         >
           <div 

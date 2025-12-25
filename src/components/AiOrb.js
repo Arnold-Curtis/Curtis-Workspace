@@ -1026,7 +1026,7 @@ const AiOrb = () => {
     <>
       {/* Show the orb always */}
       <div 
-        className={`ai-orb-container ${isMobile ? 'mobile-orb' : ''}`}
+        className={`ai-orb-container ${isMobile ? 'mobile-orb' : ''} ${windowManager && windowManager.isFullscreen ? 'fullscreen-mode' : ''}`}
         ref={orbRef}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}

@@ -5,9 +5,15 @@
   right: 20px;
   z-index: 1000;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: transparent; /* Ensure container is transparent */
   pointer-events: auto; /* Ensure orb receives pointer events */
+}
+
+/* Move orb up when a window is in fullscreen mode */
+.ai-orb-container.fullscreen-mode {
+  top: 15px; /* Move up to be next to "Book a Call" button */
+  transition: transform 0.3s ease, top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .ai-orb-container:hover {
