@@ -34,6 +34,7 @@ export const WindowManagerProvider = ({ children }) => {
       'contact': { id: 'contact', title: 'Contact.js', icon: 'fas fa-envelope', component: 'contact' },
       'guestbook': { id: 'guestbook', title: 'Guestbook.js', icon: 'fas fa-book', component: 'guestbook' },
       'book-call': { id: 'book-call', title: 'BookCall.js', icon: 'fas fa-calendar', component: 'book-call' },
+      'admin': { id: 'admin', title: 'Admin Panel', icon: 'fas fa-lock', component: 'admin' },
     };
     return pageConfigs[pageId] || null;
   };

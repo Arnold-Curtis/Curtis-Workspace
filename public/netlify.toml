@@ -2,3 +2,11 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build]
+  publish = "build"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["netlify/functions/**"]

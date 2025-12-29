@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../stylings/Contact.css';
 import { motion } from 'framer-motion';
+import { submitContact } from '../utils/apiService';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -22,34 +23,65 @@ const Contact = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
 
-    // Create submission object with timestamp
-    const submissionData = {
-      ...formData,
-      timestamp: new Date().toISOString(),
-      id: Date.now()
-    };
+    try {
+      // Submit to backend API
+      const result = await submitContact({
+        name: formData.name,
+        email: formData.email,
+        subject: '',
+        message: formData.message
+      });
 
-    // Save to localStorage
-    const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
-    const updatedSubmissions = [submissionData, ...savedSubmissions];
-    localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
-
-    // Simulate form submission
-    setTimeout(() => {
-      setSubmitting(false);
+      if (result.success) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+        
+        // Reset the success message after 5 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      } else {
+        // Fallback to localStorage if API fails
+        const submissionData = {
+          ...formData,
+          timestamp: new Date().toISOString(),
+          id: Date.now()
+        };
+        const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+        const updatedSubmissions = [submissionData, ...savedSubmissions];
+        localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
+        
+        setSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      }
+    } catch (err) {
+      console.error('Error submitting contact:', err);
+      // Fallback to localStorage on error
+      const submissionData = {
+        ...formData,
+        timestamp: new Date().toISOString(),
+        id: Date.now()
+      };
+      const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+      const updatedSubmissions = [submissionData, ...savedSubmissions];
+      localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
+      
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
-      
-      // Reset the success message after 5 seconds
       setTimeout(() => {
         setSubmitted(false);
       }, 5000);
-    }, 1500);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

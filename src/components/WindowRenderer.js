@@ -11,6 +11,7 @@ import Resume from '../pages/Resume';
 import Contact from '../pages/Contact';
 import Guestbook from '../pages/Guestbook';
 import BookCall from '../pages/BookCall';
+import AdminMessages from '../pages/AdminMessages';
 import withHighlighting from '../hoc/withHighlighting';
 
 // Apply highlighting HOC to components
@@ -20,6 +21,7 @@ const HighlightedResume = withHighlighting(Resume);
 const HighlightedContact = withHighlighting(Contact);
 const HighlightedGuestbook = withHighlighting(Guestbook);
 const HighlightedBookCall = withHighlighting(BookCall);
+const HighlightedAdminMessages = withHighlighting(AdminMessages);
 
 // Component registry - maps component keys to actual components
 const componentRegistry = {
@@ -31,6 +33,7 @@ const componentRegistry = {
     'contact': HighlightedContact,
     'guestbook': HighlightedGuestbook,
     'book-call': HighlightedBookCall,
+    'admin': HighlightedAdminMessages,
 };
 
 /**

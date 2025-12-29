@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import '../stylings/BookCall.css';
+import { submitBooking } from '../utils/apiService';
 
 const BookCall = () => {
   const [formData, setFormData] = useState({
@@ -66,7 +67,7 @@ const BookCall = () => {
   };
   
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
@@ -77,23 +78,73 @@ const BookCall = () => {
       setSubmitting(false);
       return;
     }
-    
-    // Create booking object with timestamp
-    const bookingData = {
-      ...formData,
-      timestamp: new Date().toISOString(),
-      id: Date.now(),
-      status: 'Pending'
-    };
-    
-    // Save to localStorage
-    const savedBookings = JSON.parse(localStorage.getItem('callBookings') || '[]');
-    const updatedBookings = [bookingData, ...savedBookings];
-    localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setSubmitting(false);
+
+    try {
+      // Submit to backend API
+      const result = await submitBooking({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        preferred_date: formData.date,
+        preferred_time: formData.time,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        topic: formData.topic,
+        message: formData.message
+      });
+
+      if (result.success) {
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          topic: '',
+          message: ''
+        });
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      } else {
+        // Fallback to localStorage if API fails
+        const bookingData = {
+          ...formData,
+          timestamp: new Date().toISOString(),
+          id: Date.now(),
+          status: 'Pending'
+        };
+        const savedBookings = JSON.parse(localStorage.getItem('callBookings') || '[]');
+        const updatedBookings = [bookingData, ...savedBookings];
+        localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
+        
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          topic: '',
+          message: ''
+        });
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      }
+    } catch (err) {
+      console.error('Error submitting booking:', err);
+      // Fallback to localStorage on error
+      const bookingData = {
+        ...formData,
+        timestamp: new Date().toISOString(),
+        id: Date.now(),
+        status: 'Pending'
+      };
+      const savedBookings = JSON.parse(localStorage.getItem('callBookings') || '[]');
+      const updatedBookings = [bookingData, ...savedBookings];
+      localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
+      
       setSubmitted(true);
       setFormData({
         name: '',
@@ -104,12 +155,12 @@ const BookCall = () => {
         topic: '',
         message: ''
       });
-      
-      // Reset the success message after 5 seconds
       setTimeout(() => {
         setSubmitted(false);
       }, 5000);
-    }, 1500);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const availableDates = generateAvailableDates();

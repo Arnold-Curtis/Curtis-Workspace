@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../stylings/Guestbook.css';
 import { motion } from 'framer-motion';
+import { submitGuestbookEntry, getApprovedGuestbookEntries } from '../utils/apiService';
 
 const Guestbook = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +16,17 @@ const Guestbook = () => {
 
   // Load testimonials on mount
   useEffect(() => {
-    const savedEntries = localStorage.getItem('guestbookEntries');
-    if (savedEntries) {
-      const allEntries = JSON.parse(savedEntries);
-      // Only show approved entries
-      const approvedEntries = allEntries.filter(entry => entry.status === 'approved');
-      setTestimonials(approvedEntries);
-    }
+    const loadTestimonials = async () => {
+      try {
+        const result = await getApprovedGuestbookEntries();
+        if (result.success) {
+          setTestimonials(result.data || []);
+        }
+      } catch (err) {
+        console.error('Error loading testimonials:', err);
+      }
+    };
+    loadTestimonials();
   }, []);
 
   // Handle input changes
@@ -34,40 +39,33 @@ const Guestbook = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
 
-    // Create entry object
-    const newEntry = {
-      ...formData,
-      timestamp: new Date().toISOString(),
-      id: Date.now(),
-      status: 'pending' // Default status is pending
-    };
-
     try {
-      // Save to localStorage
-      const savedEntries = JSON.parse(localStorage.getItem('guestbookEntries') || '[]');
-      const updatedEntries = [newEntry, ...savedEntries];
-      localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
+      const result = await submitGuestbookEntry({
+        name: formData.name,
+        message: formData.message,
+        company: '',
+        role: formData.role
+      });
 
-      // Simulate network request
-      setTimeout(() => {
-        setSubmitting(false);
+      if (result.success) {
         setSubmitted(true);
         setFormData({ name: '', role: '', message: '' });
-
-        // Reset success message
         setTimeout(() => {
           setSubmitted(false);
         }, 5000);
-      }, 1000);
+      } else {
+        setError('Failed to submit entry. Please try again.');
+      }
     } catch (err) {
-      setSubmitting(false);
+      console.error('Error submitting guestbook entry:', err);
       setError('Failed to submit entry. Please try again.');
-      console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 

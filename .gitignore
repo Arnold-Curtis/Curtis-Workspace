@@ -22,3 +22,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Production config with credentials (protected - do not commit!)
+api/config.production.php

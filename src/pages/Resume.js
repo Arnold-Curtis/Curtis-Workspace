@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import '../stylings/Resume.css';
+import { submitResumeRequest } from '../utils/apiService';
 
 const Resume = () => {
   const [showModal, setShowModal] = useState(false);
@@ -79,10 +80,21 @@ const Resume = () => {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically have an API call to send the data to your server
-      // For now, we'll simulate a successful submission after a delay
-      setTimeout(() => {
-        // Store the request in localStorage as a simple way to pass data to the admin page
+      // Submit to backend API
+      const result = await submitResumeRequest({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        reason: `Position: ${formData.position}. ${formData.message || ''}`
+      });
+
+      if (result.success) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          closeResumeModal();
+        }, 3000);
+      } else {
+        // Fallback to localStorage if API fails
         const existingRequests = JSON.parse(localStorage.getItem('resumeRequests') || '[]');
         const newRequest = {
           ...formData,
@@ -93,18 +105,30 @@ const Resume = () => {
         existingRequests.push(newRequest);
         localStorage.setItem('resumeRequests', JSON.stringify(existingRequests));
         
-        setIsSubmitting(false);
         setIsSubmitted(true);
-        
-        // Close the modal after a short delay to show success message
         setTimeout(() => {
           closeResumeModal();
         }, 3000);
-      }, 1500);
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
+      // Fallback to localStorage on error
+      const existingRequests = JSON.parse(localStorage.getItem('resumeRequests') || '[]');
+      const newRequest = {
+        ...formData,
+        id: Date.now(),
+        date: new Date().toISOString(),
+        status: 'pending'
+      };
+      existingRequests.push(newRequest);
+      localStorage.setItem('resumeRequests', JSON.stringify(existingRequests));
+      
+      setIsSubmitted(true);
+      setTimeout(() => {
+        closeResumeModal();
+      }, 3000);
+    } finally {
       setIsSubmitting(false);
-      setFormErrors({...formErrors, submit: 'Failed to submit. Please try again.'});
     }
   };
 

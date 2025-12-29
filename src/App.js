@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
@@ -47,6 +47,8 @@ const DesktopBackground = () => {
 // The main application with routes
 function AppWithRoutes() {
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+  const { openWindow } = useWindowManager();
 
   // Check if we're on a mobile device
   useEffect(() => {
@@ -61,6 +63,25 @@ function AppWithRoutes() {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
+
+  // Check for admin URL parameter or path to open admin panel on desktop
+  useEffect(() => {
+    if (isMobile) return; // Skip on mobile - mobile uses routes
+
+    const params = new URLSearchParams(location.search);
+    const isAdminPath = location.pathname === '/admin10@10';
+    const hasAdminParam = params.get('admin') === 'true';
+
+    if (isAdminPath || hasAdminParam) {
+      // Open admin window on desktop
+      openWindow({
+        id: 'admin',
+        title: 'Admin Panel',
+        icon: 'fas fa-lock',
+        component: 'admin'
+      });
+    }
+  }, [location, isMobile, openWindow]);
 
   return (
     <div className="App">

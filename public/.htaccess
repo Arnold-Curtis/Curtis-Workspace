@@ -1,4 +1,9 @@
 Options -MultiViews
 RewriteEngine On
+
+# Allow direct access to api folder (PHP files handled by Apache)
+RewriteCond %{REQUEST_URI} !^/api/
+
+# Standard React Router rewrite for SPA
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.html [QSA,L]

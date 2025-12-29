@@ -64,6 +64,10 @@
   height: 22px;
   object-fit: contain;
   transition: transform 0.2s ease;
+  /* Remove any background - make transparent */
+  background: transparent;
+  /* Invert colors for visibility on dark background */
+  filter: invert(1) brightness(1.2);
 }
 
 .start-button:hover .start-icon {

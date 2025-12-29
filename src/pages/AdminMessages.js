@@ -1,5 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../stylings/AdminMessages.css';
+import { 
+  getContacts, 
+  getGuestbookEntries, 
+  getBookings, 
+  getResumeRequests,
+  markContactRead,
+  deleteContact,
+  approveGuestbookEntry,
+  deleteGuestbookEntry,
+  updateBookingStatus,
+  deleteBooking,
+  fulfillResumeRequest,
+  deleteResumeRequest
+} from '../utils/apiService';
 
 const AdminMessages = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -12,29 +26,36 @@ const AdminMessages = () => {
   const [activeTab, setActiveTab] = useState('messages');
   const [showCallDetails, setShowCallDetails] = useState(null);
   const [showRequestDetails, setShowRequestDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Load submissions, call bookings, and resume requests from localStorage on component mount
-  useEffect(() => {
-    const savedSubmissions = localStorage.getItem('contactSubmissions');
-    if (savedSubmissions) {
-      setSubmissions(JSON.parse(savedSubmissions));
-    }
-    
-    const savedBookings = localStorage.getItem('callBookings');
-    if (savedBookings) {
-      setCallBookings(JSON.parse(savedBookings));
-    }
+  // Load data from API (automatically uses localStorage in development)
+  const loadAllData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [contactsResult, guestbookResult, bookingsResult, resumeResult] = await Promise.all([
+        getContacts(),
+        getGuestbookEntries(),
+        getBookings(),
+        getResumeRequests()
+      ]);
 
-    const savedResumeRequests = localStorage.getItem('resumeRequests');
-    if (savedResumeRequests) {
-      setResumeRequests(JSON.parse(savedResumeRequests));
-    }
-
-    const savedGuestbookEntries = localStorage.getItem('guestbookEntries');
-    if (savedGuestbookEntries) {
-      setGuestbookEntries(JSON.parse(savedGuestbookEntries));
+      setSubmissions(contactsResult.success ? contactsResult.data : []);
+      setGuestbookEntries(guestbookResult.success ? guestbookResult.data : []);
+      setCallBookings(bookingsResult.success ? bookingsResult.data : []);
+      setResumeRequests(resumeResult.success ? resumeResult.data : []);
+    } catch (err) {
+      console.error('Error loading data:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
+
+  // Load data when access is granted
+  useEffect(() => {
+    if (accessGranted) {
+      loadAllData();
+    }
+  }, [accessGranted, loadAllData]);
 
   // Handle code verification
   const verifyAccessCode = (e) => {
@@ -63,11 +84,29 @@ const AdminMessages = () => {
   };
 
   // Clear all submissions
-  const clearSubmissions = () => {
+  const clearSubmissions = async () => {
     if (window.confirm('Are you sure you want to delete all submissions? This action cannot be undone.')) {
-      localStorage.setItem('contactSubmissions', '[]');
+      for (const submission of submissions) {
+        await deleteContact(submission.id);
+      }
       setSubmissions([]);
     }
+  };
+  
+  // Delete a specific contact submission
+  const handleDeleteContact = async (id) => {
+    if (window.confirm('Are you sure you want to delete this message?')) {
+      await deleteContact(id);
+      setSubmissions(submissions.filter(s => s.id !== id));
+    }
+  };
+
+  // Mark contact as read
+  const handleMarkAsRead = async (id) => {
+    await markContactRead(id);
+    setSubmissions(submissions.map(s => 
+      s.id === id ? { ...s, read: 1 } : s
+    ));
   };
   
   // Download call bookings as JSON file
@@ -97,75 +136,72 @@ const AdminMessages = () => {
   };
 
   // Clear all call bookings
-  const clearBookings = () => {
+  const clearBookings = async () => {
     if (window.confirm('Are you sure you want to delete all call bookings? This action cannot be undone.')) {
-      localStorage.setItem('callBookings', '[]');
+      for (const booking of callBookings) {
+        await deleteBooking(booking.id);
+      }
       setCallBookings([]);
     }
   };
   
   // Clear all resume requests
-  const clearResumeRequests = () => {
+  const clearResumeRequests = async () => {
     if (window.confirm('Are you sure you want to delete all resume requests? This action cannot be undone.')) {
-      localStorage.setItem('resumeRequests', '[]');
+      for (const request of resumeRequests) {
+        await deleteResumeRequest(request.id);
+      }
       setResumeRequests([]);
     }
   };
 
   // Clear all guestbook entries
-  const clearGuestbookEntries = () => {
+  const clearGuestbookEntries = async () => {
     if (window.confirm('Are you sure you want to delete all guestbook entries? This action cannot be undone.')) {
-      localStorage.setItem('guestbookEntries', '[]');
+      for (const entry of guestbookEntries) {
+        await deleteGuestbookEntry(entry.id);
+      }
       setGuestbookEntries([]);
     }
   };
   
   // Update call status
-  const updateCallStatus = (id, newStatus) => {
-    const updatedBookings = callBookings.map(booking => {
-      if (booking.id === id) {
-        return { ...booking, status: newStatus };
-      }
-      return booking;
-    });
-    
-    localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-    setCallBookings(updatedBookings);
+  const updateCallStatus = async (id, newStatus) => {
+    await updateBookingStatus(id, newStatus);
+    setCallBookings(callBookings.map(booking => 
+      booking.id === id ? { ...booking, status: newStatus } : booking
+    ));
   };
   
   // Update resume request status
-  const updateResumeStatus = (id, newStatus) => {
-    const updatedRequests = resumeRequests.map(request => {
-      if (request.id === id) {
-        return { ...request, status: newStatus };
-      }
-      return request;
-    });
-    
-    localStorage.setItem('resumeRequests', JSON.stringify(updatedRequests));
-    setResumeRequests(updatedRequests);
+  const updateResumeStatus = async (id, newStatus) => {
+    if (newStatus === 'sent' || newStatus === 'fulfilled') {
+      await fulfillResumeRequest(id);
+    }
+    setResumeRequests(resumeRequests.map(request => 
+      request.id === id 
+        ? { ...request, status: newStatus, fulfilled: newStatus === 'sent' ? 1 : 0 } 
+        : request
+    ));
   };
 
   // Update guestbook entry status
-  const updateGuestbookStatus = (id, newStatus) => {
-    const updatedEntries = guestbookEntries.map(entry => {
-      if (entry.id === id) {
-        return { ...entry, status: newStatus };
-      }
-      return entry;
-    });
-
-    localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
-    setGuestbookEntries(updatedEntries);
+  const updateGuestbookStatus = async (id, newStatus) => {
+    if (newStatus === 'approved') {
+      await approveGuestbookEntry(id);
+    }
+    setGuestbookEntries(guestbookEntries.map(entry => 
+      entry.id === id 
+        ? { ...entry, status: newStatus, approved: newStatus === 'approved' ? 1 : 0 } 
+        : entry
+    ));
   };
   
   // Delete a specific call booking
-  const deleteCallBooking = (id) => {
+  const deleteCallBookingItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this booking?')) {
-      const updatedBookings = callBookings.filter(booking => booking.id !== id);
-      localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-      setCallBookings(updatedBookings);
-      
+      await deleteBooking(id);
+      setCallBookings(callBookings.filter(booking => booking.id !== id));
       if (showCallDetails === id) {
         setShowCallDetails(null);
       }
@@ -173,12 +209,10 @@ const AdminMessages = () => {
   };
   
   // Delete a specific resume request
-  const deleteResumeRequest = (id) => {
+  const deleteResumeRequestItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this resume request?')) {
-      const updatedRequests = resumeRequests.filter(request => request.id !== id);
-      localStorage.setItem('resumeRequests', JSON.stringify(updatedRequests));
-      setResumeRequests(updatedRequests);
-      
+      await deleteResumeRequest(id);
+      setResumeRequests(resumeRequests.filter(request => request.id !== id));
       if (showRequestDetails === id) {
         setShowRequestDetails(null);
       }
@@ -186,11 +220,10 @@ const AdminMessages = () => {
   };
 
   // Delete a specific guestbook entry
-  const deleteGuestbookEntry = (id) => {
+  const deleteGuestbookEntryItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this guestbook entry?')) {
-      const updatedEntries = guestbookEntries.filter(entry => entry.id !== id);
-      localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
-      setGuestbookEntries(updatedEntries);
+      await deleteGuestbookEntry(id);
+      setGuestbookEntries(guestbookEntries.filter(entry => entry.id !== id));
     }
   };
   
@@ -440,7 +473,7 @@ const AdminMessages = () => {
 
                         <button
                           className="action-button delete-button"
-                          onClick={() => deleteGuestbookEntry(entry.id)}
+                          onClick={() => deleteGuestbookEntryItem(entry.id)}
                         >
                           <i className="fas fa-trash"></i>
                           Delete
@@ -557,7 +590,7 @@ const AdminMessages = () => {
                         
                         <button 
                           className="action-button delete-button"
-                          onClick={() => deleteCallBooking(booking.id)}
+                          onClick={() => deleteCallBookingItem(booking.id)}
                         >
                           <i className="fas fa-trash"></i>
                           Delete
@@ -679,7 +712,7 @@ const AdminMessages = () => {
                         
                         <button 
                           className="action-button delete-button"
-                          onClick={() => deleteResumeRequest(request.id)}
+                          onClick={() => deleteResumeRequestItem(request.id)}
                         >
                           <i className="fas fa-trash"></i>
                           Delete
