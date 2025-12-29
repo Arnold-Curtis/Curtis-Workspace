@@ -5,6 +5,7 @@ const AdminMessages = () => {
   const [submissions, setSubmissions] = useState([]);
   const [callBookings, setCallBookings] = useState([]);
   const [resumeRequests, setResumeRequests] = useState([]);
+  const [guestbookEntries, setGuestbookEntries] = useState([]);
   const [accessGranted, setAccessGranted] = useState(false);
   const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState(null);
@@ -27,6 +28,11 @@ const AdminMessages = () => {
     const savedResumeRequests = localStorage.getItem('resumeRequests');
     if (savedResumeRequests) {
       setResumeRequests(JSON.parse(savedResumeRequests));
+    }
+
+    const savedGuestbookEntries = localStorage.getItem('guestbookEntries');
+    if (savedGuestbookEntries) {
+      setGuestbookEntries(JSON.parse(savedGuestbookEntries));
     }
   }, []);
 
@@ -105,6 +111,14 @@ const AdminMessages = () => {
       setResumeRequests([]);
     }
   };
+
+  // Clear all guestbook entries
+  const clearGuestbookEntries = () => {
+    if (window.confirm('Are you sure you want to delete all guestbook entries? This action cannot be undone.')) {
+      localStorage.setItem('guestbookEntries', '[]');
+      setGuestbookEntries([]);
+    }
+  };
   
   // Update call status
   const updateCallStatus = (id, newStatus) => {
@@ -131,6 +145,19 @@ const AdminMessages = () => {
     localStorage.setItem('resumeRequests', JSON.stringify(updatedRequests));
     setResumeRequests(updatedRequests);
   };
+
+  // Update guestbook entry status
+  const updateGuestbookStatus = (id, newStatus) => {
+    const updatedEntries = guestbookEntries.map(entry => {
+      if (entry.id === id) {
+        return { ...entry, status: newStatus };
+      }
+      return entry;
+    });
+
+    localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
+    setGuestbookEntries(updatedEntries);
+  };
   
   // Delete a specific call booking
   const deleteCallBooking = (id) => {
@@ -155,6 +182,15 @@ const AdminMessages = () => {
       if (showRequestDetails === id) {
         setShowRequestDetails(null);
       }
+    }
+  };
+
+  // Delete a specific guestbook entry
+  const deleteGuestbookEntry = (id) => {
+    if (window.confirm('Are you sure you want to delete this guestbook entry?')) {
+      const updatedEntries = guestbookEntries.filter(entry => entry.id !== id);
+      localStorage.setItem('guestbookEntries', JSON.stringify(updatedEntries));
+      setGuestbookEntries(updatedEntries);
     }
   };
   
@@ -267,6 +303,13 @@ const AdminMessages = () => {
               <i className="fas fa-file-alt"></i> Resume Requests
               <span className="tab-counter">{resumeRequests.length}</span>
             </button>
+            <button
+              className={`admin-tab ${activeTab === 'guestbook' ? 'active' : ''}`}
+              onClick={() => setActiveTab('guestbook')}
+            >
+              <i className="fas fa-comments"></i> Guestbook
+              <span className="tab-counter">{guestbookEntries.length}</span>
+            </button>
           </div>
           
           {activeTab === 'messages' && (
@@ -327,6 +370,89 @@ const AdminMessages = () => {
                 <div className="no-submissions-message">
                   <i className="fas fa-inbox"></i>
                   <p>No contact form submissions yet</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {activeTab === 'guestbook' && (
+            <>
+              <div className="admin-header">
+                <h1>Guestbook Entries</h1>
+                <div className="admin-actions">
+                  <button
+                    onClick={clearGuestbookEntries}
+                    className="admin-button delete-button"
+                    disabled={guestbookEntries.length === 0}
+                  >
+                    <i className="fas fa-trash-alt"></i> Clear All
+                  </button>
+                </div>
+              </div>
+
+              {guestbookEntries.length > 0 ? (
+                <div className="resume-requests-container">
+                  {guestbookEntries.map((entry) => (
+                    <div key={entry.id} className="request-card">
+                      <div className="request-header">
+                        <div className="request-info">
+                          <h3>{entry.name}</h3>
+                          {entry.role && <p className="company-position">{entry.role}</p>}
+                        </div>
+                        <div className={`request-status ${getStatusClass(entry.status)}`}>
+                          <i className="fas fa-circle status-indicator"></i>
+                          {entry.status ? entry.status.charAt(0).toUpperCase() + entry.status.slice(1) : 'Pending'}
+                        </div>
+                      </div>
+
+                      <div className="request-contact">
+                        <div className="contact-item">
+                          <i className="fas fa-calendar"></i>
+                          <span>{new Date(entry.timestamp).toLocaleDateString()} at {new Date(entry.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                      </div>
+
+                      <div className="request-details" style={{display: 'block', margin: '15px 0'}}>
+                        <div className="details-content">
+                          <p>{entry.message}</p>
+                        </div>
+                      </div>
+
+                      <div className="request-actions">
+                        <div className="status-actions">
+                          <button
+                            className={`status-button approve-button ${entry.status === 'approved' ? 'active' : ''}`}
+                            onClick={() => updateGuestbookStatus(entry.id, 'approved')}
+                            disabled={entry.status === 'approved'}
+                          >
+                            <i className="fas fa-check"></i>
+                            Approve
+                          </button>
+                          <button
+                            className={`status-button reject-button ${entry.status === 'rejected' ? 'active' : ''}`}
+                            onClick={() => updateGuestbookStatus(entry.id, 'rejected')}
+                            disabled={entry.status === 'rejected'}
+                          >
+                            <i className="fas fa-times"></i>
+                            Reject
+                          </button>
+                        </div>
+
+                        <button
+                          className="action-button delete-button"
+                          onClick={() => deleteGuestbookEntry(entry.id)}
+                        >
+                          <i className="fas fa-trash"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-submissions-message">
+                  <i className="fas fa-comments"></i>
+                  <p>No guestbook entries yet</p>
                 </div>
               )}
             </>
