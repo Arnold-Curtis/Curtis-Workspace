@@ -1,6 +1,7 @@
 .Sidebar {
   width: 200px;
-  background-color: #181818; /* VS Code-like background color */
+  background-color: #181818;
+  /* VS Code-like background color */
   color: #cccccc;
   height: 100vh;
   padding: 0;
@@ -78,12 +79,24 @@
   align-items: center;
   padding: 6px 16px 6px 24px;
   font-size: 13px;
+  /* Button reset styles */
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sidebar-link:hover {
+  background-color: #2a2d2e;
 }
 
 .file-icon {
   margin-right: 6px;
   font-size: 14px;
-  color: #519aba; /* Blue color for JavaScript files */
+  color: #519aba;
+  /* Blue color for JavaScript files */
 }
 
 /* Mobile responsive styles */
@@ -91,7 +104,7 @@
   .Sidebar {
     width: 180px;
   }
-  
+
   .sidebar-link {
     font-size: 12px;
     padding: 5px 14px 5px 20px;
@@ -102,16 +115,16 @@
   .Sidebar {
     width: 160px;
   }
-  
+
   .sidebar-header {
     padding: 4px 10px;
     font-size: 10px;
   }
-  
+
   .section-header {
     padding: 3px 10px;
   }
-  
+
   .sidebar-link {
     padding: 5px 10px 5px 18px;
   }
@@ -131,11 +144,11 @@
     transition: transform 0.3s ease-in-out;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   }
-  
+
   .Sidebar.show-mobile-menu {
     transform: translateX(0);
   }
-  
+
   .mobile-backdrop {
     position: fixed;
     top: 0;
@@ -146,7 +159,7 @@
     z-index: 1050;
     display: none;
   }
-  
+
   .mobile-backdrop.show {
     display: block;
   }
@@ -166,7 +179,7 @@
     width: 140px;
     font-size: 95%;
   }
-  
+
   .sidebar-link {
     font-size: 11px;
   }

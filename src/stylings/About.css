@@ -366,8 +366,7 @@
   }
   
   .code-line-numbers {
-    padding: 15px 5px;
-    font-size: 10px;
+    display: none; /* Hide on mobile to prevent horizontal issues */
   }
   
   /* Adjust layout for smaller screens */
@@ -376,6 +375,10 @@
     height: auto;
     min-height: 100vh;
     overflow-y: auto !important; /* Ensure scrolling works */
+    overflow-x: hidden !important; /* Prevent horizontal scroll */
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
   }
   
   /* Ensure content is scrollable on mobile */
@@ -383,12 +386,18 @@
     height: auto;
     min-height: calc(100vh - 95px); /* Adjust for header height and mobile nav */
     overflow: hidden; /* Prevent scrolling at this level */
+    overflow-x: hidden;
+    width: 100%;
   }
   
   .about-main {
     overflow: visible;
+    overflow-x: hidden;
     height: auto;
+    padding: 10px 15px;
     padding-bottom: 80px; /* Add bottom padding to ensure last content is visible */
+    width: 100%;
+    box-sizing: border-box;
   }
   
   /* Fix content being cut off by making divs non-fixed height */
@@ -397,6 +406,8 @@
   .education-card {
     height: auto;
     overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   /* Make the experience cards better fit mobile screens */

@@ -6,7 +6,7 @@ import Draggable from 'react-draggable';
 const DraggableWrapper = forwardRef((props, ref) => {
   const nodeRef = useRef(null);
   const draggableRef = useRef(null);
-  
+
   useImperativeHandle(ref, () => ({
     getDOMNode: () => nodeRef.current,
     getDraggableNode: () => draggableRef.current
@@ -28,27 +28,55 @@ const DraggableWrapper = forwardRef((props, ref) => {
     children,
     className,
     style,
+    isFullscreen,
     ...rest
   } = props;
 
   // If dragging is disabled, just render the children directly
   if (disabled) {
+    // When in fullscreen mode, fill the parent container
+    const disabledStyle = isFullscreen
+      ? {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        ...style
+      }
+      : {
+        position: 'absolute',
+        left: position?.x || defaultPosition?.x || 0,
+        top: position?.y || defaultPosition?.y || 0,
+        ...style
+      };
+
     return (
       <div
         ref={nodeRef}
         className={className}
-        style={{
-          position: 'absolute',
-          left: position?.x || defaultPosition?.x || 0,
-          top: position?.y || defaultPosition?.y || 0,
-          ...style
-        }}
+        style={disabledStyle}
         {...rest}
       >
         {children}
       </div>
     );
   }
+
+  // Calculate style based on fullscreen state
+  const draggableStyle = isFullscreen
+    ? {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      ...style
+    }
+    : {
+      position: 'absolute',
+      ...style
+    };
 
   return (
     <Draggable
@@ -61,18 +89,15 @@ const DraggableWrapper = forwardRef((props, ref) => {
       allowAnyClick={allowAnyClick}
       grid={grid}
       scale={scale}
-      bounds={bounds}
-      position={position}
+      bounds={isFullscreen ? undefined : bounds}
+      position={isFullscreen ? { x: 0, y: 0 } : position}
       defaultPosition={defaultPosition}
       ref={draggableRef}
     >
       <div
         ref={nodeRef}
         className={className}
-        style={{
-          position: 'absolute',
-          ...style
-        }}
+        style={draggableStyle}
         {...rest}
       >
         {children}

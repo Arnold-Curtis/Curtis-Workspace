@@ -1,17 +1,93 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { generateResponse, resetChatHistory, setChatHistoryFromStored, initializeNewChat, parseLinks } from '../utils/geminiService';
-import { 
-  saveChatMessage, 
-  getChatMessages, 
-  generateChatId, 
-  getCurrentChatId, 
-  setCurrentChatId 
+import {
+  saveChatMessage,
+  getChatMessages,
+  generateChatId,
+  getCurrentChatId,
+  setCurrentChatId
 } from '../utils/chatDatabase';
 import { useWindowManager } from './WindowManager';
 import ChatHistory from './ChatHistory';
 import './AiOrb.css';
+
+// Separate component for AI response content to handle link clicks reliably
+// This fixes the intermittent link failure issue by attaching handlers in a controlled way
+const AiResponseContent = ({ html, onLinkClick }) => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !onLinkClick) return;
+
+    // Find all AI links in the rendered HTML
+    const links = containerRef.current.querySelectorAll('.ai-link');
+
+    // Create a single handler that we can attach and track
+    const handleLinkClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const page = e.currentTarget.getAttribute('data-page');
+      const line = e.currentTarget.getAttribute('data-line');
+
+      if (page) {
+        console.log(`AiResponseContent: Link clicked - page=${page}, line=${line}`);
+        onLinkClick(page, line);
+      }
+    };
+
+    // Handle touch start for visual feedback
+    const handleTouchStart = (e) => {
+      e.currentTarget.style.transform = 'scale(0.95)';
+      e.currentTarget.style.opacity = '0.8';
+    };
+
+    // Handle touch end - reset visual feedback and trigger action
+    const handleTouchEnd = (e) => {
+      e.currentTarget.style.transform = 'scale(1)';
+      e.currentTarget.style.opacity = '1';
+      handleLinkClick(e);
+    };
+
+    // Handle touch cancel - reset visual feedback without action
+    const handleTouchCancel = (e) => {
+      e.currentTarget.style.transform = 'scale(1)';
+      e.currentTarget.style.opacity = '1';
+    };
+
+    // Attach click handlers to all links
+    links.forEach(link => {
+      // Add transition for smooth visual feedback
+      link.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
+
+      link.addEventListener('click', handleLinkClick);
+      // Enhanced touch handling for mobile with visual feedback
+      link.addEventListener('touchstart', handleTouchStart, { passive: true });
+      link.addEventListener('touchend', handleTouchEnd, { passive: false });
+      link.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+    });
+
+    // Cleanup function to remove handlers
+    return () => {
+      links.forEach(link => {
+        link.removeEventListener('click', handleLinkClick);
+        link.removeEventListener('touchstart', handleTouchStart);
+        link.removeEventListener('touchend', handleTouchEnd);
+        link.removeEventListener('touchcancel', handleTouchCancel);
+      });
+    };
+  }, [html, onLinkClick]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="ai-response"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+};
 
 const AiOrb = () => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -30,42 +106,45 @@ const AiOrb = () => {
   const constraintsRef = useRef(null);
   const messagesEndRef = useRef(null);
   const orbRef = useRef(null);
-  
+
+  // Drag controls for the chat window header
+  const dragControls = useDragControls();
+
   // Access window manager context and navigation
   const windowManager = useWindowManager();
   const navigate = useNavigate();
-  
+
   // Log window manager for debugging
   useEffect(() => {
     console.log('AiOrb: WindowManager context initialized:', windowManager);
   }, [windowManager]);
-  
+
   // Make window manager available globally for use in event handlers
   useEffect(() => {
     window.windowManagerContext = windowManager;
     console.log('AiOrb: WindowManager context set globally');
   }, [windowManager]);
-  
+
   // Check if we're on a mobile device
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth <= 768);
-      
+
       // Force the orb to be visible on mobile
       if (window.innerWidth <= 768) {
         // Get references to navigation elements
         const topBar = document.querySelector('.TopBar, .top-nav, header');
         const mobileNav = document.querySelector('.MobileNav, .bottom-nav, .footer-mobile');
-        
+
         // Adjust z-index for navigation elements
         if (mobileNav) {
           mobileNav.style.zIndex = '1000'; // Ensure nav is below orb
         }
-        
+
         if (topBar) {
           topBar.style.zIndex = '1001'; // Ensure top bar is visible
         }
-        
+
         // Adjust any overlapping elements
         const adjustMobileLayout = () => {
           const bottomElements = document.querySelectorAll('.MobileNav, .bottom-nav, .footer-mobile');
@@ -75,14 +154,14 @@ const AiOrb = () => {
             }
           });
         };
-        
+
         adjustMobileLayout();
       }
     };
-    
+
     checkIfMobile();
     window.addEventListener('resize', checkIfMobile);
-    
+
     return () => {
       window.removeEventListener('resize', checkIfMobile);
     };
@@ -91,21 +170,21 @@ const AiOrb = () => {
   // NEW ANIMATION SYSTEM: Clean and smooth chat snapping (moved here for correct dependencies)
   const snapChatToSide = useCallback(() => {
     if (!chatRef.current || isMobile) return Promise.resolve();
-    
+
     return new Promise((resolve) => {
       console.log('Starting new smooth snap animation');
-      
+
       // Get current position and calculate target position
       const rect = chatRef.current.getBoundingClientRect();
       const topBar = document.querySelector('.TopBar, .top-nav, header');
       const topBarHeight = topBar ? topBar.offsetHeight : 60;
-      
+
       // Disable drag during animation to prevent conflicts
       const motionDiv = chatRef.current.closest('.drag-area > div');
       if (motionDiv) {
         motionDiv.style.pointerEvents = 'none';
       }
-      
+
       // Set current position as fixed to prevent any jumps
       const initialStyles = {
         position: 'fixed',
@@ -117,15 +196,15 @@ const AiOrb = () => {
         transition: 'none',
         zIndex: '1500'
       };
-      
+
       Object.assign(chatRef.current.style, initialStyles);
-      
+
       // Force a reflow to ensure styles are applied
       void chatRef.current.offsetWidth;
-      
+
       // Add smooth, visible transition with perfect timing - longer duration for sleek movement
       chatRef.current.style.transition = 'all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
-      
+
       // Small delay to ensure the transition is applied, then animate
       setTimeout(() => {
         const targetStyles = {
@@ -135,42 +214,10 @@ const AiOrb = () => {
           width: '40vw',
           height: `calc(100vh - ${topBarHeight + 40}px)`
         };
-        
+
         Object.assign(chatRef.current.style, targetStyles);
         chatRef.current.classList.add('snapped-chat');
-        
-        // Add minimize button after animation starts
-        setTimeout(() => {
-          // Directly add minimize button here instead of calling function
-          if (!document.querySelector('.chat-minimize-btn') && chatRef.current) {
-            const minimizeBtn = document.createElement('button');
-            minimizeBtn.className = 'chat-minimize-btn';
-            minimizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
-            minimizeBtn.title = 'Exit split view';
-            
-            // Add click handler
-            minimizeBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('EXIT SPLIT VIEW: Button clicked from snapChatToSide');
-              // Use global reference to avoid dependency
-              if (window.exitSnappedModeRef) {
-                window.exitSnappedModeRef();
-              }
-            });
-            
-            const chatHeader = chatRef.current.querySelector('.ai-chat-header');
-            if (chatHeader) {
-              const actionButtons = chatHeader.querySelector('.ai-chat-actions');
-              if (actionButtons && actionButtons.firstChild) {
-                actionButtons.insertBefore(minimizeBtn, actionButtons.firstChild);
-              } else {
-                chatHeader.appendChild(minimizeBtn);
-              }
-            }
-          }
-        }, 200); // Slightly delayed to ensure smooth animation
-        
+
         // Re-enable interactions after animation completes
         setTimeout(() => {
           if (motionDiv) {
@@ -186,22 +233,22 @@ const AiOrb = () => {
   const handleLinkClick = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const link = e.currentTarget;
     const page = link.getAttribute('data-page').toLowerCase();
     const lineNumber = link.getAttribute('data-line');
-    
+
     console.log(`AI Link clicked: page=${page}, line=${lineNumber}, isMobile=${isMobile}`);
-    
+
     // Mobile handling - simplified and more reliable
     if (isMobile) {
       console.log('Mobile navigation triggered');
       const pageUrl = `/${page === 'home' ? '' : page}`;
       sessionStorage.setItem('highlightLine', lineNumber);
-      
+
       // Close the chat first on mobile for better UX
       setShowChat(false);
-      
+
       // Use a small delay to ensure state updates
       setTimeout(() => {
         console.log(`Navigating to: ${pageUrl}`);
@@ -209,7 +256,7 @@ const AiOrb = () => {
       }, 100);
       return;
     }
-    
+
     // Store chat state and line for preservation
     const currentChatState = {
       messages: messages,
@@ -246,17 +293,17 @@ const AiOrb = () => {
     const performSplitViewSetup = async () => {
       try {
         console.log('Setting up split view without page reload');
-        
+
         // 1. IMMEDIATELY set up the window manager split view
         windowManager.snapWithAi(page);
-        
+
         // 2. Animate the chat to the side
         await snapChatToSide();
-        
+
         // 3. Navigate using React Router (no page reload!)
         const pageUrl = `/${page === 'home' ? '' : page}`;
         navigate(pageUrl);
-        
+
         console.log('Split view setup complete - no page reload!');
       } catch (error) {
         console.error('Error during split view setup:', error);
@@ -278,15 +325,88 @@ const AiOrb = () => {
     }
   }, [isMobile, windowManager, showChat, messages, currentChatId, snapChatToSide, navigate]);
 
+  // Simplified handler for AiResponseContent - this is a stable callback that takes page/line directly
+  const handleLinkClickInternal = useCallback((page, lineNumber) => {
+    const pageLower = page.toLowerCase();
+    console.log(`handleLinkClickInternal: page=${pageLower}, line=${lineNumber}, isMobile=${isMobile}`);
+
+    // Mobile handling
+    if (isMobile) {
+      console.log('Mobile navigation triggered');
+      const pageUrl = `/${pageLower === 'home' ? '' : pageLower}`;
+      sessionStorage.setItem('highlightLine', lineNumber);
+      setShowChat(false);
+      setTimeout(() => {
+        navigate(pageUrl);
+      }, 100);
+      return;
+    }
+
+    // Desktop: Special case for home - show desktop and exit snap mode
+    if (pageLower === 'home') {
+      console.log('Home link clicked - showing desktop');
+      if (windowManager?.isAiSnapped) {
+        // Use global reference to avoid circular dependency
+        if (window.exitSnappedModeRef) {
+          window.exitSnappedModeRef();
+        }
+      }
+      windowManager?.minimizeAllWindows();
+      return;
+    }
+
+    // Store chat state
+    const currentChatState = { messages, chatId: currentChatId };
+    sessionStorage.setItem('preservedChatState', JSON.stringify(currentChatState));
+    sessionStorage.setItem('highlightLine', lineNumber);
+
+    // Desktop handling
+    const isAlreadySnapped = windowManager && windowManager.isAiSnapped;
+
+    if (isAlreadySnapped) {
+      if (windowManager.snappedWindowId === pageLower) {
+        // Same page - just highlight
+        const event = new CustomEvent('ai-highlight-request', { detail: { lineNumber } });
+        document.dispatchEvent(event);
+        if (inputRef.current) inputRef.current.focus();
+        return;
+      } else {
+        // Different page - snapWithAi now handles opening the window
+        console.log('Switching to different page in snap mode:', pageLower);
+        windowManager.snapWithAi(pageLower);
+        return;
+      }
+    }
+
+    // Set up split view - snapWithAi now opens the window
+    const performSplitView = async () => {
+      try {
+        console.log('Setting up split view for:', pageLower);
+        windowManager.snapWithAi(pageLower);
+        await snapChatToSide();
+        console.log('Split view setup complete');
+      } catch (error) {
+        console.error('Split view setup error:', error);
+      }
+    };
+
+    if (!showChat) {
+      setShowChat(true);
+      setTimeout(performSplitView, 150);
+    } else {
+      performSplitView();
+    }
+  }, [isMobile, windowManager, showChat, messages, currentChatId, snapChatToSide, navigate]);
+
   // COMPLETELY REWRITTEN: Clean exit from snapped mode with full cleanup
   const exitSnappedMode = useCallback(() => {
     if (!chatRef.current) return;
-    
+
     console.log('EXIT SPLIT VIEW: Starting complete cleanup and exit');
-    
+
     // Get current position before animation
     const rect = chatRef.current.getBoundingClientRect();
-    
+
     // Set current position as fixed to maintain position during transition
     chatRef.current.style.position = 'fixed';
     chatRef.current.style.left = `${rect.left}px`;
@@ -295,16 +415,16 @@ const AiOrb = () => {
     chatRef.current.style.height = `${rect.height}px`;
     chatRef.current.style.right = 'auto';
     chatRef.current.style.transform = 'none';
-    
+
     // Force reflow
     void chatRef.current.offsetWidth;
-    
+
     // Add smooth, visible transition for exit animation - longer duration for sleek movement
     chatRef.current.style.transition = 'all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
-    
+
     // Remove snapped class first
     chatRef.current.classList.remove('snapped-chat');
-    
+
     // Animate back to center by removing positioning
     setTimeout(() => {
       if (chatRef.current) {
@@ -316,7 +436,7 @@ const AiOrb = () => {
         chatRef.current.style.height = '';
         chatRef.current.style.zIndex = '';
         chatRef.current.style.transform = '';
-        
+
         // Clean up transition after animation
         setTimeout(() => {
           if (chatRef.current) {
@@ -325,44 +445,27 @@ const AiOrb = () => {
         }, 800); // Match the transition duration
       }
     }, 50); // Small delay for smooth transition start
-    
-    // Remove minimize button
-    const minimizeBtn = document.querySelector('.chat-minimize-btn');
-    if (minimizeBtn) {
-      minimizeBtn.remove();
-    }
-    
+
+    // Note: Minimize button is now React-rendered, no need to remove it manually
+
     // Exit snapped mode in window manager
     if (windowManager && windowManager.exitSnappedMode) {
       console.log('EXIT SPLIT VIEW: Calling windowManager.exitSnappedMode()');
       windowManager.exitSnappedMode();
     }
-    
+
     // Clear session storage
     sessionStorage.removeItem('preservedChatState');
     sessionStorage.removeItem('highlightLine');
-    
-    // CRUCIAL: Force re-attach link event listeners after exit
+
+    // Dispatch refresh event to re-attach link handlers via React
+    // No DOM manipulation needed - React will handle the re-render
     setTimeout(() => {
-      console.log('EXIT SPLIT VIEW: Re-attaching link event listeners');
-      const links = document.querySelectorAll('.ai-link');
-      links.forEach(link => {
-        // Remove any existing listeners first
-        const clonedLink = link.cloneNode(true);
-        link.parentNode.replaceChild(clonedLink, link);
-      });
-      
-      // Force a re-render of the link listeners by triggering the useEffect
-      // We'll do this by dispatching a custom event
-      setTimeout(() => {
-        const event = new CustomEvent('ai-links-need-refresh');
-        document.dispatchEvent(event);
-        console.log('EXIT SPLIT VIEW: Triggered link refresh event');
-      }, 100);
-      
-      console.log(`EXIT SPLIT VIEW: Cleaned and refreshed ${links.length} links`);
-    }, 700); // After animation completes
-    
+      const event = new CustomEvent('ai-links-need-refresh');
+      document.dispatchEvent(event);
+      console.log('EXIT SPLIT VIEW: Triggered link refresh event');
+    }, 800); // After animation completes
+
     console.log('EXIT SPLIT VIEW: Complete cleanup finished');
   }, [windowManager]); // Remove handleLinkClick dependency to avoid circular reference
 
@@ -374,59 +477,20 @@ const AiOrb = () => {
     };
   }, [exitSnappedMode]);
 
-  // Helper function to add minimize button with PROPER click handler
-  const addMinimizeButton = useCallback(() => {
-    if (document.querySelector('.chat-minimize-btn')) return;
-    
-    const minimizeBtn = document.createElement('button');
-    minimizeBtn.className = 'chat-minimize-btn';
-    minimizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
-    minimizeBtn.title = 'Exit split view';
-    
-    // FIXED: Properly attach the exit function
-    minimizeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('EXIT SPLIT VIEW: Button clicked');
-      exitSnappedMode();
-    });
-    
-    const chatHeader = chatRef.current?.querySelector('.ai-chat-header');
-    if (chatHeader) {
-      const actionButtons = chatHeader.querySelector('.ai-chat-actions');
-      if (actionButtons && actionButtons.firstChild) {
-        actionButtons.insertBefore(minimizeBtn, actionButtons.firstChild);
-      } else {
-        chatHeader.appendChild(minimizeBtn);
-      }
-    }
-    
-    console.log('EXIT SPLIT VIEW: Minimize button added and event listener attached');
-  }, [exitSnappedMode]);
-
-  // Update addMinimizeButton to use exitSnappedMode - REMOVED duplicate function
-  React.useEffect(() => {
-    const minimizeBtn = document.querySelector('.chat-minimize-btn');
-    if (minimizeBtn) {
-      minimizeBtn.onclick = exitSnappedMode;
-    }
-  }, [exitSnappedMode]);
-
-  // Check for snapped state on component mount - UPDATED for new animation system
+  // Check for snapped state on component mount - restore snap position if needed
   useEffect(() => {
     // Check if we need to restore snapped state
     if (windowManager && windowManager.isAiSnapped && !isMobile) {
       setShowChat(true);
-      
+
       // Small delay to ensure chat window is rendered
       setTimeout(() => {
         if (chatRef.current) {
-          console.log('Restoring snapped state with new animation system');
-          
-          // Use the new animation system instead of old method
+          console.log('Restoring snapped state');
+
           const topBar = document.querySelector('.TopBar, .top-nav, header');
           const topBarHeight = topBar ? topBar.offsetHeight : 60;
-          
+
           // Directly apply snapped position without animation on restore
           const snappedPosition = {
             position: 'fixed',
@@ -439,35 +503,33 @@ const AiOrb = () => {
             zIndex: '1500',
             transition: 'none' // No animation on restore
           };
-          
+
           Object.assign(chatRef.current.style, snappedPosition);
           chatRef.current.classList.add('snapped-chat');
-          
-          // Add minimize button
-          addMinimizeButton();
+          // Note: Minimize button is now rendered by React, no need to add dynamically
         }
-      }, 300); // Reduced delay since we're not animating
+      }, 300);
     }
-  }, [windowManager, isMobile, addMinimizeButton]); // Add addMinimizeButton dependency
+  }, [windowManager, isMobile]);
 
   // Load chat messages when chat is opened or current chat changes
   useEffect(() => {
     if (showChat) {
       console.log(`AiOrb useEffect: Loading messages for chat ID: ${currentChatId}`);
-      
+
       // Check if we have a preserved chat state from navigation
       const preservedChatState = sessionStorage.getItem('preservedChatState');
       if (preservedChatState) {
         try {
           const { messages: preservedMessages, chatId: preservedChatId } = JSON.parse(preservedChatState);
-          
+
           // Only restore if we have messages and a valid chat ID
           if (preservedMessages && preservedMessages.length > 0 && preservedChatId) {
             console.log(`Restoring preserved chat state with ${preservedMessages.length} messages`);
             setMessages(preservedMessages);
             setCurrentChat(preservedChatId);
             setCurrentChatId(preservedChatId);
-            
+
             // Clear the preserved state after restoring
             sessionStorage.removeItem('preservedChatState');
             return; // Skip loading messages since we restored from session
@@ -477,7 +539,7 @@ const AiOrb = () => {
           sessionStorage.removeItem('preservedChatState');
         }
       }
-      
+
       // If no preserved state, load messages normally
       const loadMessages = async () => {
         try {
@@ -485,10 +547,10 @@ const AiOrb = () => {
           const chatIdToLoad = currentChatId;
           console.log(`loadChatMessages: Loading messages for chat ID: ${chatIdToLoad}`);
           setIsLoading(true);
-          
+
           const chatMessages = await getChatMessages(chatIdToLoad);
           console.log(`loadChatMessages: Retrieved ${chatMessages.length} messages for ${chatIdToLoad}`);
-          
+
           if (chatMessages && chatMessages.length > 0) {
             // Update UI with messages
             const formattedMessages = chatMessages.map(msg => {
@@ -507,10 +569,10 @@ const AiOrb = () => {
                 };
               }
             });
-            
+
             console.log(`loadChatMessages: Setting ${formattedMessages.length} messages in UI for ${chatIdToLoad}`);
             setMessages(formattedMessages);
-            
+
             // Set the Gemini chat history from stored messages using the same chatId
             await setChatHistoryFromStored(chatMessages, chatIdToLoad);
             console.log(`loadChatMessages: Chat history set for chat ${chatIdToLoad}`);
@@ -527,7 +589,7 @@ const AiOrb = () => {
           console.error('Error loading chat messages:', error);
         } finally {
           setIsLoading(false);
-          
+
           // Final scroll to bottom
           setTimeout(() => {
             scrollToBottom();
@@ -537,81 +599,81 @@ const AiOrb = () => {
           if (inputRef.current) {
             setTimeout(() => {
               inputRef.current.focus();
-            }, 250); 
+            }, 250);
           }
         }
       };
-      
+
       loadMessages();
     }
   }, [showChat, currentChatId]); // Remove loadChatMessages from dependencies
-  
+
   // Show initial greeting after 3 seconds, but only if chat is not open
   useEffect(() => {
     if (!showChat) {
       const timer = setTimeout(() => {
         setInitialGreetingShown(true);
-        
+
         // Auto-hide greeting after 5 seconds
         const hideTimer = setTimeout(() => {
           setInitialGreetingShown(false);
         }, 5000);
-        
+
         return () => clearTimeout(hideTimer);
       }, 3000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [showChat]);
-  
+
   // Set drag constraints when chat window opens
   useEffect(() => {
     if (showChat && !isMobile) {
       const updateConstraints = () => {
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
-        
+
         setDragConstraints({
-          top: -windowHeight/2 + 50,
-          left: -windowWidth/2 + 50,
-          right: windowWidth/2 - 50,
-          bottom: windowHeight/2 - 50
+          top: -windowHeight / 2 + 50,
+          left: -windowWidth / 2 + 50,
+          right: windowWidth / 2 - 50,
+          bottom: windowHeight / 2 - 50
         });
       };
-      
+
       updateConstraints();
       window.addEventListener('resize', updateConstraints);
       return () => window.removeEventListener('resize', updateConstraints);
     }
   }, [showChat, isMobile]);
-  
+
   // Handle mobile navigation when chat is open
   useEffect(() => {
     if (isMobile && showChat) {
       // Get references to navigation elements
       const topBar = document.querySelector('.TopBar, .top-nav, header');
-      
+
       // Adjust top bar
       if (topBar) {
         topBar.style.zIndex = '1006'; // Keep top bar above chat window
       }
-      
+
       // Add class to body
       document.body.classList.add('chat-open');
-      
+
       // Focus on input when chat opens
       if (inputRef.current) {
         setTimeout(() => {
           inputRef.current.focus();
         }, 300);
       }
-      
+
       return () => {
         // Restore top bar z-index
         if (topBar) {
           topBar.style.zIndex = '1001';
         }
-        
+
         // Remove class from body
         document.body.classList.remove('chat-open');
       };
@@ -626,16 +688,16 @@ const AiOrb = () => {
       }, 100); // Small delay to ensure input is rendered after state updates
     }
   }, [showChat, isLoading]);
-  
+
   // Close chat when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       // Check if the click is outside the chat window and not on the orb itself
       // Don't close if in snapped mode
       if (
-        showChat && 
-        chatRef.current && 
-        !chatRef.current.contains(event.target) && 
+        showChat &&
+        chatRef.current &&
+        !chatRef.current.contains(event.target) &&
         !event.target.closest('.ai-orb-container') &&
         !(windowManager && windowManager.isAiSnapped)
       ) {
@@ -645,11 +707,11 @@ const AiOrb = () => {
         }
       }
     };
-    
+
     // Add event listener for both mouse and touch events
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
@@ -662,7 +724,7 @@ const AiOrb = () => {
       scrollToBottom();
     }
   }, [messages, showChat]);
-  
+
   // Additional effect to scroll to bottom when chat is opened
   useEffect(() => {
     if (showChat) {
@@ -684,10 +746,10 @@ const AiOrb = () => {
         });
       }
     };
-    
+
     updateOrbPosition();
     window.addEventListener('resize', updateOrbPosition);
-    
+
     return () => {
       window.removeEventListener('resize', updateOrbPosition);
     };
@@ -698,45 +760,45 @@ const AiOrb = () => {
     const addLinkEventListeners = () => {
       const links = document.querySelectorAll('.ai-link');
       console.log(`Found ${links.length} AI links to attach listeners to`);
-      
+
       links.forEach((link, index) => {
         // Remove existing listeners to prevent duplicates
         link.removeEventListener('click', handleLinkClick);
-        
+
         // For mobile, also try touch events
         if (isMobile) {
           link.removeEventListener('touchend', handleLinkClick);
         }
-        
+
         // Add click event listener
         link.addEventListener('click', handleLinkClick, { passive: false });
-        
+
         // For mobile, also add touch event as backup
         if (isMobile) {
           link.addEventListener('touchend', handleLinkClick, { passive: false });
         }
-        
+
         // Add the page and line information as a tooltip
         const page = link.getAttribute('data-page');
         const line = link.getAttribute('data-line');
-        
+
         console.log(`Link ${index}: page=${page}, line=${line}`);
-        
+
         if (page && line) {
           // Format the tooltip text
           let tooltipText = `${page.charAt(0).toUpperCase() + page.slice(1)}`;
-          
+
           if (line.includes('section:')) {
             tooltipText += ` • ${line.replace('section:', 'Section: ')}`;
           } else {
             tooltipText += ` • Line ${line}`;
           }
-          
+
           // Set tooltip attribute for accessibility
           link.setAttribute('title', tooltipText);
         }
       });
-      
+
       console.log(`Added event listeners to ${links.length} AI links (mobile: ${isMobile})`);
     };
 
@@ -750,7 +812,7 @@ const AiOrb = () => {
 
     // Add custom event listener
     document.addEventListener('ai-links-need-refresh', handleLinkRefresh);
-    
+
     if (showChat) {
       // Small delay to ensure DOM is updated
       setTimeout(() => {
@@ -762,7 +824,7 @@ const AiOrb = () => {
       document.removeEventListener('ai-links-need-refresh', handleLinkRefresh);
     };
   }, [messages, showChat, handleLinkClick, isMobile]); // Add isMobile as dependency
-  
+
   const handleOrbClick = () => {
     if (orbRef.current) {
       const rect = orbRef.current.getBoundingClientRect();
@@ -771,32 +833,32 @@ const AiOrb = () => {
         y: rect.top + rect.height / 2
       });
     }
-    
+
     // Toggle chat visibility and reset related states
     setShowChat(prevShowChat => !prevShowChat);
     setShowTooltip(false);
     setInitialGreetingShown(false);
-    
+
     // Always attempt to focus the input field when the orb is clicked and chat is open
     if (inputRef.current) {
       inputRef.current.focus();
     }
   };
-  
+
   const handleChatClose = useCallback(() => {
-    // Don't close chat if in snapped mode
+    // If in snapped mode, exit snapped mode first, then close
     if (windowManager && windowManager.isAiSnapped) {
-      return;
+      exitSnappedMode();
     }
-    
+
     setShowChat(false);
-  }, [windowManager]);
+  }, [windowManager, exitSnappedMode]);
 
   // Improved scroll to bottom function
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       try {
-        messagesEndRef.current.scrollIntoView({ 
+        messagesEndRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'end'
         });
@@ -804,7 +866,7 @@ const AiOrb = () => {
         console.error('Error scrolling to bottom:', error);
         // Fallback method if smooth scrolling fails
         if (messagesEndRef.current.parentElement) {
-          messagesEndRef.current.parentElement.scrollTop = 
+          messagesEndRef.current.parentElement.scrollTop =
             messagesEndRef.current.parentElement.scrollHeight;
         }
       }
@@ -819,18 +881,18 @@ const AiOrb = () => {
   // Handle selecting a chat from history
   const onSelectHistoryChat = async (selectedChatId) => {
     console.log(`AiOrb: History selection callback with chat ID ${selectedChatId}`);
-    
+
     // This ensures we have the latest chat ID before proceeding
     if (!selectedChatId || typeof selectedChatId !== 'string' || selectedChatId.trim() === '') {
       console.error('Invalid chat ID provided to onSelectHistoryChat:', selectedChatId);
       return;
     }
-    
+
     // First close the history panel with a slight delay to avoid UI glitches
     setTimeout(() => {
       setShowChatHistory(false);
     }, 100);
-    
+
     // Then handle the chat selection
     await handleSelectChat(selectedChatId);
   };
@@ -841,17 +903,17 @@ const AiOrb = () => {
     setCurrentChatId(newChatId);
     setCurrentChat(newChatId);
     setMessages([]);
-    
+
     // Initialize the chat with website content
     setIsLoading(true);
     try {
       const initialResponse = await initializeNewChat(newChatId);
-      
+
       // Save the AI's initial greeting to the database
       if (initialResponse) {
         // Save the AI response as the first message
         await saveChatMessage(initialResponse, false, newChatId);
-        
+
         // Update the UI with the initial message
         setMessages([{ text: initialResponse, isUser: false }]);
       }
@@ -861,7 +923,7 @@ const AiOrb = () => {
     } finally {
       setIsLoading(false);
     }
-    
+
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -870,18 +932,18 @@ const AiOrb = () => {
   // Handle selecting a chat from history
   const handleSelectChat = async (chatId) => {
     console.log(`AiOrb: Selecting chat with ID ${chatId}`);
-    
+
     // Set the current chat ID in both local state and localStorage
     setCurrentChat(chatId);
     setCurrentChatId(chatId); // This is the utility function for localStorage
     setShowChat(true); // Ensure chat window is open
     setShowChatHistory(false); // Close the history panel
-    
+
     // Clear current messages and set loading state.
     // The useEffect hook listening to currentChatId and showChat will handle loading.
-    setMessages([]); 
-    setIsLoading(true); 
-    
+    setMessages([]);
+    setIsLoading(true);
+
     // The actual loading (getChatMessages, setChatHistoryFromStored, initializeNewChat if needed)
     // will now be handled by the useEffect hook that calls loadChatMessages
     // when currentChatId or showChat changes.
@@ -895,62 +957,62 @@ const AiOrb = () => {
   // Handle sending a message
   const handleSendMessage = async () => {
     if (inputValue.trim() === '') return;
-    
+
     const userMessage = inputValue.trim();
     setInputValue('');
-    
+
     // Add user message to state
     setMessages(prevMessages => [...prevMessages, { text: userMessage, isUser: true }]);
-    
+
     // Save user message to database
     await saveChatMessage(userMessage, true, currentChatId);
-    
+
     // Scroll to bottom after user message is added
     setTimeout(() => {
       scrollToBottom();
     }, 100);
-    
+
     // Set loading state
     setIsLoading(true);
-    
+
     try {
       // Get AI response
       const aiResponse = await generateResponse(userMessage, currentChatId);
-      
+
       // Parse links in the AI response
       const { parsedResponse, links } = parseLinks(aiResponse);
-      
+
       // Add AI response to state with parsed links
       setMessages(prevMessages => [
-        ...prevMessages, 
-        { 
-          text: parsedResponse, 
+        ...prevMessages,
+        {
+          text: parsedResponse,
           isUser: false,
           hasLinks: links.length > 0
         }
       ]);
-      
+
       // Save original AI response to database (with link markup)
       await saveChatMessage(aiResponse, false, currentChatId);
-      
+
       // Scroll to bottom after AI response is added
       setTimeout(() => {
         scrollToBottom();
       }, 100);
     } catch (error) {
       console.error('Error getting AI response:', error);
-      
+
       // Add error message
       const errorMessage = 'Sorry, I encountered an error. Please try again.';
       setMessages(prevMessages => [...prevMessages, { text: errorMessage, isUser: false }]);
-      
+
       // Save error message to database
       await saveChatMessage(errorMessage, false, currentChatId);
     } finally {
       setIsLoading(false);
-      
 
-      
+
+
       // Final scroll to bottom
       setTimeout(() => {
         scrollToBottom();
@@ -1009,7 +1071,7 @@ const AiOrb = () => {
   useEffect(() => {
     const initializeChat = async () => {
       const currentId = localStorage.getItem('currentChatId');
-      
+
       if (!currentId) {
         console.log('AiOrb: No current chat ID found, initializing a new chat');
         await startNewChat();
@@ -1018,29 +1080,39 @@ const AiOrb = () => {
         setCurrentChat(currentId);
       }
     };
-    
+
     initializeChat();
   }, []); // Run only once on component mount
 
   return (
     <>
-      {/* Show the orb always */}
-      <div 
+      {/* Show the orb always - with accessibility attributes for mobile */}
+      <div
         className={`ai-orb-container ${isMobile ? 'mobile-orb' : ''} ${windowManager && windowManager.isFullscreen ? 'fullscreen-mode' : ''}`}
         ref={orbRef}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={handleOrbClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleOrbClick(e);
+          }
+        }}
+        role="button"
+        aria-label={showChat ? "Close AI Assistant" : "Open AI Assistant"}
+        aria-expanded={showChat}
+        tabIndex={0}
       >
         <div className="ai-orb">
           <div className="orb-inner"></div>
           <div className="orb-glow"></div>
           <div className="orb-particles"></div>
         </div>
-        
+
         <AnimatePresence>
           {(initialGreetingShown || showTooltip) && !showChat && (
-            <motion.div 
+            <motion.div
               className={`ai-greeting ${initialGreetingShown && !showTooltip ? 'initial' : 'tooltip'}`}
               initial={{ opacity: 0, scale: 0.8, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1054,10 +1126,10 @@ const AiOrb = () => {
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Transparent area that will close the chat when clicked */}
-      <div 
-        ref={constraintsRef} 
+      <div
+        ref={constraintsRef}
         className={`drag-area ${showChat ? 'chat-open' : ''} ${windowManager && windowManager.isAiSnapped ? 'snapped' : ''}`}
         style={{ background: 'transparent', pointerEvents: (windowManager && windowManager.isAiSnapped) ? 'none' : (showChat ? 'auto' : 'none') }}
         /* The 'snapped' class in AiOrb.css also sets pointer-events: none !important, which should take precedence */
@@ -1070,25 +1142,63 @@ const AiOrb = () => {
       >
         <AnimatePresence>
           {showChat && (
-            <motion.div 
+            <motion.div
               className="ai-chat-window"
               ref={chatRef}
               variants={chatVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              drag={!isMobile && !(windowManager && windowManager.isAiSnapped)}
+              drag={!isMobile}
+              dragControls={dragControls}
+              dragListener={false}
               dragConstraints={dragConstraints}
               dragElastic={0.1}
               dragMomentum={false}
+              onDragEnd={(e, info) => {
+                // If dragged significantly when snapped, exit snap mode
+                if (windowManager?.isAiSnapped) {
+                  const dragDistance = Math.abs(info.offset.x) + Math.abs(info.offset.y);
+                  if (dragDistance > 50) {
+                    console.log('AI Chat: Drag-to-exit triggered, distance:', dragDistance);
+                    exitSnappedMode();
+                  }
+                }
+              }}
               onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling to the drag area
             >
-              <div className="ai-chat-header">
+              <div
+                className="ai-chat-header"
+                onPointerDown={(e) => {
+                  // Allow drag on desktop (including when snapped for drag-to-exit)
+                  if (!isMobile) {
+                    dragControls.start(e);
+                  }
+                }}
+                style={{
+                  cursor: !isMobile ? 'grab' : 'default'
+                }}
+              >
                 <div className="ai-chat-orb">
                   <div className="orb-inner-small"></div>
                 </div>
                 <h3>Curtis' AI Assistant</h3>
                 <div className="ai-chat-actions">
+                  {/* Exit split view button - only shown when snapped */}
+                  {windowManager?.isAiSnapped && (
+                    <button
+                      className="chat-minimize-btn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('EXIT SPLIT VIEW: React button clicked');
+                        exitSnappedMode();
+                      }}
+                      title="Exit split view"
+                    >
+                      <i className="fas fa-compress"></i>
+                    </button>
+                  )}
                   <button className="new-chat-btn" onClick={startNewChat} title="Start a new chat">
                     <i className="fas fa-plus"></i>
                   </button>
@@ -1100,19 +1210,19 @@ const AiOrb = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="ai-chat-content">
                 {messages.length === 0 ? (
                   <p className="ai-intro-message">
-                    Hi there! I'm Curtis' AI assistant. I can help you learn more about Curtis, 
-                    his skills, projects, and experience. Feel free to ask me anything about his 
+                    Hi there! I'm Curtis' AI assistant. I can help you learn more about Curtis,
+                    his skills, projects, and experience. Feel free to ask me anything about his
                     work or how he might be able to help with your development needs.
                   </p>
                 ) : (
                   <div className="ai-messages">
                     {messages.map((message, index) => (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className={`ai-message ${message.isUser ? 'user' : 'assistant'}`}
                       >
                         <div className="message-avatar">
@@ -1128,10 +1238,10 @@ const AiOrb = () => {
                           {message.isUser ? (
                             <p>{message.text}</p>
                           ) : (
-                            <div 
-                              className="ai-response"
-                              dangerouslySetInnerHTML={{ __html: message.text }}
-                            ></div>
+                            <AiResponseContent
+                              html={message.text}
+                              onLinkClick={handleLinkClickInternal}
+                            />
                           )}
                         </div>
                       </div>
@@ -1139,7 +1249,7 @@ const AiOrb = () => {
                     <div ref={messagesEndRef} />
                   </div>
                 )}
-                
+
                 {isLoading && (
                   <div className="ai-typing">
                     <div className="ai-avatar-orb">
@@ -1153,7 +1263,7 @@ const AiOrb = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="ai-chat-input">
                 <textarea
                   ref={inputRef}
@@ -1163,8 +1273,8 @@ const AiOrb = () => {
                   placeholder="Ask me anything about Curtis..."
                   disabled={isLoading}
                 />
-                <button 
-                  className="send-message" 
+                <button
+                  className="send-message"
                   onClick={handleSendMessage}
                   disabled={inputValue.trim() === '' || isLoading}
                 >
@@ -1175,7 +1285,7 @@ const AiOrb = () => {
           )}
         </AnimatePresence>
       </div>
-      
+
       <ChatHistory
         isOpen={showChatHistory}
         onClose={toggleChatHistory}
@@ -1186,18 +1296,18 @@ const AiOrb = () => {
 };
 
 export default AiOrb;    // Debug function to test AI link behavior
-    window.debugAiLinks = () => {
-      const links = document.querySelectorAll('.ai-link');
-      console.log(`Found ${links.length} AI links`);
-      links.forEach((link, index) => {
-        const page = link.getAttribute('data-page');
-        const line = link.getAttribute('data-line');
-        console.log(`Link ${index}: page=${page}, line=${line}, text="${link.textContent}"`);
-        
-        // Test if event listeners are attached
-        const events = window.getEventListeners ? window.getEventListeners(link) : 'DevTools required';
-        console.log(`Events on link ${index}:`, events);
-      });
-    };
-    
-    console.log('Debug functions available: window.debugAiLinks()');
+window.debugAiLinks = () => {
+  const links = document.querySelectorAll('.ai-link');
+  console.log(`Found ${links.length} AI links`);
+  links.forEach((link, index) => {
+    const page = link.getAttribute('data-page');
+    const line = link.getAttribute('data-line');
+    console.log(`Link ${index}: page=${page}, line=${line}, text="${link.textContent}"`);
+
+    // Test if event listeners are attached
+    const events = window.getEventListeners ? window.getEventListeners(link) : 'DevTools required';
+    console.log(`Events on link ${index}:`, events);
+  });
+};
+
+console.log('Debug functions available: window.debugAiLinks()');

@@ -11,7 +11,7 @@ if (!API_KEY) {
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Get the Gemini model
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 // Store chat histories for each chat ID
 const chatHistories = new Map();
@@ -23,7 +23,7 @@ let pageContents = {};
 // Load website content from webcont.txt
 export const loadWebsiteContent = async () => {
   if (websiteContent) return websiteContent;
-  
+
   try {
     // Fix the path to access the file correctly in the public directory
     const response = await fetch('/webcont.txt');
@@ -41,20 +41,20 @@ export const loadWebsiteContent = async () => {
 // Load content for a specific page
 export const loadPageContent = async (pageName) => {
   if (pageContents[pageName]) return pageContents[pageName];
-  
+
   try {
     // First try to load from src directory
     let response = await fetch(`/src/${pageName}_content.txt`);
-    
+
     // If that fails, try the root directory
     if (!response.ok) {
       response = await fetch(`/${pageName}_content.txt`);
     }
-    
+
     if (!response.ok) {
       throw new Error(`Failed to load ${pageName} content: ${response.status}`);
     }
-    
+
     const content = await response.text();
     pageContents[pageName] = content;
     return content;
@@ -67,18 +67,18 @@ export const loadPageContent = async (pageName) => {
 // Load all available page contents
 export const loadAllPageContents = async () => {
   const pages = ['home', 'about', 'skills', 'projects', 'contact', 'resume', 'aiorb'];
-  
+
   try {
     await Promise.all(pages.map(async (page) => {
       try {
         // First try to load from src directory
         let content = await fetch(`/src/${page}_content.txt`);
-        
+
         // If that fails, try the root directory
         if (!content.ok) {
           content = await fetch(`/${page}_content.txt`);
         }
-        
+
         if (content.ok) {
           pageContents[page] = await content.text();
         }
@@ -109,7 +109,7 @@ export const initializeNewChat = async (chatId = getCurrentChatId()) => {
     };
 
     const aiGreeting = "Hi there! I'm Curtis' AI assistant. I can help you learn more about Curtis, his skills, projects, and experience. Feel free to ask me anything about his work or how he might be able to help with your development needs.";
-    
+
     const aiResponse = {
       role: 'model',
       parts: [{ text: aiGreeting }],
@@ -117,7 +117,7 @@ export const initializeNewChat = async (chatId = getCurrentChatId()) => {
 
     // Set the chat history with the system context and initial AI greeting
     chatHistories.set(chatId, [systemPrompt, aiResponse]);
-    
+
     return aiGreeting;
   } catch (error) {
     console.error('Error initializing chat with website content:', error);
@@ -135,11 +135,12 @@ export const findRelevantPages = async (userMessage, chatId = getCurrentChatId()
 
     // Get chat history for this chat
     const chatHistory = chatHistories.get(chatId);
-    
+
     // Create a prompt to ask the AI which pages are relevant
     const relevancePrompt = {
       role: 'user',
-      parts: [{ text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
+      parts: [{
+        text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
 Based on the user's query: "${userMessage}", identify which pages from the website would be most relevant to answer their question.
 Return your response in the following JSON format only:
 {
@@ -168,7 +169,7 @@ Return up to 3 most relevant pages, ordered by relevance.
     // Generate response to find relevant pages
     const relevanceResult = await relevanceChat.sendMessage(userMessage);
     const relevanceResponse = relevanceResult.response.text();
-    
+
     // Parse the JSON response
     try {
       // Extract JSON from the response (in case there's any extra text)
@@ -204,12 +205,12 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
 
     // Get chat history for this chat
     const chatHistory = chatHistories.get(chatId);
-    
+
     // Check if the first message is the system context
     // If not, we need to reinitialize with the system context
-    const hasSystemContext = chatHistory.length > 0 && 
-                            chatHistory[0].parts[0].text.includes('[SYSTEM CONTEXT');
-    
+    const hasSystemContext = chatHistory.length > 0 &&
+      chatHistory[0].parts[0].text.includes('[SYSTEM CONTEXT');
+
     if (!hasSystemContext) {
       console.log('Chat history missing system context, reinitializing...');
       await initializeNewChat(chatId);
@@ -219,7 +220,7 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
     console.log('Finding relevant pages for query...');
     const relevantPages = await findRelevantPages(userMessage, chatId);
     console.log('Relevant pages:', relevantPages);
-    
+
     // Step 2: Load content from relevant pages
     let pageContexts = '';
     for (const pageInfo of relevantPages) {
@@ -228,7 +229,7 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
         const content = await fetch(`/src/${pageName}_content.txt`)
           .then(res => res.ok ? res.text() : null)
           .catch(() => null);
-        
+
         if (content) {
           pageContexts += `\n\n## ${pageName.toUpperCase()} PAGE CONTENT:\n${content}`;
         }
@@ -236,11 +237,12 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
         console.error(`Error loading content for ${pageInfo.page}:`, error);
       }
     }
-    
+
     // Step 3: Create a prompt with the relevant page contents
     const contextPrompt = {
       role: 'user',
-      parts: [{ text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
+      parts: [{
+        text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
 I'm going to provide you with specific content from the pages you identified as relevant to the user's query.
 Use this information to provide a detailed and accurate response.
 
@@ -302,6 +304,14 @@ Now, please answer the user's query: "${userMessage}"
     return response;
   } catch (error) {
     console.error('Error generating response from Gemini API:', error);
+    // Provide more specific error messages
+    if (error.message?.includes('429') || error.message?.includes('quota')) {
+      return 'The AI service has reached its daily limit. Please try again later or contact the site owner to upgrade the API plan.';
+    } else if (error.message?.includes('401') || error.message?.includes('API key')) {
+      return 'There is an issue with the AI configuration. Please contact the site owner.';
+    } else if (error.message?.includes('404')) {
+      return 'The AI model is temporarily unavailable. Please try again later.';
+    }
     return 'Sorry, I encountered an error processing your request. Please try again.';
   }
 };
@@ -315,28 +325,28 @@ export const resetChatHistory = (chatId = getCurrentChatId()) => {
 export const setChatHistoryFromStored = async (storedMessages, chatId = getCurrentChatId()) => {
   try {
     console.log(`setChatHistoryFromStored: Setting chat history for chat ${chatId} with ${storedMessages.length} messages`);
-    
+
     // Get website content for system context
     const content = await loadWebsiteContent();
-    
+
     // Create system prompt with website content
     const systemPrompt = {
       role: 'user',
       parts: [{ text: `[SYSTEM CONTEXT - NOT VISIBLE TO USER]\nThis is the content map of Arnold Curtis's portfolio website. Use this information to answer user questions accurately about Arnold, his skills, projects, experience, and other details contained here:\n\n${content}\n\nYou are an AI assistant embedded in Arnold Curtis's portfolio website. Your purpose is to help visitors learn about Arnold's background, skills, projects, and experience. Be helpful, friendly, and knowledgeable about Arnold based on the information provided. Do not mention that you were given this context information.\n[END OF SYSTEM CONTEXT]` }],
     };
-    
+
     // Map stored messages to chat history format
     const history = storedMessages.map(msg => ({
       role: msg.isUser ? 'user' : 'model',
       parts: [{ text: msg.message }]
     }));
-    
+
     // Add system prompt at the beginning of history
     const fullHistory = [systemPrompt, ...history];
-    
+
     // Set the chat history with system context
     chatHistories.set(chatId, fullHistory);
-    
+
     console.log(`setChatHistoryFromStored: Successfully set chat history for chat ${chatId} with ${history.length} messages plus system context`);
     return true;
   } catch (error) {
@@ -364,16 +374,16 @@ export const parseLinks = (response) => {
   const links = [];
   let match;
   let parsedResponse = response;
-  
+
   // Extract all links
   while ((match = linkRegex.exec(response)) !== null) {
     const page = match[1].toLowerCase();
     const identifier = match[2]; // Can be a line number, range, or section identifier
     const text = match[3];
-    
+
     // Validate the identifier
     let validIdentifier = identifier;
-    
+
     // Check if it's a line number and validate it
     if (!identifier.includes('section:')) {
       // For line numbers or ranges
@@ -393,7 +403,7 @@ export const parseLinks = (response) => {
         }
       }
     }
-    
+
     links.push({
       page,
       identifier: validIdentifier,
@@ -401,12 +411,12 @@ export const parseLinks = (response) => {
       fullMatch: match[0]
     });
   }
-  
+
   // Replace link syntax with styled links
   parsedResponse = response.replace(linkRegex, (match, page, identifier, text) => {
     // Validate identifier before creating the link
     let validIdentifier = identifier;
-    
+
     // Check if it's a line number and validate it
     if (!identifier.includes('section:')) {
       // For line numbers or ranges
@@ -424,10 +434,10 @@ export const parseLinks = (response) => {
         }
       }
     }
-    
+
     return `<span class="ai-link" data-page="${page.toLowerCase()}" data-line="${validIdentifier}">${text}</span>`;
   });
-  
+
   return { parsedResponse, links };
 };
 

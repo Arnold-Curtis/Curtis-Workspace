@@ -162,6 +162,14 @@ code {
         padding: 16px 20px;
         width: 100%;
         min-width: unset;
+        min-height: 44px; /* Touch target minimum */
+        -webkit-tap-highlight-color: rgba(100, 255, 218, 0.2);
+        transition: transform 0.1s ease, background-color 0.2s ease;
+    }
+
+    .about-button:active, .skills-button:active {
+        transform: scale(0.98);
+        background-color: rgba(38, 54, 72, 0.6);
     }
 }
 

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
-// Removed SidebarIcons import
-import DraggableWindow from './components/DraggableWindow';
-import MobileWindowWrapper from './components/MobileWindowWrapper';
 import MobileNav from './components/MobileNav';
 import { WindowManagerProvider, useWindowManager } from './components/WindowManager';
+import WindowRenderer from './components/WindowRenderer';
 import Taskbar from './components/Taskbar';
+import StartMenu from './components/StartMenu';
+import SnapPreviewOverlay from './components/SnapPreviewOverlay';
 import MobileOrientationOverlay from './components/MobileOrientationOverlay';
 import AiOrb from './components/AiOrb';
 import Home from './pages/Home';
@@ -33,67 +33,35 @@ const HighlightedGuestbook = withHighlighting(Guestbook);
 const HighlightedBookCall = withHighlighting(BookCall);
 const HighlightedAdminMessages = withHighlighting(AdminMessages);
 
-// Wrapper component for pages that should use DraggableWindow
-const WindowWrapper = ({ children, title, icon, windowId }) => {
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // Check if we're on a mobile device
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkIfMobile);
-    };
-  }, []);
-  
-  // For mobile devices, use a different wrapper
-  if (isMobile) {
-    return (
-      <div className="mobile-full-wrapper">
-        <MobileWindowWrapper title={title} icon={icon}>
-          {children}
-        </MobileWindowWrapper>
-      </div>
-    );
-  }
-  
-  // For desktop, use the regular draggable window
+// Desktop home - ALWAYS renders the Home component as the background (like Windows desktop)
+const DesktopBackground = () => {
   return (
-    <div className="window-wrapper">
-      <DraggableWindow title={title} icon={icon} windowId={windowId}>
-        {children}
-      </DraggableWindow>
+    <div className="desktop-background">
+      <HighlightedHome />
     </div>
   );
 };
 
-// Removed ContentWrapper as it's no longer used
+// WindowWrapper is no longer needed - using WindowRenderer for desktop and Routes for mobile
 
 // The main application with routes
 function AppWithRoutes() {
-  // Use the window manager to access window state
-  const { windows } = useWindowManager();
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Check if we're on a mobile device
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkIfMobile();
     window.addEventListener('resize', checkIfMobile);
-    
+
     return () => {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
-  
+
   return (
     <div className="App">
       <MobileOrientationOverlay />
@@ -103,73 +71,38 @@ function AppWithRoutes() {
         {/* Removed SidebarIcons component */}
         {!isMobile && <Sidebar />}
         <div className="content">
-          <Routes>
-            <Route path="/" element={<HighlightedHome />} />
-            <Route 
-              path="/about" 
-              element={
-                <WindowWrapper title="About.js" icon="fas fa-file-code" windowId="about">
-                  <HighlightedAbout />
-                </WindowWrapper>
-              } 
-            />
-            <Route 
-              path="/projects" 
-              element={
-                <WindowWrapper title="Projects.js" icon="fas fa-file-code" windowId="projects">
-                  <HighlightedProjects />
-                </WindowWrapper>
-              } 
-            />
-            <Route 
-              path="/skills" 
-              element={
-                <WindowWrapper title="Skills.js" icon="fas fa-file-code" windowId="skills">
-                  <Skills />
-                </WindowWrapper>
-              } 
-            />
-            <Route 
-              path="/resume" 
-              element={
-                <WindowWrapper title="Resume.js" icon="fas fa-file-alt" windowId="resume">
-                  <HighlightedResume />
-                </WindowWrapper>
-              } 
-            />
-            <Route 
-              path="/contact" 
-              element={
-                <WindowWrapper title="Contact.js" icon="fas fa-file-code" windowId="contact">
-                  <HighlightedContact />
-                </WindowWrapper>
-              } 
-            />
-            <Route
-              path="/guestbook"
-              element={
-                <WindowWrapper title="Guestbook.js" icon="fas fa-comments" windowId="guestbook">
-                  <HighlightedGuestbook />
-                </WindowWrapper>
-              }
-            />
-            <Route 
-              path="/book-call" 
-              element={
-                <WindowWrapper title="BookCall.js" icon="fas fa-phone-alt" windowId="book-call">
-                  <HighlightedBookCall />
-                </WindowWrapper>
-              } 
-            />
-            {/* Hidden admin route with custom URL */}
-            <Route path="/admin10@10" element={<HighlightedAdminMessages />} />
-          </Routes>
+          {/* Snap preview overlay for window snapping */}
+          {!isMobile && <SnapPreviewOverlay />}
+
+          {/* Desktop background - Home component renders as background, always visible */}
+          {!isMobile && <DesktopBackground />}
+
+          {/* WindowRenderer renders all open windows from state - enables multi-window stacking */}
+          {!isMobile && <WindowRenderer />}
+
+          {/* Routes now only for URL state - mobile will still use routes directly */}
+          {isMobile && (
+            <Routes>
+              <Route path="/" element={<HighlightedHome />} />
+              <Route path="/about" element={<HighlightedAbout />} />
+              <Route path="/projects" element={<HighlightedProjects />} />
+              <Route path="/skills" element={<Skills />} />
+              <Route path="/resume" element={<HighlightedResume />} />
+              <Route path="/contact" element={<HighlightedContact />} />
+              <Route path="/guestbook" element={<HighlightedGuestbook />} />
+              <Route path="/book-call" element={<HighlightedBookCall />} />
+              <Route path="/admin10@10" element={<HighlightedAdminMessages />} />
+            </Routes>
+          )}
         </div>
       </div>
-      
-      {/* Only render taskbar if there are windows open and not on mobile */}
-      {windows && windows.length > 0 && !isMobile && <Taskbar />}
-      
+
+      {/* Always render taskbar on desktop (even with no windows) */}
+      {!isMobile && <Taskbar />}
+
+      {/* Start Menu */}
+      {!isMobile && <StartMenu />}
+
       {/* Render mobile nav on mobile devices */}
       {isMobile && <MobileNav />}
     </div>

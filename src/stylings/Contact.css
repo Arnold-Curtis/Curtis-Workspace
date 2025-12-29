@@ -1028,26 +1028,35 @@ textarea.input-field {
   .contact-page-container {
     padding-bottom: 60px; /* Make room for mobile nav */
     overflow-y: auto !important; /* Ensure content is fully visible */
+    overflow-x: hidden !important; /* Prevent horizontal scroll */
     height: auto;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
   }
   
   /* Make the contact form more mobile-friendly */
   .contact-form-wrapper {
     flex-direction: column;
     padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   /* Adjust the contact card layout for better readability */
   .contact-info-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+    width: 100%;
   }
   
   /* Ensure form inputs are easier to tap */
   .input-field {
     font-size: 16px; /* Prevent zoom on mobile when focusing inputs */
     padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   /* Make submit button more prominent */
@@ -1059,20 +1068,33 @@ textarea.input-field {
   
   .contact-content {
     overflow: visible; /* Allow content to flow naturally */
+    overflow-x: hidden; /* But prevent horizontal scroll */
     height: auto;
+    width: 100%;
   }
   
   .contact-main {
     overflow: visible; /* Allow content to determine the height */
+    overflow-x: hidden;
     height: auto;
+    padding: 10px 15px;
     padding-bottom: 80px; /* Add more bottom padding for mobile */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Hide code line numbers on mobile to prevent horizontal issues */
+  .code-line-numbers {
+    display: none;
   }
   
   /* Fix issues with scrolling containers */
   body, #root, .App {
     overflow-y: auto;
+    overflow-x: hidden;
     height: auto;
     min-height: 100vh;
+    max-width: 100vw;
   }
 }
 

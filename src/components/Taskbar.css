@@ -1,59 +1,235 @@
+/* ===================================
+   Windows 11 Style Taskbar
+   =================================== */
+
 .taskbar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40px;
-  background-color: #1e1e1e;
-  border-top: 1px solid #3c3c3c;
+  height: 48px;
+
+  /* Glass-morphism effect */
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
+  /* Layout */
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  justify-content: space-between;
+  padding: 0 12px;
+
+  /* Border & Shadow */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
+
   z-index: 1500;
 }
 
-.taskbar-item {
-  height: 30px;
-  min-width: 160px;
-  max-width: 200px;
-  background-color: #252526;
-  margin-right: 6px;
-  border-radius: 4px;
+/* ===================================
+   Taskbar Left (Start Button)
+   =================================== */
+
+.taskbar-left {
   display: flex;
   align-items: center;
-  padding: 0 12px;
+}
+
+.start-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  border: 1px solid #3c3c3c;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease;
-  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.start-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.start-button:active,
+.start-button.active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.start-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.start-button:hover .start-icon {
+  transform: scale(1.05);
+}
+
+/* ===================================
+   Taskbar Center (Window Icons)
+   =================================== */
+
+.taskbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.taskbar-item {
+  width: 44px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.15s ease;
 }
 
 .taskbar-item:hover {
-  background-color: #2d2d2d;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.taskbar-item:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0.95);
 }
 
 .taskbar-item.active {
-  background-color: #37373d;
-  border-bottom: 2px solid #007acc;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.taskbar-item.minimized {
+.taskbar-item-icon {
+  font-size: 18px;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.taskbar-item:hover .taskbar-item-icon {
+  transform: scale(1.1);
+}
+
+.taskbar-item.minimized .taskbar-item-icon {
   opacity: 0.7;
 }
 
-.taskbar-icon {
-  margin-right: 8px;
-  color: #519aba;
-  font-size: 14px;
+/* ===================================
+   Taskbar Indicator (Open/Minimized)
+   =================================== */
+
+.taskbar-indicator {
+  position: absolute;
+  bottom: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: #60cdff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.taskbar-title {
-  color: #cccccc;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Open window - larger indicator */
+.taskbar-indicator.open {
+  width: 16px;
+  opacity: 1;
+}
+
+/* Active window - brightest indicator */
+.taskbar-indicator.open.active {
+  width: 20px;
+  background: #60cdff;
+  box-shadow: 0 0 8px rgba(96, 205, 255, 0.5);
+}
+
+/* Minimized window - smaller indicator */
+.taskbar-indicator.minimized {
+  width: 6px;
+  opacity: 0.6;
+}
+
+/* ===================================
+   Taskbar Right (Show Desktop)
+   =================================== */
+
+.taskbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.show-desktop-button {
+  width: 16px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 8px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.show-desktop-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.show-desktop-button.active {
+  background: rgba(96, 205, 255, 0.3);
+}
+
+.show-desktop-line {
+  width: 2px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.show-desktop-button:hover .show-desktop-line {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* ===================================
+   Hover Animation for Items
+   =================================== */
+
+.taskbar-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.taskbar-item:hover::before {
+  opacity: 1;
+}
+
+/* ===================================
+   Mobile - Hide Taskbar
+   =================================== */
+
+@media (max-width: 768px) {
+  .taskbar {
+    display: none;
+  }
 }

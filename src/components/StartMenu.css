@@ -1,0 +1,219 @@
+/* ===================================
+   Start Menu - Windows 11 Style
+   =================================== */
+
+/* Overlay Container */
+.start-menu-overlay {
+    position: fixed;
+    bottom: 58px;
+    /* Above taskbar (48px + 10px gap) */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 2000;
+    pointer-events: none;
+}
+
+/* Main Menu Container */
+.start-menu {
+    width: 600px;
+    max-width: calc(100vw - 40px);
+    background: rgba(32, 32, 32, 0.95);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    overflow: hidden;
+    pointer-events: auto;
+
+    /* Slide up animation */
+    animation: startMenuSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes startMenuSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.start-menu-header {
+    padding: 20px 24px 12px;
+}
+
+.start-menu-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+/* Search Bar */
+.start-menu-search {
+    margin: 0 16px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.start-menu-search:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-icon {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Section */
+.start-menu-section {
+    padding: 0 16px 16px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 8px 12px;
+}
+
+.section-header span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Apps Grid - 4 columns */
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+
+/* App Item */
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.app-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.app-item:active {
+    background: rgba(255, 255, 255, 0.05);
+    transform: scale(0.97);
+}
+
+.app-item.current {
+    background: rgba(96, 205, 255, 0.15);
+}
+
+.app-item.current:hover {
+    background: rgba(96, 205, 255, 0.2);
+}
+
+/* App Icon Wrapper */
+.app-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    transition: transform 0.2s ease;
+}
+
+.app-item:hover .app-icon-wrapper {
+    transform: scale(1.05);
+}
+
+.app-icon {
+    font-size: 22px;
+}
+
+/* App Title */
+.app-title {
+    font-size: 11px;
+    color: #ffffff;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Footer */
+.start-menu-footer {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(96, 205, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #60cdff;
+    font-size: 14px;
+}
+
+.user-name {
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+    .start-menu-overlay {
+        display: none;
+    }
+}

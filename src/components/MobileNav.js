@@ -16,16 +16,17 @@ const MobileNav = () => {
   ];
   
   return (
-    <nav className="mobile-nav">
+    <nav className="mobile-nav" role="navigation" aria-label="Main navigation">
       {navItems.map((item) => (
         <Link 
           key={item.path}
           to={item.path} 
           className={`mobile-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+          aria-current={location.pathname === item.path ? 'page' : undefined}
         >
-          <i className={item.icon}></i>
+          <i className={item.icon} aria-hidden="true"></i>
           <span className="mobile-nav-label">{item.label}</span>
-          {location.pathname === item.path && <div className="mobile-nav-highlight"></div>}
+          {location.pathname === item.path && <div className="mobile-nav-highlight" aria-hidden="true"></div>}
         </Link>
       ))}
     </nav>

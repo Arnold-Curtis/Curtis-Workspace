@@ -1,12 +1,136 @@
+/* ===================================
+   Mobile-First CSS Variables
+   =================================== */
+:root {
+  /* Mobile breakpoints (for reference in JS) */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 920px;
+  --breakpoint-xl: 1024px;
+
+  /* Touch target sizes (Apple: 44px, Google: 48px) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+
+  /* Mobile spacing */
+  --mobile-padding-xs: 4px;
+  --mobile-padding-sm: 8px;
+  --mobile-padding-md: 16px;
+  --mobile-padding-lg: 24px;
+  --mobile-gap: 12px;
+  --mobile-border-radius: 8px;
+
+  /* Mobile font sizes */
+  --mobile-font-input: 16px;
+  /* Prevents iOS zoom on focus */
+  --mobile-font-label: 14px;
+  --mobile-font-small: 12px;
+
+  /* Safe area insets (for notched devices) */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* Mobile navigation dimensions */
+  --mobile-nav-height: 60px;
+  --mobile-nav-height-safe: calc(60px + var(--safe-area-bottom));
+  --mobile-top-bar-height: 50px;
+  --mobile-top-bar-height-safe: calc(50px + var(--safe-area-top));
+
+  /* Colors */
+  --color-background: #0a192f;
+  --color-background-dark: #1e1e1e;
+  --color-accent: #61dafb;
+  --color-accent-hover: rgba(97, 218, 251, 0.2);
+}
+
 /* Reset default margin and padding */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
+  max-width: 100vw;
+  /* Extra overflow prevention */
   box-sizing: border-box;
-  background-color: #0a192f; /* Set the purple background color */
+  background-color: #0a192f;
+  /* Set the purple background color */
+}
+
+/* Ensure all elements use border-box */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ===================================
+   Global Mobile Touch Target Sizes
+   =================================== */
+@media (max-width: 768px) {
+
+  /* CRITICAL: Prevent horizontal scroll on all mobile devices */
+  html,
+  body,
+  #root,
+  .App {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+  }
+
+  /* Ensure all interactive elements meet minimum touch target */
+  button,
+  [role="button"],
+  .clickable,
+  input[type="submit"],
+  input[type="button"] {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Global form input zoom prevention */
+  input,
+  textarea,
+  select {
+    font-size: var(--mobile-font-input) !important;
+    max-width: 100%;
+  }
+
+  /* Improve scrolling feel on mobile */
+  .scrollable,
+  [data-scrollable="true"] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Ensure page containers don't cause horizontal overflow */
+  [class*="-page-container"],
+  [class*="-content"],
+  [class*="-main"] {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+}
+
+/* ===================================
+   Reduced Motion Support (Accessibility)
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 #root {
@@ -52,6 +176,7 @@ html, body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -61,11 +186,15 @@ html, body {
   display: flex;
   flex: 1;
   width: 100%;
-  height: calc(100% - 60px - 40px); /* Adjust for TopBar height and Taskbar height */
-  overflow: hidden; /* Prevent overflow */
+  height: calc(100% - 60px - 40px);
+  /* Adjust for TopBar height and Taskbar height */
+  overflow: hidden;
+  /* Prevent overflow */
   position: relative;
-  background-color: #0a192f; /* Purple background */
-  padding-bottom: 40px; /* Make room for the taskbar */
+  background-color: #0a192f;
+  /* Purple background */
+  padding-bottom: 40px;
+  /* Make room for the taskbar */
 }
 
 .content {
@@ -74,21 +203,24 @@ html, body {
   flex-direction: column;
   height: 100%;
   position: relative;
-  margin-left: 0; /* Changed from 50px to 0 - removing space for SidebarIcons */
+  margin-left: 0;
+  /* Changed from 50px to 0 - removing space for SidebarIcons */
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden; /* Changed from auto to hidden to prevent unwanted scrolling */
-  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  will-change: width, transform; /* Optimize for animations */
+  overflow: hidden;
+  /* Changed from auto to hidden to prevent unwanted scrolling */
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: width, transform;
+  /* Optimize for animations */
 }
 
 /* Content split animation for AI assistant snapped mode */
 .content-split-animation {
   width: 55% !important;
   transform: translateX(-5px);
-  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 /* Window Wrapper - Container for draggable windows */
@@ -114,9 +246,12 @@ html, body {
 
 /* New class for centered content containers */
 .centered-content {
-  width: 92%; /* Increased from 85% to utilize more horizontal space */
-  max-width: 1600px; /* Increased from 1200px to allow wider content */
-  height: calc(100% - 40px); /* Add some padding from top/bottom */
+  width: 92%;
+  /* Increased from 85% to utilize more horizontal space */
+  max-width: 1600px;
+  /* Increased from 1200px to allow wider content */
+  height: calc(100% - 40px);
+  /* Add some padding from top/bottom */
   margin: 20px auto;
   border-radius: 8px;
   overflow: hidden;
@@ -135,25 +270,18 @@ html, body {
 
 /* Adjust content containers in split view */
 .content-split-animation .centered-content,
-.content-split-animation .window-wrapper,
-.content-split-animation .draggable-window {
+.content-split-animation .window-wrapper {
   width: 100% !important;
   max-width: 100% !important;
 }
 
-/* Ensure draggable windows fill the split content area */
-.content-split-animation .draggable-window {
-  height: calc(100% - 20px) !important;
-  position: relative !important;
-  top: 0 !important;
-  left: 0 !important;
-  transform: none !important;
+/* Allow DraggableWindow to control its own positioning in split mode */
+/* The DraggableWindow.js component handles snap positioning dynamically */
+.content-split-animation .window-wrapper {
+  position: relative;
+  overflow: visible;
 }
 
-/* Ensure window content fills the available space */
-.content-split-animation .window-content {
-  height: calc(100% - 30px) !important;
-}
 
 .top-bar {
   position: sticky;
@@ -169,56 +297,70 @@ html, body {
 }
 
 .sidebar {
-  width: 200px; /* Sidebar width */
-  flex-shrink: 0; /* Prevent shrinking */
+  width: 200px;
+  /* Sidebar width */
+  flex-shrink: 0;
+  /* Prevent shrinking */
   background-color: #20232a;
   height: 100%;
-  overflow: hidden; /* Prevent overflow */
-  position: fixed; /* Fix sidebar to the left */
+  overflow: hidden;
+  /* Prevent overflow */
+  position: fixed;
+  /* Fix sidebar to the left */
   left: 0;
   top: 0;
   bottom: 0;
 }
 
 .sidebar-icons {
-  width: 200px; /* Match the sidebar width */
+  width: 200px;
+  /* Match the sidebar width */
   flex-shrink: 0;
   height: 60px;
   background-color: #20232a;
-  overflow: hidden; /* Prevent overflow */
+  overflow: hidden;
+  /* Prevent overflow */
 }
 
 @media (max-width: 768px) {
   .content {
-    width: 100%; /* Sidebar collapses on smaller screens */
+    width: 100%;
+    /* Sidebar collapses on smaller screens */
     padding: 10px;
   }
 
   .sidebar {
-    display: none; /* Hide sidebar on small screens */
+    display: none;
+    /* Hide sidebar on small screens */
   }
 }
 
 /* Mobile device styles */
 .mobile-device .main-content {
-  overflow-y: auto; /* Enable vertical scrolling on mobile */
-  padding-bottom: 0; /* Remove padding for taskbar */
-  height: calc(100% - 60px); /* Only account for TopBar */
+  overflow-y: auto;
+  /* Enable vertical scrolling on mobile */
+  padding-bottom: 0;
+  /* Remove padding for taskbar */
+  height: calc(100% - 60px);
+  /* Only account for TopBar */
 }
 
 .mobile-device .content {
   margin-left: 0;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
   padding: 0;
 }
 
 .mobile-device .top-bar {
-  height: 50px; /* Smaller top bar on mobile */
+  height: 50px;
+  /* Smaller top bar on mobile */
   padding: 0 10px;
 }
 
 .mobile-device .window-wrapper {
-  padding: 10px 5px; /* Reduced padding */
+  padding: 10px 5px;
+  /* Reduced padding */
 }
 
 .mobile-device .centered-content {
@@ -246,7 +388,8 @@ html, body {
 
 /* Portrait-specific styles */
 .portrait-mode .sidebar {
-  display: none; /* Hide sidebar on portrait */
+  display: none;
+  /* Hide sidebar on portrait */
 }
 
 .portrait-mode .sidebar-icons {
@@ -294,7 +437,7 @@ html, body {
 }
 
 .landscape-mode .SidebarIcons {
-  width: 40px; 
+  width: 40px;
 }
 
 .landscape-mode .content {
@@ -321,15 +464,15 @@ html, body {
   .sidebar {
     width: 160px;
   }
-  
+
   .sidebar-icons {
     width: 40px;
   }
-  
+
   .SidebarIcons {
     width: 40px;
   }
-  
+
   .content {
     margin-left: 40px;
   }
@@ -338,7 +481,7 @@ html, body {
 /* Phones and small screens */
 @media (max-width: 768px) {
   .content {
-    width: 100%; 
+    width: 100%;
     margin-left: 0;
     padding: 5px;
   }
@@ -346,7 +489,7 @@ html, body {
   .sidebar {
     display: none;
   }
-  
+
   .sidebar-icons {
     position: fixed;
     bottom: 0;
@@ -357,19 +500,19 @@ html, body {
     height: 40px;
     z-index: 1000;
   }
-  
+
   .SidebarIcons {
     flex-direction: row;
     height: 40px;
     width: 100%;
     padding: 0;
   }
-  
+
   .icon-container {
     padding: 5px 0;
     margin: 0;
   }
-  
+
   .active-indicator {
     position: absolute;
     left: auto;
@@ -377,20 +520,20 @@ html, body {
     height: 2px;
     width: 100%;
   }
-  
+
   .main-content {
     height: calc(100% - 60px);
     padding-bottom: 40px;
   }
-  
+
   .top-bar {
     padding: 0 10px;
   }
-  
+
   .window-wrapper {
     padding: 5px;
   }
-  
+
   .draggable-window {
     position: static !important;
     width: 100% !important;
@@ -398,7 +541,7 @@ html, body {
     transform: none !important;
     box-shadow: none;
   }
-  
+
   .centered-content {
     width: 100%;
     margin: 5px 0;
@@ -411,7 +554,7 @@ html, body {
   .top-bar {
     height: 50px;
   }
-  
+
   .main-content {
     height: calc(100% - 50px - 40px);
   }
@@ -428,12 +571,14 @@ html, body {
 
 /* Mobile device adjustments */
 @media (max-width: 768px) {
+
   /* Override the background color on mobile for content area */
-  .content, .main-content {
+  .content,
+  .main-content {
     background-color: #1e1e1e;
     padding-bottom: 0;
   }
-  
+
   /* Ensure content fills the space on mobile */
   .content {
     margin-left: 0;
@@ -441,20 +586,21 @@ html, body {
     width: 100%;
     padding: 0;
   }
-  
+
   /* Keep the home content centered on mobile */
   .home-content {
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: calc(100vh - 60px - 60px); /* Adjust for top bar and mobile nav */
+    min-height: calc(100vh - 60px - 60px);
+    /* Adjust for top bar and mobile nav */
   }
-  
+
   /* Reduce vertical padding on mobile */
   .window-wrapper {
     padding: 0;
   }
-  
+
   /* Remove the window border and background on mobile */
   .draggable-window {
     position: static !important;
@@ -466,19 +612,20 @@ html, body {
     box-shadow: none;
     border-radius: 0;
   }
-  
+
   /* Reduce header size on mobile */
   .window-title-bar {
     height: 40px;
   }
-  
+
   /* Ensure window content is visible and scrollable on mobile */
   .window-content {
     height: auto !important;
-    min-height: calc(100vh - 110px); /* Adjusted for top bar, header, and mobile nav */
+    min-height: calc(100vh - 110px);
+    /* Adjusted for top bar, header, and mobile nav */
     overflow-y: auto;
   }
-  
+
   /* Make sure contents fill the screen */
   .centered-content {
     width: 100%;
@@ -490,20 +637,40 @@ html, body {
 
 /* Portrait-specific adjustments */
 @media (orientation: portrait) and (max-width: 768px) {
+
   /* Additional height adjustment for portrait mode */
   .window-content {
-    min-height: calc(100vh - 100px); /* Slightly shorter header in portrait mode */
+    min-height: calc(100vh - 100px);
+    /* Slightly shorter header in portrait mode */
   }
 }
 
 /* Landscape-specific adjustments */
 @media (orientation: landscape) and (max-width: 920px) {
+
   /* Optimize for limited vertical space in landscape */
   .window-content {
     min-height: calc(100vh - 120px);
   }
-  
+
   .home-content {
-    min-height: calc(100vh - 50px - 50px); /* Adjust for shorter top bar and nav in landscape */
+    min-height: calc(100vh - 50px - 50px);
+    /* Adjust for shorter top bar and nav in landscape */
   }
+}
+
+/* Desktop Background - Always visible background layer (like Windows wallpaper) */
+.desktop-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: auto;
+}
+
+.desktop-background>* {
+  width: 100%;
+  height: 100%;
 }

@@ -419,8 +419,39 @@
     border-right: none;
     border-bottom: 1px solid #3c3c3c;
   }
+
+  /* GitHub button as floating action button on mobile */
+  .github-redirect-button {
+    position: fixed;
+    bottom: calc(80px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
+    right: 15px;
+    z-index: 999;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    justify-content: center;
+    background-color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: none;
+    -webkit-tap-highlight-color: rgba(97, 218, 251, 0.2);
+  }
+
+  .github-redirect-button .redirect-text,
+  .github-redirect-button .redirect-icon {
+    display: none;
+  }
+
+  .github-redirect-button .github-icon {
+    font-size: 22px;
+    margin: 0;
+  }
+
+  .github-redirect-button:active {
+    transform: scale(0.95);
+  }
   
-  /* Make project list horizontal for mobile */
+  /* Make project list horizontal for mobile with scroll indicators */
   .project-list {
     display: flex;
     flex-direction: row;
@@ -430,6 +461,23 @@
     scrollbar-width: thin;
     scrollbar-color: #3c3c3c #1e1e1e;
     -webkit-overflow-scrolling: touch;
+    /* Scroll snap for better UX */
+    scroll-snap-type: x mandatory;
+    /* Fade edges to indicate more content */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15px,
+      black calc(100% - 15px),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15px,
+      black calc(100% - 15px),
+      transparent
+    );
   }
   
   .project-item {
@@ -442,6 +490,19 @@
     white-space: normal;
     width: max-content;
     max-width: 200px;
+    scroll-snap-align: start;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: rgba(97, 218, 251, 0.2);
+  }
+
+  .project-item:first-child {
+    margin-left: 10px;
+  }
+
+  .project-item:last-child {
+    margin-right: 15px;
   }
   
   .project-display {
@@ -449,6 +510,7 @@
     height: auto;
     min-height: calc(100vh - 200px - 95px); /* Adjust to account for explorer + header */
     padding: 15px;
+    padding-bottom: 80px; /* Space for floating GitHub button */
   }
   
   .project-display {
@@ -471,6 +533,7 @@
   .project-link {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
   }
   
   .placeholder-content {

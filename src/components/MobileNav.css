@@ -3,7 +3,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: calc(60px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
+  padding-bottom: var(--safe-area-bottom, env(safe-area-inset-bottom, 0px));
+  padding-left: var(--safe-area-left, env(safe-area-inset-left, 0px));
+  padding-right: var(--safe-area-right, env(safe-area-inset-right, 0px));
   background-color: #1e1e1e;
   display: flex;
   justify-content: space-around;
@@ -21,9 +24,11 @@
   color: #8b8b8b;
   text-decoration: none;
   flex: 1;
-  height: 100%;
+  height: 60px;
+  min-height: var(--touch-target-min, 44px);
   position: relative;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-nav-item i {
@@ -32,12 +37,18 @@
 }
 
 .mobile-nav-label {
-  font-size: 12px;
+  font-size: 10px;
   text-transform: capitalize;
+  font-weight: 500;
 }
 
 .mobile-nav-item.active {
   color: #61dafb;
+  background-color: rgba(97, 218, 251, 0.1);
+}
+
+.mobile-nav-item:active {
+  background-color: rgba(97, 218, 251, 0.15);
 }
 
 .mobile-nav-highlight {
@@ -54,9 +65,9 @@
     display: flex;
   }
   
-  /* More space on smaller screens */
+  /* Maintain readable icon sizes */
   .mobile-nav-item i {
-    font-size: 16px;
+    font-size: 18px;
   }
   
   .mobile-nav-label {
@@ -67,32 +78,34 @@
 /* Landscape orientation - more horizontal space */
 @media (orientation: landscape) and (max-width: 920px) {
   .mobile-nav {
-    height: 50px;
+    height: calc(45px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
   }
   
   .mobile-nav-item {
     flex-direction: row;
-    gap: 5px;
+    gap: 6px;
+    height: 45px;
+    padding: 0 8px;
   }
   
   .mobile-nav-item i {
+    font-size: 16px;
     margin-bottom: 0;
-  }
-  
-  .mobile-nav-item i {
-    font-size: 18px;
-    margin-bottom: 2px;
   }
   
   .mobile-nav-label {
     font-size: 10px;
+  }
+
+  .mobile-nav-highlight {
+    height: 2px;
   }
 }
 
 /* Small mobile devices */
 @media (max-width: 320px) {
   .mobile-nav-label {
-    font-size: 9px;
+    font-size: 8px;
   }
   
   .mobile-nav-item i {
