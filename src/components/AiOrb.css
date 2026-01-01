@@ -427,8 +427,10 @@
   white-space: pre-wrap;
 }
 
-/* AI Link styling - improved */
-.ai-link {
+/* AI Link and Reference styling - improved */
+/* Supports both legacy .ai-link and new .ai-ref (semantic references) */
+.ai-link,
+.ai-ref {
   color: #7289da;
   text-decoration: underline;
   cursor: pointer;
@@ -440,21 +442,25 @@
   display: inline-block;
 }
 
-.ai-message.user .ai-link {
+.ai-message.user .ai-link,
+.ai-message.user .ai-ref {
   color: #70a9f7;
 }
 
-.ai-link:hover {
+.ai-link:hover,
+.ai-ref:hover {
   background-color: rgba(114, 137, 218, 0.1);
   color: #5c6bc0;
   text-decoration: none;
 }
 
-.ai-message.user .ai-link:hover {
+.ai-message.user .ai-link:hover,
+.ai-message.user .ai-ref:hover {
   background-color: rgba(112, 169, 247, 0.1);
 }
 
-.ai-link::after {
+.ai-link::after,
+.ai-ref::after {
   content: '\f0c1';
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
@@ -465,13 +471,16 @@
   transition: all 0.2s ease;
 }
 
-.ai-link:active {
+.ai-link:active,
+.ai-ref:active {
   transform: translateY(1px);
 }
 
-/* Mobile-specific AI link improvements */
+/* Mobile-specific AI link and reference improvements */
 @media (max-width: 768px) {
-  .ai-link {
+
+  .ai-link,
+  .ai-ref {
     /* Increase touch target size for mobile */
     min-height: 32px;
     padding: 4px 6px;
@@ -487,18 +496,21 @@
     z-index: 10;
   }
 
-  .ai-link:active {
+  .ai-link:active,
+  .ai-ref:active {
     background-color: rgba(114, 137, 218, 0.3);
     transform: scale(0.98);
   }
 
   /* Remove hover effects on mobile */
-  .ai-link:hover::before {
+  .ai-link:hover::before,
+  .ai-ref:hover::before {
     display: none;
   }
 
   /* Better visual feedback for mobile taps */
-  .ai-link::after {
+  .ai-link::after,
+  .ai-ref::after {
     font-size: 0.9em;
     margin-left: 6px;
   }
@@ -989,7 +1001,8 @@
   .ai-chat-input textarea {
     padding: 10px;
     height: 44px;
-    font-size: 16px; /* Prevent iOS zoom */
+    font-size: 16px;
+    /* Prevent iOS zoom */
   }
 
   .send-message {

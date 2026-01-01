@@ -40,16 +40,17 @@
 33. TensorFlow - 60%
 34. Flutter - 50%
 35. Spring Framework - 70%
-36. 
-37. // Frameworks rendered as animated progress bars
-38. // Component ID: terminal-result when category is 'frameworks'
-39. // Each framework has class: skill-bar
-40. // Framework name class: skill-name
-41. // Framework progress container class: skill-progress
-42. // Framework progress fill class: skill-fill
-43. // Framework percentage class: skill-level
-44. // Progress bars animate on load
-45. // Frameworks appear after typing command
+36. Framer Motion - 75%
+37. 
+38. // Frameworks rendered as animated progress bars
+39. // Component ID: terminal-result when category is 'frameworks'
+40. // Each framework has class: skill-bar
+41. // Framework name class: skill-name
+42. // Framework progress container class: skill-progress
+43. // Framework progress fill class: skill-fill
+44. // Framework percentage class: skill-level
+45. // Progress bars animate on load
+46. // Frameworks appear after typing command
 
 ## SECTION: TOOLS [LINES 46-60]
 46. Git - 60%

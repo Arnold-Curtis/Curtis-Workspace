@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import '../stylings/Resume.css';
 import { submitResumeRequest } from '../utils/apiService';
+import { processPendingHighlight, injectHighlightStyles } from '../utils/highlightService';
 
 const Resume = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,6 +16,14 @@ const Resume = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Check for highlight requests when component mounts
+  useEffect(() => {
+    injectHighlightStyles();
+    setTimeout(() => {
+      processPendingHighlight();
+    }, 500);
+  }, []);
 
   const openResumeModal = () => {
     setShowModal(true);
@@ -62,16 +71,16 @@ const Resume = () => {
     }
     if (!formData.company.trim()) errors.company = "Company name is required";
     if (!formData.position.trim()) errors.position = "Position is required";
-    
+
     return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     const errors = validateForm();
-    
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -104,7 +113,7 @@ const Resume = () => {
         };
         existingRequests.push(newRequest);
         localStorage.setItem('resumeRequests', JSON.stringify(existingRequests));
-        
+
         setIsSubmitted(true);
         setTimeout(() => {
           closeResumeModal();
@@ -122,7 +131,7 @@ const Resume = () => {
       };
       existingRequests.push(newRequest);
       localStorage.setItem('resumeRequests', JSON.stringify(existingRequests));
-      
+
       setIsSubmitted(true);
       setTimeout(() => {
         closeResumeModal();
@@ -136,23 +145,28 @@ const Resume = () => {
     <div className="resume-page-container">
       {/* Modal overlay */}
       {showModal && (
-        <div className="resume-modal-overlay" onClick={closeResumeModal} data-line="76-110">
-          <div className="resume-modal" onClick={(e) => e.stopPropagation()} id="resume-modal">
+        <div className="resume-modal-overlay" onClick={closeResumeModal}>
+          <div
+            className="resume-modal"
+            onClick={(e) => e.stopPropagation()}
+            id="resume-modal"
+            data-section="resume.requestForm"
+          >
             <div className="resume-modal-header">
-              <h3 data-line="76">Request Official Resume</h3>
+              <h3>Request Official Resume</h3>
               <button className="modal-close" onClick={closeResumeModal}>
                 <i className="fas fa-times"></i>
               </button>
             </div>
-            
+
             {!isSubmitted ? (
               <form className="resume-request-form" onSubmit={handleSubmit}>
-                <p className="form-description" data-line="78-79">
-                  Please provide your details to receive my official resume with verified certifications. 
+                <p className="form-description">
+                  Please provide your details to receive my official resume with verified certifications.
                   This helps me ensure my resume is shared with genuine opportunities.
                 </p>
-                
-                <div className="form-group" data-line="81-82">
+
+                <div className="form-group">
                   <label htmlFor="name">Name <span className="required">*</span></label>
                   <input
                     type="text"
@@ -165,8 +179,8 @@ const Resume = () => {
                   />
                   {formErrors.name && <div className="error-message">{formErrors.name}</div>}
                 </div>
-                
-                <div className="form-group" data-line="84-85">
+
+                <div className="form-group">
                   <label htmlFor="email">Email <span className="required">*</span></label>
                   <input
                     type="email"
@@ -179,8 +193,8 @@ const Resume = () => {
                   />
                   {formErrors.email && <div className="error-message">{formErrors.email}</div>}
                 </div>
-                
-                <div className="form-group" data-line="87-88">
+
+                <div className="form-group">
                   <label htmlFor="company">Company <span className="required">*</span></label>
                   <input
                     type="text"
@@ -193,8 +207,8 @@ const Resume = () => {
                   />
                   {formErrors.company && <div className="error-message">{formErrors.company}</div>}
                 </div>
-                
-                <div className="form-group" data-line="90-91">
+
+                <div className="form-group">
                   <label htmlFor="position">Position <span className="required">*</span></label>
                   <input
                     type="text"
@@ -207,8 +221,8 @@ const Resume = () => {
                   />
                   {formErrors.position && <div className="error-message">{formErrors.position}</div>}
                 </div>
-                
-                <div className="form-group" data-line="93-94">
+
+                <div className="form-group">
                   <label htmlFor="message">Additional Information (Optional)</label>
                   <textarea
                     id="message"
@@ -219,20 +233,19 @@ const Resume = () => {
                     rows="3"
                   />
                 </div>
-                
+
                 {formErrors.submit && <div className="error-message submit-error">{formErrors.submit}</div>}
-                
-                <button 
-                  type="submit" 
+
+                <button
+                  type="submit"
                   className="resume-submit-button"
                   disabled={isSubmitting}
-                  data-line="96"
                 >
                   {isSubmitting ? 'Sending Request...' : 'Submit Request'}
                 </button>
               </form>
             ) : (
-              <div className="success-message" data-line="98">
+              <div className="success-message">
                 <i className="fas fa-check-circle"></i>
                 <h4>Request Submitted!</h4>
                 <p>Thank you for your interest. I'll review your request and send my official resume to your email shortly.</p>
@@ -241,7 +254,7 @@ const Resume = () => {
           </div>
         </div>
       )}
-      
+
       <div className="resume-header">
         <div className="file-tab">
           <i className="fas fa-file-alt tab-icon"></i>
@@ -249,9 +262,9 @@ const Resume = () => {
           <i className="fas fa-times close-icon"></i>
         </div>
       </div>
-      
+
       <div className="resume-content">
-        <motion.div 
+        <motion.div
           className="code-line-numbers"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -261,9 +274,9 @@ const Resume = () => {
             <div key={i} className="line-number">{i + 1}</div>
           ))}
         </motion.div>
-        
+
         <div className="resume-main">
-          <motion.div 
+          <motion.div
             className="code-comment"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -276,21 +289,22 @@ const Resume = () => {
  * including education, work experience, skills, and achievements.
  */`}
           </motion.div>
-          
+
           {/* Resume Header Section */}
-          <motion.div 
-            className="section-container"
+          <motion.div
+            className="section-container header-section"
+            id="resume-header"
+            data-section="resume.header"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            data-line="1-10"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ResumeHeader</span> = () =&gt; &#123;
             </h2>
-            <div className="resume-header-content" id="resume-header">
-              <div className="resume-name resume-title" data-line="1">Arnold Curtis</div>
-              <div className="resume-title resume-subtitle" data-line="2">Full-Stack Engineer & Machine Learning Innovator</div>
+            <div className="resume-header-content">
+              <div className="resume-name resume-title">Arnold Curtis</div>
+              <div className="resume-title resume-subtitle">Full-Stack Engineer & Machine Learning Innovator</div>
               <div className="resume-contact-info">
                 <div className="contact-item">
                   <i className="fas fa-envelope"></i> mbicidev@gmail.com
@@ -298,7 +312,7 @@ const Resume = () => {
                 <div className="contact-item">
                   <i className="fas fa-phone"></i> +254723393075
                 </div>
-                <div className="contact-item resume-location" data-line="3">
+                <div className="contact-item resume-location">
                   <i className="fas fa-map-marker-alt"></i> Nairobi, Kenya
                 </div>
                 <div className="contact-item">
@@ -311,88 +325,91 @@ const Resume = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Experience Section */}
-          <motion.div 
-            className="section-container"
+          <motion.div
+            className="section-container experience-section"
+            id="resume-experience"
+            data-section="resume.experience"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            data-line="11-30"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">Experience</span> = () =&gt; &#123;
             </h2>
-            <div className="resume-section" id="experience-section">
-              <div className="resume-entry role-entry" data-line="13-20">
+            <div className="resume-section">
+              <div className="resume-entry role-entry">
                 <div className="entry-header">
-                  <div className="position role-title" data-line="13">Full Stack Developer</div>
-                  <div className="company-date company-period" data-line="14">
+                  <div className="position role-title">Full Stack Developer</div>
+                  <div className="company-date company-period">
                     <span className="company">Self-employed</span>
                     <span className="date">2024 - Present</span>
                   </div>
                 </div>
                 <ul className="responsibilities">
-                  <li className="achievement-item" data-line="16">Full stack developer building robust applications and exploring AI-powered solutions</li>
-                  <li className="achievement-item" data-line="17">Developed the AI Personal Assistant (AIPA/PLANAZ) using React.js, Spring Boot, and Java</li>
-                  <li className="achievement-item" data-line="18">Created a Natural Language Review System for academic evaluations using Java and NLP</li>
-                  <li className="achievement-item" data-line="19">Skilled in both front-end and back-end technologies with a focus on intelligent systems</li>
-                  <li className="achievement-item" data-line="20">Implemented database designs and optimized queries for MySQL, MongoDB and SQLite</li>
+                  <li className="achievement-item">Full stack developer building robust applications and exploring AI-powered solutions</li>
+                  <li className="achievement-item">Developed the AI Personal Assistant (AIPA/PLANAZ) using React.js, Spring Boot, and Java</li>
+                  <li className="achievement-item">Created a Natural Language Review System for academic evaluations using Java and NLP</li>
+                  <li className="achievement-item">Skilled in both front-end and back-end technologies with a focus on intelligent systems</li>
+                  <li className="achievement-item">Implemented database designs and optimized queries for MySQL, MongoDB and SQLite</li>
                 </ul>
               </div>
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Education Section */}
-          <motion.div 
-            className="section-container"
+          <motion.div
+            className="section-container education-section"
+            id="resume-education"
+            data-section="resume.education"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            data-line="31-50"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">Education</span> = () =&gt; &#123;
             </h2>
-            <div className="resume-section" id="education-section">
-              <div className="resume-entry education-entry" data-line="33-34">
+            <div className="resume-section">
+              <div className="resume-entry education-entry">
                 <div className="entry-header">
-                  <div className="degree" data-line="33">Bachelor of Business Information Technology</div>
-                  <div className="school-date institution-period" data-line="34">
+                  <div className="degree">Bachelor of Business Information Technology</div>
+                  <div className="school-date institution-period">
                     <span className="school">Strathmore University</span>
                     <span className="date">July 2024 - Present</span>
                   </div>
                 </div>
               </div>
-              
-              <div className="resume-entry education-entry" data-line="39-41">
+
+              <div className="resume-entry education-entry">
                 <div className="entry-header">
-                  <div className="degree" data-line="39">Certificate in Programming Languages</div>
-                  <div className="school-date institution-period" data-line="40">
+                  <div className="degree">Certificate in Programming Languages</div>
+                  <div className="school-date institution-period">
                     <span className="school">St Nicholas College</span>
                     <span className="date">January 2023 - July 2023</span>
                   </div>
                 </div>
-                <div className="specialization" data-line="41">Specialization: C# Programming Language</div>
+                <div className="specialization">Specialization: C# Programming Language</div>
               </div>
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Skills Section */}
-          <motion.div 
-            className="section-container"
+          <motion.div
+            className="section-container skills-section"
+            id="resume-skills"
+            data-section="resume.skills"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.1 }}
-            data-line="51-75"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">Skills</span> = () =&gt; &#123;
             </h2>
-            <div className="resume-section" id="skills-section">
-              <div className="skills-category skill-category" data-line="53-54">
+            <div className="resume-section">
+              <div className="skills-category skill-category">
                 <h3 className="category-name">Programming Languages</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">JavaScript</span>
@@ -402,8 +419,8 @@ const Resume = () => {
                   <span className="skill-tag intermediate">SQL</span>
                 </div>
               </div>
-              
-              <div className="skills-category skill-category" data-line="56-57">
+
+              <div className="skills-category skill-category">
                 <h3 className="category-name">Frontend Technologies</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">React.js</span>
@@ -412,8 +429,8 @@ const Resume = () => {
                   <span className="skill-tag intermediate">JavaFX</span>
                 </div>
               </div>
-              
-              <div className="skills-category skill-category" data-line="59-60">
+
+              <div className="skills-category skill-category">
                 <h3 className="category-name">Backend Technologies</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">Node.js</span>
@@ -423,8 +440,8 @@ const Resume = () => {
                   <span className="skill-tag intermediate">JavaFX</span>
                 </div>
               </div>
-              
-              <div className="skills-category skill-category" data-line="62-63">
+
+              <div className="skills-category skill-category">
                 <h3 className="category-name">Databases & Storage</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">MySQL</span>
@@ -433,8 +450,8 @@ const Resume = () => {
                   <span className="skill-tag intermediate">PostgreSQL</span>
                 </div>
               </div>
-              
-              <div className="skills-category skill-category" data-line="65-66">
+
+              <div className="skills-category skill-category">
                 <h3 className="category-name">Machine Learning & AI</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">TensorFlow</span>
@@ -443,8 +460,8 @@ const Resume = () => {
                   <span className="skill-tag intermediate">Large Language Models (LLMs)</span>
                 </div>
               </div>
-              
-              <div className="skills-category skill-category" data-line="68-69">
+
+              <div className="skills-category skill-category">
                 <h3 className="category-name">DevOps & Tools</h3>
                 <div className="skill-tags">
                   <span className="skill-tag advanced">Git</span>
@@ -455,9 +472,9 @@ const Resume = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Projects Section */}
-          <motion.div 
+          <motion.div
             className="section-container"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -481,7 +498,7 @@ const Resume = () => {
                   <li>Built a smart planning function to break down goals into achievable tasks</li>
                 </ul>
               </div>
-              
+
               <div className="resume-entry">
                 <div className="entry-header">
                   <div className="position">Natural Language Review System</div>
@@ -499,9 +516,9 @@ const Resume = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Certifications Section */}
-          <motion.div 
+          <motion.div
             className="section-container"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -534,9 +551,9 @@ const Resume = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
+
           {/* Export Section */}
-          <motion.div 
+          <motion.div
             className="section-container export-section"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -555,15 +572,15 @@ const Resume = () => {
             </div>
             <div className="code-line"><span className="function-call">)</span>;</div>
           </motion.div>
-          
+
           {/* Download Resume Button - REPLACED with Get Official Resume */}
-          <motion.div 
+          <motion.div
             className="resume-download"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.9 }}
           >
-            <button type="button" className="download-button" onClick={openResumeModal} data-line="76">
+            <button type="button" className="download-button" onClick={openResumeModal}>
               <i className="fas fa-file-certificate"></i> Get Official Resume
             </button>
           </motion.div>

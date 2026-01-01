@@ -1,315 +1,412 @@
 /**
- * Utility functions for highlighting content referenced by AI links
+ * Enhanced Highlight Service - Uses semantic section IDs for reliable element targeting
+ * Replaces the old line-number-based highlighting system
  */
 
-// Check if there's a highlight request in session storage
+import { getSelectorsForSection, findSectionById, getPageForSection } from './contentRegistry';
+
+/**
+ * Check if there's a highlight request in session storage
+ * Now supports both section IDs and legacy line numbers
+ */
 export const checkForHighlightRequest = () => {
-  const highlightLine = sessionStorage.getItem('highlightLine');
-  console.log('checkForHighlightRequest: Checking for highlight request:', highlightLine);
-  
-  if (highlightLine) {
-    // Clear the session storage to prevent highlighting on subsequent page loads
-    sessionStorage.removeItem('highlightLine');
-    return highlightLine;
+  // Check for new section-based highlight
+  const highlightSection = sessionStorage.getItem('highlightSection');
+  if (highlightSection) {
+    sessionStorage.removeItem('highlightSection');
+    console.log('checkForHighlightRequest: Found section highlight request:', highlightSection);
+    return { type: 'section', value: highlightSection };
   }
+
+  // Check for legacy line-based highlight (backward compatibility)
+  const highlightLine = sessionStorage.getItem('highlightLine');
+  if (highlightLine) {
+    sessionStorage.removeItem('highlightLine');
+    console.log('checkForHighlightRequest: Found legacy line highlight request:', highlightLine);
+    return { type: 'line', value: highlightLine };
+  }
+
   return null;
 };
 
-// Highlight a specific element or line range
-export const highlightElement = (lineNumber) => {
-  console.log(`Attempting to highlight: ${lineNumber}`);
-  
-  // Handle range format (e.g., "16-30")
-  let startLine, endLine;
-  
-  // Check if this is a section reference (e.g., "section:about")
-  if (lineNumber.includes('section:')) {
-    const sectionId = lineNumber.replace('section:', '');
-    console.log(`Looking for section: ${sectionId}`);
-    
-    // Find section by ID, class, or data attribute with multiple selectors
-    const selectors = [
-      `#${sectionId}`,
-      `.${sectionId}`,
-      `[data-section="${sectionId}"]`,
-      `[data-id="${sectionId}"]`,
-      `[id*="${sectionId}"]`,
-      `[class*="${sectionId}"]`,
-      `h1:contains("${sectionId}")`,
-      `h2:contains("${sectionId}")`,
-      `h3:contains("${sectionId}")`
-    ];
-    
-    // Try each selector
-    let section = null;
-    for (const selector of selectors) {
-      try {
-        const elements = document.querySelectorAll(selector);
-        if (elements && elements.length > 0) {
-          section = elements[0];
-          break;
-        }
-      } catch (error) {
-        console.warn(`Error with selector ${selector}:`, error);
+/**
+ * Highlight a section by its semantic ID
+ * @param {string} sectionId - e.g., "about.bio", "skills.languages"
+ * @returns {boolean} true if element was found and highlighted
+ */
+export const highlightSection = (sectionId) => {
+  console.log(`highlightSection: Attempting to highlight section: ${sectionId}`);
+
+  // Get all selectors for this section in priority order
+  const selectors = getSelectorsForSection(sectionId);
+  console.log(`highlightSection: Trying selectors:`, selectors);
+
+  // Try each selector until we find an element
+  for (const selector of selectors) {
+    try {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`highlightSection: Found element with selector "${selector}":`, element);
+        applyHighlightEffect([element]);
+        return true;
       }
+    } catch (error) {
+      console.warn(`highlightSection: Error with selector "${selector}":`, error);
     }
-    
-    // If still not found, try a more flexible approach with textContent
-    if (!section) {
-      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .section-title');
-      for (const heading of headings) {
-        if (heading.textContent.toLowerCase().includes(sectionId.toLowerCase())) {
-          section = heading.closest('section') || heading.parentElement || heading;
-          break;
-        }
-      }
-    }
-    
-    if (section) {
-      console.log(`Found section element:`, section);
-      applyHighlightEffect([section]);
+  }
+
+  // Fallback: Try content-based matching
+  console.log('highlightSection: No element found with selectors, trying content-based fallback');
+  const section = findSectionById(sectionId);
+  if (section && section.title) {
+    const element = findElementByContent(section.title);
+    if (element) {
+      console.log('highlightSection: Found element by content matching:', element);
+      applyHighlightEffect([element]);
       return true;
     }
-    console.warn(`Section not found: ${sectionId}`);
-    return false;
   }
-  
-  // Handle line number or range
+
+  console.warn(`highlightSection: Could not find element for section: ${sectionId}`);
+  return false;
+};
+
+/**
+ * Highlight an element using legacy line number (backward compatibility)
+ * @param {string} lineNumber - Line number or range (e.g., "16", "16-30", "section:bio")
+ * @returns {boolean}
+ */
+export const highlightElement = (lineNumber) => {
+  console.log(`highlightElement: Attempting to highlight: ${lineNumber}`);
+
+  // Check if this is a section reference (e.g., "section:about.bio" or "section:bio")
+  if (lineNumber.includes('section:')) {
+    const sectionId = lineNumber.replace('section:', '');
+    // If it's already a full section ID
+    if (sectionId.includes('.')) {
+      return highlightSection(sectionId);
+    }
+    // Otherwise try to find it as a partial match
+    return highlightSectionByPartialId(sectionId);
+  }
+
+  // Handle line number or range - try to find elements with data-line
+  let startLine, endLine;
+
   if (lineNumber.includes('-')) {
     const [start, end] = lineNumber.split('-');
     startLine = parseInt(start, 10);
     endLine = parseInt(end, 10);
-    console.log(`Looking for line range: ${startLine}-${endLine}`);
   } else {
     startLine = parseInt(lineNumber, 10);
     endLine = startLine;
-    console.log(`Looking for line: ${startLine}`);
   }
-  
-  // Check for invalid line numbers
+
   if (isNaN(startLine) || startLine <= 0) {
-    console.error(`Invalid line number: ${lineNumber}`);
+    console.error(`highlightElement: Invalid line number: ${lineNumber}`);
     return false;
   }
-  
-  // Find elements with matching data-line attributes
+
+  // Try to find elements with data-line attributes
   const elements = document.querySelectorAll(`[data-line]`);
-  console.log(`Found ${elements.length} elements with data-line attributes`);
-  
   let foundElements = [];
-  
+
   elements.forEach(element => {
     const elementLine = element.getAttribute('data-line');
-    
-    // Check if element has a specific line number
+
     if (elementLine && !elementLine.includes('-')) {
       const line = parseInt(elementLine, 10);
       if (line >= startLine && line <= endLine) {
-        console.log(`Found matching element for line ${line}:`, element);
         foundElements.push(element);
       }
-    } 
-    // Check if element has a line range
-    else if (elementLine && elementLine.includes('-')) {
+    } else if (elementLine && elementLine.includes('-')) {
       const [elemStart, elemEnd] = elementLine.split('-').map(num => parseInt(num, 10));
-      
-      // Check if ranges overlap
       if (
-        (elemStart <= startLine && elemEnd >= startLine) || // Element range contains start line
-        (elemStart <= endLine && elemEnd >= endLine) || // Element range contains end line
-        (startLine <= elemStart && endLine >= elemEnd) // Highlight range contains element range
+        (elemStart <= startLine && elemEnd >= startLine) ||
+        (elemStart <= endLine && elemEnd >= endLine) ||
+        (startLine <= elemStart && endLine >= elemEnd)
       ) {
-        console.log(`Found matching element for range ${elemStart}-${elemEnd}:`, element);
         foundElements.push(element);
       }
     }
   });
-  
-  // If no elements found with data-line, try finding by line number in the content
-  if (foundElements.length === 0) {
-    console.log('No elements found with matching data-line, trying fallback method');
-    
-    // Try to find elements with IDs that might correspond to line numbers
-    const elementsWithIds = document.querySelectorAll('[id]');
-    for (const element of elementsWithIds) {
-      const id = element.id;
-      if (/^line-\d+$/.test(id)) {
-        const lineNum = parseInt(id.replace('line-', ''), 10);
-        if (lineNum >= startLine && lineNum <= endLine) {
-          foundElements.push(element);
-        }
-      }
-    }
-    
-    // If still no elements found, look for elements that might correspond to the line numbers
-    if (foundElements.length === 0) {
-      // Look for elements that might correspond to the line numbers
-      // This is a fallback for content that doesn't have explicit data-line attributes
-      const contentSections = document.querySelectorAll(
-        '.section-content, .skill-bar, .project-item, .terminal-result, .content-section, ' +
-        'p, li, .code-block, .skill-item, .project-card, .experience-item'
-      );
-      console.log(`Found ${contentSections.length} content sections to check`);
-      
-      contentSections.forEach((section, index) => {
-        // Use index + 1 as an approximate line number
-        if (index + 1 >= startLine && index + 1 <= endLine) {
-          console.log(`Found matching section by index ${index + 1}:`, section);
-          foundElements.push(section);
-        }
-      });
-      
-      // If still no elements found, try to find any relevant content
-      if (foundElements.length === 0) {
-        console.log('Still no elements found, trying to find any content sections');
-        // Just highlight the first few content sections as a last resort
-        const allContentSections = document.querySelectorAll(
-          '.content-section, .section-content, p, h1, h2, h3, .skill-item, .project-card'
-        );
-        if (allContentSections.length > 0) {
-          // Take the first element as a fallback
-          console.log('Using first content section as fallback');
-          foundElements.push(allContentSections[0]);
-        }
-      }
-    }
-  }
-  
-  // Apply highlight effect to found elements
+
   if (foundElements.length > 0) {
-    console.log(`Applying highlight to ${foundElements.length} elements`);
+    console.log(`highlightElement: Found ${foundElements.length} elements with matching data-line`);
     applyHighlightEffect(foundElements);
     return true;
   }
-  
-  console.warn('No elements found to highlight');
+
+  // Fallback: Try to find any content sections
+  console.log('highlightElement: No data-line elements found, trying fallback selectors');
+  const fallbackSelectors = [
+    '.section-content',
+    '.content-section',
+    '.skill-bar',
+    '.project-item',
+    '.experience-item',
+    'section',
+    '.card'
+  ];
+
+  for (const selector of fallbackSelectors) {
+    const elements = document.querySelectorAll(selector);
+    if (elements.length > 0) {
+      // Highlight the first matching element
+      console.log(`highlightElement: Using fallback - highlighting first ${selector}`);
+      applyHighlightEffect([elements[0]]);
+      return true;
+    }
+  }
+
+  console.warn('highlightElement: No elements found to highlight');
   return false;
 };
 
-// Apply highlight effect to elements
-const applyHighlightEffect = (elements) => {
-  elements.forEach(element => {
-    // First scroll to the element with a smooth animation
+/**
+ * Find section by partial ID (e.g., "bio" matches "about.bio")
+ */
+const highlightSectionByPartialId = (partialId) => {
+  console.log(`highlightSectionByPartialId: Looking for partial ID: ${partialId}`);
+
+  // Try as-is first
+  const selectors = [
+    `[data-section*="${partialId}"]`,
+    `#${partialId}`,
+    `.${partialId}`,
+    `#${partialId}-section`,
+    `.${partialId}-section`,
+    `[id*="${partialId}"]`,
+    `[class*="${partialId}"]`
+  ];
+
+  for (const selector of selectors) {
     try {
-      // Use scrollIntoView with a smooth behavior
-      element.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center',
-        inline: 'nearest'
-      });
-      
-      // Small delay before applying the highlight to ensure scrolling is complete
-      setTimeout(() => {
-        // Add highlight class
-        element.classList.add('ai-highlight');
-        
-        // Remove highlight after animation completes
-        setTimeout(() => {
-          element.classList.remove('ai-highlight');
-          // Add a persistent subtle highlight
-          element.classList.add('ai-highlight-persistent');
-          
-          // Remove persistent highlight after some time
-          setTimeout(() => {
-            // Fade out the highlight
-            element.style.transition = 'all 1s ease';
-            element.classList.add('ai-highlight-fade');
-            
-            setTimeout(() => {
-              element.classList.remove('ai-highlight-persistent');
-              element.classList.remove('ai-highlight-fade');
-            }, 1000);
-          }, 5000); // Persistent highlight lasts 5 seconds
-        }, 3000); // Initial highlight lasts 3 seconds
-      }, 500);
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`highlightSectionByPartialId: Found element with selector "${selector}"`);
+        applyHighlightEffect([element]);
+        return true;
+      }
     } catch (error) {
-      console.error('Error scrolling to element:', error);
-      // Fallback method if smooth scrolling fails
-      const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const elementTop = rect.top + scrollTop;
-      window.scrollTo({
-        top: elementTop - (window.innerHeight / 2),
-        behavior: 'smooth'
-      });
-      
-      // Apply highlight after fallback scrolling
-      setTimeout(() => {
-        element.classList.add('ai-highlight');
-        
-        setTimeout(() => {
-          element.classList.remove('ai-highlight');
-          element.classList.add('ai-highlight-persistent');
-          
-          setTimeout(() => {
-            element.style.transition = 'all 1s ease';
-            element.classList.add('ai-highlight-fade');
-            
-            setTimeout(() => {
-              element.classList.remove('ai-highlight-persistent');
-              element.classList.remove('ai-highlight-fade');
-            }, 1000);
-          }, 5000);
-        }, 3000);
-      }, 500);
+      // Ignore invalid selectors
     }
+  }
+
+  // Try heading-based matching
+  const element = findElementByContent(partialId);
+  if (element) {
+    applyHighlightEffect([element]);
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Find element by matching content (heading text, title, etc.)
+ */
+const findElementByContent = (searchText) => {
+  if (!searchText) return null;
+
+  const searchLower = searchText.toLowerCase();
+
+  // Look for headings that match
+  const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .section-title, .card-title');
+  for (const heading of headings) {
+    if (heading.textContent.toLowerCase().includes(searchLower)) {
+      // Return the parent section if available
+      const section = heading.closest('section') ||
+        heading.closest('.section') ||
+        heading.closest('.card') ||
+        heading.parentElement;
+      return section || heading;
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Apply highlight effect to elements with smooth scrolling and animation
+ */
+const applyHighlightEffect = (elements) => {
+  if (!elements || elements.length === 0) return;
+
+  // Inject styles if not already done
+  injectHighlightStyles();
+
+  elements.forEach((element, index) => {
+    // Small delay between multiple elements for visual effect
+    const delay = index * 100;
+
+    setTimeout(() => {
+      try {
+        // Scroll to element smoothly
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        // Wait for scroll to complete, then apply highlight
+        setTimeout(() => {
+          // Add the highlight class
+          element.classList.add('ai-highlight');
+
+          // Remove initial highlight after animation, add persistent subtle highlight
+          setTimeout(() => {
+            element.classList.remove('ai-highlight');
+            element.classList.add('ai-highlight-persistent');
+
+            // Fade out persistent highlight after a few seconds
+            setTimeout(() => {
+              element.classList.add('ai-highlight-fade');
+
+              setTimeout(() => {
+                element.classList.remove('ai-highlight-persistent');
+                element.classList.remove('ai-highlight-fade');
+              }, 1000);
+            }, 5000);
+          }, 3000);
+        }, 500);
+      } catch (error) {
+        console.error('applyHighlightEffect: Error applying highlight:', error);
+      }
+    }, delay);
   });
 };
 
-// Add CSS for highlighting
+/**
+ * Inject CSS styles for highlighting
+ */
 export const injectHighlightStyles = () => {
-  if (!document.getElementById('highlight-styles')) {
-    const styleElement = document.createElement('style');
-    styleElement.id = 'highlight-styles';
-    styleElement.textContent = `
-      .ai-highlight {
-        animation: pulse-highlight 3s ease;
-        box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.8);
-        position: relative;
-        z-index: 100;
-        background-color: rgba(114, 137, 218, 0.15);
+  if (document.getElementById('ai-highlight-styles')) return;
+
+  const styleElement = document.createElement('style');
+  styleElement.id = 'ai-highlight-styles';
+  styleElement.textContent = `
+    /* Main pulsing highlight animation */
+    .ai-highlight {
+      animation: ai-pulse-highlight 3s ease;
+      box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.8), 0 0 20px rgba(97, 218, 251, 0.4);
+      position: relative;
+      z-index: 100;
+      background-color: rgba(97, 218, 251, 0.15);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    /* Persistent subtle highlight after main animation */
+    .ai-highlight-persistent {
+      box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.4), 0 0 10px rgba(97, 218, 251, 0.2);
+      background-color: rgba(97, 218, 251, 0.08);
+      border-radius: 8px;
+      transition: all 0.5s ease;
+    }
+
+    /* Fade out animation */
+    .ai-highlight-fade {
+      box-shadow: 0 0 0 0 rgba(97, 218, 251, 0);
+      background-color: rgba(97, 218, 251, 0);
+      transition: all 1s ease;
+    }
+
+    /* Pulsing animation keyframes */
+    @keyframes ai-pulse-highlight {
+      0% {
+        box-shadow: 0 0 0 0 rgba(97, 218, 251, 0.8), 0 0 0 rgba(97, 218, 251, 0.4);
+        background-color: rgba(97, 218, 251, 0.1);
       }
-      
-      .ai-highlight-persistent {
-        box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
-        background-color: rgba(114, 137, 218, 0.05);
-        transition: all 0.3s ease;
+      15% {
+        box-shadow: 0 0 0 8px rgba(97, 218, 251, 0.6), 0 0 30px rgba(97, 218, 251, 0.5);
+        background-color: rgba(97, 218, 251, 0.25);
       }
-      
-      .ai-highlight-fade {
-        box-shadow: 0 0 0 0 rgba(114, 137, 218, 0);
-        background-color: rgba(114, 137, 218, 0);
+      30% {
+        box-shadow: 0 0 0 4px rgba(97, 218, 251, 0.4), 0 0 20px rgba(97, 218, 251, 0.3);
+        background-color: rgba(97, 218, 251, 0.2);
       }
-      
-      @keyframes pulse-highlight {
-        0% {
-          box-shadow: 0 0 0 0 rgba(114, 137, 218, 0.8);
-          background-color: rgba(114, 137, 218, 0.1);
-        }
-        30% {
-          box-shadow: 0 0 0 10px rgba(114, 137, 218, 0.3);
-          background-color: rgba(114, 137, 218, 0.25);
-        }
-        70% {
-          box-shadow: 0 0 0 8px rgba(114, 137, 218, 0.2);
-          background-color: rgba(114, 137, 218, 0.2);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(114, 137, 218, 0);
-          background-color: rgba(114, 137, 218, 0.05);
-        }
+      50% {
+        box-shadow: 0 0 0 6px rgba(97, 218, 251, 0.5), 0 0 25px rgba(97, 218, 251, 0.4);
+        background-color: rgba(97, 218, 251, 0.22);
       }
-    `;
-    document.head.appendChild(styleElement);
-  }
+      70% {
+        box-shadow: 0 0 0 4px rgba(97, 218, 251, 0.3), 0 0 15px rgba(97, 218, 251, 0.2);
+        background-color: rgba(97, 218, 251, 0.15);
+      }
+      100% {
+        box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.2), 0 0 10px rgba(97, 218, 251, 0.1);
+        background-color: rgba(97, 218, 251, 0.08);
+      }
+    }
+
+    /* Ensure highlighted elements are visible above other content */
+    .ai-highlight,
+    .ai-highlight-persistent {
+      isolation: isolate;
+    }
+  `;
+  document.head.appendChild(styleElement);
 };
 
-// Set up event listener for highlight requests
+/**
+ * Set up event listener for highlight requests from AI components
+ */
 export const setupHighlightEventListener = () => {
+  // Listen for new section-based highlight requests
+  document.addEventListener('ai-section-highlight', (event) => {
+    const { sectionId } = event.detail;
+    if (sectionId) {
+      highlightSection(sectionId);
+    }
+  });
+
+  // Listen for legacy line-based highlight requests (backward compatibility)
   document.addEventListener('ai-highlight-request', (event) => {
-    const { lineNumber } = event.detail;
-    if (lineNumber) {
+    const { lineNumber, sectionId } = event.detail;
+
+    if (sectionId) {
+      highlightSection(sectionId);
+    } else if (lineNumber) {
       highlightElement(lineNumber);
     }
   });
+};
+
+/**
+ * Trigger a highlight for a section from anywhere in the app
+ */
+export const triggerSectionHighlight = (sectionId) => {
+  const event = new CustomEvent('ai-section-highlight', {
+    detail: { sectionId }
+  });
+  document.dispatchEvent(event);
+};
+
+/**
+ * Store a highlight request for after navigation
+ * @param {string} sectionId - The section ID to highlight
+ */
+export const storeHighlightRequest = (sectionId) => {
+  sessionStorage.setItem('highlightSection', sectionId);
+};
+
+/**
+ * Process any pending highlight requests (call after page load)
+ */
+export const processPendingHighlight = () => {
+  const request = checkForHighlightRequest();
+
+  if (!request) return false;
+
+  // Small delay to ensure DOM is ready
+  setTimeout(() => {
+    if (request.type === 'section') {
+      highlightSection(request.value);
+    } else if (request.type === 'line') {
+      highlightElement(request.value);
+    }
+  }, 500);
+
+  return true;
 };

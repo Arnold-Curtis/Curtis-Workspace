@@ -2,103 +2,128 @@
 
 ## SECTION: PROJECT EXPLORER [LINES 1-15]
 1. PROJECTS EXPLORER
-2. AI Personal Assistant (AIPA) (PLANAZ)
-3. Natural Language Review System
-4. 
-5. // Project explorer rendered as IDE sidebar
-6. // Component ID: explorer-section
-7. // Explorer header class: explorer-header
-8. // Project list class: project-list
-9. // Each project item has class: project-item
-10. // Active project has class: active
-11. // Each project has icon: code-branch
-12. // Empty state message: "Select a project from the sidebar to view details."
-13. // Empty state subtext: "Browse through my portfolio of web applications, machine learning projects, and more."
+2. AI Personal Assistant (AIPA)
+3. Natural Language Review System (NLRS)
+4. AudioGlass — Transparency Mode
+5. Curtis-Workspace — Interactive Portfolio
+6. // Project explorer rendered as IDE sidebar
+7. // Component ID: explorer-section
+8. // Explorer header class: explorer-header
+9. // Project list class: project-list
+10. // Each project item has class: project-item
+11. // Active project has class: active
+12. // Each project has icon: code-branch
+13. // Empty state message: "Select a project from the sidebar to view details."
 14. // GitHub link button available with text: "Explore My Work"
 15. // GitHub link: github.com/Arnold-Curtis
 
 ## SECTION: PROJECT 1 - AIPA [LINES 16-50]
-16. AI Personal Assistant (AIPA) (PLANAZ)
+16. AI Personal Assistant (AIPA)
 17. 
-18. AIPA, also known as PLANAZ, is an intelligent AI-powered personal assistant built to help users
-19. seamlessly manage their daily lives through natural conversation and smart automation.
-20. It uses large language models (LLMs), both locally and via cloud APIs,
-21. to understand user input, generate personalized plans, and handle events.
-22. Built with a modern React frontend and a robust Spring Boot + SQLite backend,
-23. AIPA combines conversational AI with productivity tools.
+18. AIPA is a full-stack AI-powered personal assistant that combines a modern React 19 frontend
+19. with a robust Spring Boot 3.4 backend. Integrated with Google's Gemini 2.0 Flash API,
+20. it provides intelligent, context-aware responses, automatic calendar event detection
+21. from natural language, persistent memory capabilities, and dynamic plan generation.
+22. The system features sophisticated input routing that determines whether user input
+23. requires planning, calendar events, or simple responses.
 24. 
 25. Technologies:
-26. React.js
-27. Spring Boot
-28. Java
-29. SQLite
-30. Large Language Models (LLMs)
-31. Cloud & Local AI Integration
-32. REST APIs
-33. 
-34. Key Features:
-35. Natural language understanding using LLMs
-36. Cloud and local LLM integration
-37. Calendar system for event scheduling
-38. Context-aware event creation
-39. Smart planning and task breakdown
-40. Auto-assignment of subtasks
-41. Dynamic reminder system
-42. Conversational interface
-43. Responsive UI in React
-44. Spring Boot backend with SQLite
-45. 
-46. // Project 1 rendered as detailed card when selected
-47. // Component ID: project-details when Project 1 is active
-48. // Project has sections for description, technologies, and features
-49. // GitHub link: github.com/Arnold-Curtis/AI-Personal-Assistant
-50. // Has fade-in animation when selected
+26. React 19, Spring Boot 3.4, Java, SQLite, Google Gemini 2.0 Flash,
+27. Spring Security, JWT Authentication, REST APIs, FullCalendar
+28. 
+29. Key Features:
+30. Gemini 2.0 Flash integration for fast, high-quality AI responses
+31. Multi-tier prompt system with sophisticated AI behavior templates
+32. Natural language event detection — auto-creates calendar events from phrases
+33. Persistent memory system that stores and retrieves user preferences
+34. Dynamic plan generation breaking complex goals into time-bound steps
+35. JWT-based authentication with refresh capability
+36. Customizable themes (10 color schemes) with font size controls
+37. FullCalendar integration with day, week, and list views
+38. Session memory tracking for contextual awareness
+39. Profile management with photo upload and password updates
+40. 
+41. // Project 1 rendered as detailed card when selected
+42. // Component ID: project-details when Project 1 is active
+43. // GitHub link: github.com/Arnold-Curtis/AI-Personal-Assistant
 
 ## SECTION: PROJECT 2 - NLRS [LINES 51-85]
-51. Natural Language Review System
-52. 
-53. A desktop Java application that transforms academic evaluations using NLP
-54. to analyze open-ended student feedback. It replaces rigid survey forms
-55. with natural language input to provide deeper, unbiased insights.
-56. 
-57. Technologies:
-58. Java
-59. JavaFX
-60. Scene Builder
-61. MySQL
-62. Natural Language Processing (NLP)
-63. JUnit
-64. TestNG
-65. Agile-Scrum
-66. Object-Oriented Design
-67. 
-68. Key Features:
-69. Accepts natural language student reviews
-70. Analyzes feedback using NLP
-71. Reduces bias by removing predefined survey options
-72. Role-based access for students, lecturers, and admins
-73. Performance reporting and sentiment analysis
-74. Authentication to prevent fake reviews
-75. Lecturer feedback on reviews
-76. Modular and scalable design
-77. Unit testing with JUnit and TestNG
-78. 
-79. // Project 2 rendered as detailed card when selected
-80. // Component ID: project-details when Project 2 is active
-81. // Project has sections for description, technologies, and features
-82. // Technologies and features rendered as tag pills
-83. // GitHub link: github.com/Arnold-Curtis/NaturalLanguageReviewSystem
-84. // Project image placeholder used
-85. // Has fade-in animation when selected
+44. Natural Language Review System (NLRS)
+45. 
+46. NLRS is a JavaFX desktop application designed for educational institutions
+47. to manage lecturer feedback. Students submit open-ended reviews which are
+48. automatically analyzed using Stanford CoreNLP for sentiment analysis (1-9 scale).
+49. Lecturers view aggregated sentiment scores, and administrators manage users
+50. and generate performance reports.
+51. 
+52. Technologies:
+53. Java, JavaFX 17, FXML, Stanford CoreNLP 4.5.6, MySQL 8.0, JDBC, FormsFX, Maven
+54. 
+55. Key Features:
+56. Stanford CoreNLP pipeline for sentiment analysis (tokenize → parse → sentiment)
+57. Sentiment scoring from 1 (Very Negative) to 9 (Very Positive)
+58. Role-based dashboards for students, lecturers, and administrators
+59. Anonymous review submission protecting student privacy
+60. Unit/course-based filtering for targeted feedback analysis
+61. Comprehensive performance reports with aggregated sentiment data
+62. Authentication system preventing fake reviews
+63. 
+64. // GitHub link: github.com/Arnold-Curtis/NaturalLanguageReviewSystem
 
-## SECTION: PROJECT HEADER [LINES 86-95]
-86. Projects.js
-87. Explore My Work
-88. 
-89. // Project header rendered as file tab
-90. // Component ID: projects-header
-91. // File tab class: file-tab
-92. // Tab icon: file-code
-93. // GitHub redirect button class: github-redirect-button
-94. // GitHub icon: github
-95. // External link icon: external-link-alt 
+## SECTION: PROJECT 3 - AUDIOGLASS [LINES 86-115]
+65. AudioGlass — Transparency Mode
+66. 
+67. AudioGlass is a Windows desktop application providing real-time audio passthrough
+68. from microphone to headphones, emulating the 'transparency mode' found in premium
+69. ANC headphones like AirPods Pro. Designed for ultra-low latency (sub-15ms),
+70. the application runs its audio hot path in native C code to bypass .NET garbage
+71. collection pauses, achieving performance impossible with managed code alone.
+72. 
+73. Technologies:
+74. C# .NET, Windows Forms, Miniaudio (C library), Custom C++ Wrapper,
+75. WASAPI, P/Invoke, NAudio, PowerShell
+76. 
+77. Key Features:
+78. Sub-15ms latency achieved via native (unmanaged) audio processing
+79. GC-immune audio loop bypasses .NET garbage collection pauses
+80. System tray application with minimal footprint and quick toggle
+81. Configurable buffer sizes (128-frame ~2.6ms or 256-frame ~5.3ms)
+82. Input/output device selection with hot-swap and auto-reconnection
+83. Adjustable passthrough volume (0-100%)
+84. Persistent settings saved across restarts
+85. Callback marshaling with GCHandle to prevent delegate collection
+86. 
+87. // GitHub link: github.com/Arnold-Curtis/AudioGlass
+
+## SECTION: PROJECT 4 - CURTIS-WORKSPACE [LINES 116-150]
+88. Curtis-Workspace — Interactive Portfolio
+89. 
+90. This portfolio website reimagined as a fully interactive Windows 11-style desktop
+91. environment. Instead of traditional scrolling, visitors experience a multi-window
+92. operating system simulation with draggable windows, a centered taskbar, snap zones,
+93. and an AI-powered assistant orb integrated with Google Gemini.
+94. 
+95. Technologies:
+96. React 19, React Router 6, Framer Motion, Google Generative AI (Gemini),
+97. react-draggable, react-resizable, CSS3 Variables, Netlify Functions, PHP Backend
+98. 
+99. Key Features:
+100. Multi-window architecture with independent, stacking windows
+101. Draggable windows with momentum, bounds checking, and resize handles
+102. Windows 11-style centered taskbar with open window indicators
+103. Snap zones for half-screen, quarter-screen, and fullscreen layouts
+104. Elastic animations matching Windows 11 behavior
+105. AI Assistant Orb with Google Gemini integration and portfolio context
+106. Split-view mode — AI chat snaps beside referenced content
+107. Glassmorphism design with dark theme and custom cursor effects
+108. Responsive design with mobile-specific navigation
+109. 
+110. // Live Demo: arnoldcurtis.netlify.app
+111. // GitHub link: github.com/Arnold-Curtis/Curtis-Workspace
+
+## SECTION: PROJECT HEADER [LINES 151-160]
+112. Projects.js
+113. Explore My Work
+114. // Project header rendered as file tab
+115. // Component ID: projects-header
+116. // GitHub redirect button links to github.com/Arnold-Curtis

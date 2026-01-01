@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../stylings/Contact.css';
 import { motion } from 'framer-motion';
 import { submitContact } from '../utils/apiService';
+import { processPendingHighlight, injectHighlightStyles } from '../utils/highlightService';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,14 @@ const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+
+  // Check for highlight requests when component mounts
+  useEffect(() => {
+    injectHighlightStyles();
+    setTimeout(() => {
+      processPendingHighlight();
+    }, 500);
+  }, []);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -40,7 +49,7 @@ const Contact = () => {
       if (result.success) {
         setSubmitted(true);
         setFormData({ name: '', email: '', message: '' });
-        
+
         // Reset the success message after 5 seconds
         setTimeout(() => {
           setSubmitted(false);
@@ -55,7 +64,7 @@ const Contact = () => {
         const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
         const updatedSubmissions = [submissionData, ...savedSubmissions];
         localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
-        
+
         setSubmitted(true);
         setFormData({ name: '', email: '', message: '' });
         setTimeout(() => {
@@ -73,7 +82,7 @@ const Contact = () => {
       const savedSubmissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
       const updatedSubmissions = [submissionData, ...savedSubmissions];
       localStorage.setItem('contactSubmissions', JSON.stringify(updatedSubmissions));
-      
+
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => {
@@ -87,7 +96,7 @@ const Contact = () => {
   return (
     <div className="contact-page-container">
       <div className="contact-content">
-        <motion.div 
+        <motion.div
           className="code-line-numbers"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -97,14 +106,13 @@ const Contact = () => {
             <div key={i} className="line-number">{i + 1}</div>
           ))}
         </motion.div>
-        
+
         <div className="contact-main">
-          <motion.div 
+          <motion.div
             className="code-comment"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            data-line="51-60"
           >
             {`/**
  * Contact.js
@@ -113,13 +121,14 @@ const Contact = () => {
  * for reaching out to Arnold Curtis.
  */`}
           </motion.div>
-          
-          <motion.div 
-            className="section-container"
+
+          <motion.div
+            className="section-container contact-info-section"
+            id="contact-info"
+            data-section="contact.info"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            data-line="1-20"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ContactInfo</span> = () =&gt; &#123;
@@ -130,56 +139,57 @@ const Contact = () => {
                   <i className="fas fa-envelope"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type" data-line="1">Email</h3>
-                  <p className="contact-value" data-line="2">mbicidev@gmail.com</p>
+                  <h3 className="contact-type">Email</h3>
+                  <p className="contact-value">mbicidev@gmail.com</p>
                 </div>
               </div>
-              
+
               <div className="contact-card">
                 <div className="contact-icon">
                   <i className="fas fa-phone-alt"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type" data-line="4">Phone</h3>
-                  <p className="contact-value" data-line="5"> +254723393075 </p>
+                  <h3 className="contact-type">Phone</h3>
+                  <p className="contact-value"> +254723393075 </p>
                 </div>
               </div>
-              
+
               <div className="contact-card">
                 <div className="contact-icon">
                   <i className="fab fa-github"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type" data-line="7">GitHub</h3>
-                  <a href="https://github.com/Arnold-Curtis" target="_blank" rel="noopener noreferrer" className="contact-value link" data-line="8">github.com/Arnold-Curtis</a>
+                  <h3 className="contact-type">GitHub</h3>
+                  <a href="https://github.com/Arnold-Curtis" target="_blank" rel="noopener noreferrer" className="contact-value link">github.com/Arnold-Curtis</a>
                 </div>
               </div>
-              
+
               <div className="contact-card">
                 <div className="contact-icon">
                   <i className="fab fa-linkedin"></i>
                 </div>
                 <div className="contact-details">
-                  <h3 className="contact-type" data-line="10">LinkedIn</h3>
-                  <a href="https://linkedin.com/in/arnold-curtis" target="_blank" rel="noopener noreferrer" className="contact-value link" data-line="11">linkedin.com/in/arnold-curtis</a>
+                  <h3 className="contact-type">LinkedIn</h3>
+                  <a href="https://linkedin.com/in/arnold-curtis" target="_blank" rel="noopener noreferrer" className="contact-value link">linkedin.com/in/arnold-curtis</a>
                 </div>
               </div>
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
-          <motion.div 
-            className="section-container"
+
+          <motion.div
+            className="section-container contact-form-section"
+            id="contact-form"
+            data-section="contact.form"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            data-line="21-50"
           >
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ContactForm</span> = () =&gt; &#123;
             </h2>
             <div className="terminal-like-container">
-              <div className="terminal-header" data-line="44">
+              <div className="terminal-header">
                 <span className="terminal-title">
                   <i className="fas fa-terminal"></i> message.send
                 </span>
@@ -187,71 +197,70 @@ const Contact = () => {
               <div className="terminal-body">
                 <div className="contact-form-wrapper" id="contact-form-wrapper">
                   <div className="get-in-touch">
-                    <h2 data-line="21">Get in Touch</h2>
-                    <p data-line="23-24">
-                      Have a project in mind or want to discuss potential opportunities? 
+                    <h2>Get in Touch</h2>
+                    <p>
+                      Have a project in mind or want to discuss potential opportunities?
                       I'd love to hear from you! Fill out the form, and I'll get back to you as soon as possible.
                     </p>
-                    <div className="response-time" data-line="26">
+                    <div className="response-time">
                       <i className="fas fa-clock"></i>
                       <span>Average response time: <strong>1 hour</strong></span>
                     </div>
                   </div>
-                  
+
                   <form className="contact-form" onSubmit={handleSubmit}>
-                    <div className="form-group" data-line="28-29">
+                    <div className="form-group">
                       <label htmlFor="name">
                         <i className="fas fa-user"></i> Name
                       </label>
-                      <input 
+                      <input
                         id="name"
                         name="name"
-                        type="text" 
-                        className="input-field" 
-                        placeholder="Your Name" 
+                        type="text"
+                        className="input-field"
+                        placeholder="Your Name"
                         value={formData.name}
                         onChange={handleChange}
-                        required 
+                        required
                       />
                     </div>
-                    
-                    <div className="form-group" data-line="31-32">
+
+                    <div className="form-group">
                       <label htmlFor="email">
                         <i className="fas fa-envelope"></i> Email
                       </label>
-                      <input 
+                      <input
                         id="email"
                         name="email"
-                        type="email" 
-                        className="input-field" 
-                        placeholder="your.email@example.com" 
+                        type="email"
+                        className="input-field"
+                        placeholder="your.email@example.com"
                         value={formData.email}
                         onChange={handleChange}
-                        required 
+                        required
                       />
                     </div>
-                    
-                    <div className="form-group" data-line="34-35">
+
+                    <div className="form-group">
                       <label htmlFor="message">
                         <i className="fas fa-comment-alt"></i> Message
                       </label>
-                      <textarea 
+                      <textarea
                         id="message"
                         name="message"
-                        className="input-field" 
-                        placeholder="Your message here..." 
-                        rows="5" 
+                        className="input-field"
+                        placeholder="Your message here..."
+                        rows="5"
                         value={formData.message}
                         onChange={handleChange}
                         required
                       ></textarea>
                     </div>
-                    
-                    <button 
-                      type="submit" 
+
+                    <button
+                      type="submit"
                       className={`submit-button ${submitting ? 'submitting' : ''}`}
                       disabled={submitting}
-                      data-line="37"
                     >
                       {submitting ? (
                         <>
@@ -263,14 +272,14 @@ const Contact = () => {
                         </>
                       )}
                     </button>
-                    
+
                     {submitted && (
-                      <div className="success-message" data-line="39">
+                      <div className="success-message">
                         <i className="fas fa-check-circle"></i>
                         <span>Your message has been sent successfully!</span>
                       </div>
                     )}
-                    
+
                     {error && (
                       <div className="error-message">
                         <i className="fas fa-exclamation-circle"></i>
@@ -283,8 +292,8 @@ const Contact = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="section-container export-section"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

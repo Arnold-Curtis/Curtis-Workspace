@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import '../stylings/Skills.css';
-import { checkForHighlightRequest, highlightElement, injectHighlightStyles } from '../utils/highlightService';
+import { processPendingHighlight, highlightSection, injectHighlightStyles } from '../utils/highlightService';
 
 export const Skills = () => {
   const [terminalActive, setTerminalActive] = useState(true);
@@ -9,7 +9,7 @@ export const Skills = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const typeIntervalRef = useRef(null);
-  
+
   // Terminal interaction strings - wrapped in useMemo to prevent recreation on each render
   const terminalLines = useMemo(() => [
     { command: "skills.show('technical')", delay: 30 },
@@ -55,28 +55,28 @@ export const Skills = () => {
       { name: 'Communication', level: 90 },
       { name: 'Team Collaboration', level: 92 },
       { name: 'Project Management', level: 85 },
-      { name: 'Willingness to Learn', level: 88 } 
+      { name: 'Willingness to Learn', level: 88 }
     ]
   };
 
   // Current category being displayed
   const [currentCategory, setCurrentCategory] = useState(null);
-  
+
   // Function to animate typing in the terminal - wrapped in useCallback to prevent recreation on each render
   const animateTyping = useCallback((command, onComplete) => {
     if (isTyping) {
       // Clear existing typing animation if one is in progress
       clearInterval(typeIntervalRef.current);
     }
-    
+
     setIsTyping(true);
     let index = 0;
     setTypedText('');
-    
+
     typeIntervalRef.current = setInterval(() => {
       setTypedText(command.substring(0, index));
       index++;
-      
+
       if (index > command.length) {
         clearInterval(typeIntervalRef.current);
         setIsTyping(false);
@@ -84,21 +84,21 @@ export const Skills = () => {
       }
     }, 50); // Faster typing speed for better UX when manually selecting
   }, [isTyping, typeIntervalRef, setTypedText, setIsTyping]);
-  
+
   // Typing animation for initial sequence
   useEffect(() => {
     if (currentLine < terminalLines.length) {
       const command = terminalLines[currentLine].command;
       const delay = terminalLines[currentLine].delay;
-      
+
       const timeout = setTimeout(() => {
         animateTyping(command, () => {
           // Extract category from command
           const category = command.match(/'(.*?)'/)[1];
-          
+
           setTimeout(() => {
             setCurrentCategory(category);
-            
+
             setTimeout(() => {
               setCurrentLine(prevLine => prevLine + 1);
               // Check if this is the last animation
@@ -109,7 +109,7 @@ export const Skills = () => {
           }, 300); // Show result right after typing
         });
       }, currentLine === 0 ? 500 : delay); // Delay before starting to type
-      
+
       return () => {
         clearTimeout(timeout);
         clearInterval(typeIntervalRef.current);
@@ -120,10 +120,10 @@ export const Skills = () => {
   // Handle category selection
   const handleCategorySelect = (category) => {
     if (category === currentCategory) return; // Don't re-animate if it's the same category
-    
+
     // Create the command string that would show this category
     const command = `skills.show('${category}')`;
-    
+
     // Animate typing the command
     animateTyping(command, () => {
       // After typing animation completes, update the category
@@ -132,7 +132,7 @@ export const Skills = () => {
       }, 300);
     });
   };
-  
+
   const toggleTerminal = () => {
     setTerminalActive(!terminalActive);
   };
@@ -141,32 +141,39 @@ export const Skills = () => {
   useEffect(() => {
     // Inject highlight styles
     injectHighlightStyles();
-    
-    // Check if there's a highlight request
-    const highlightLine = checkForHighlightRequest();
-    if (highlightLine) {
-      // If animation is not complete, wait for it
-      if (!animationComplete) {
-        const waitForAnimation = setInterval(() => {
-          if (animationComplete) {
-            clearInterval(waitForAnimation);
-            setTimeout(() => {
-              highlightElement(highlightLine);
-            }, 500);
-          }
-        }, 500);
-        
-        // Cleanup interval if component unmounts
-        return () => clearInterval(waitForAnimation);
-      } else {
-        // If animation is already complete, highlight immediately
-        setTimeout(() => {
-          highlightElement(highlightLine);
-        }, 500);
-      }
+
+    // Process pending highlights after animation completes
+    if (animationComplete) {
+      setTimeout(() => {
+        processPendingHighlight();
+      }, 500);
     }
   }, [animationComplete]);
-  
+
+  // Listen for section highlight events
+  useEffect(() => {
+    const handleSectionHighlight = (event) => {
+      const { sectionId } = event.detail;
+      if (sectionId && sectionId.startsWith('skills.')) {
+        // Extract the category from the section ID
+        const category = sectionId.replace('skills.', '');
+        if (skillsData[category]) {
+          // First switch to that category
+          handleCategorySelect(category);
+          // Then highlight after a short delay
+          setTimeout(() => {
+            highlightSection(sectionId);
+          }, 800);
+        }
+      }
+    };
+
+    document.addEventListener('ai-section-highlight', handleSectionHighlight);
+    return () => {
+      document.removeEventListener('ai-section-highlight', handleSectionHighlight);
+    };
+  }, [currentCategory]);
+
   return (
     <div className="skills-page">
       <div className="skills-content">
@@ -185,9 +192,9 @@ export const Skills = () => {
               </button>
             </div>
           </div>
-          
+
           {terminalActive && (
-            <div className="terminal-container" id="terminal-container" data-line="1-15">
+            <div className="terminal-container" id="terminal-container">
               <div className="terminal-header">
                 <span className="terminal-title">
                   <i className="fas fa-terminal"></i> bash
@@ -200,62 +207,18 @@ export const Skills = () => {
                   <span className="terminal-command"> {typedText}</span>
                   {(isTyping || typedText.length === terminalLines[currentLine]?.command.length) && <span className="cursor">▋</span>}
                 </div>
-                
+
                 {currentCategory && (
-                  <div className="terminal-result">
+                  <div
+                    className="terminal-result"
+                    data-section={`skills.${currentCategory}`}
+                    data-category={currentCategory}
+                  >
                     <div className="result-title">
                       {currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Skills:
                     </div>
-                    {currentCategory === 'technical' && skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar" data-line={16 + index}>
-                        <span className="skill-name">{skill.name}</span>
-                        <div className="skill-progress">
-                          <div
-                            className="skill-fill"
-                            style={{ width: `${skill.level}%` }}
-                          ></div>
-                        </div>
-                        <span className="skill-level">{skill.level}%</span>
-                      </div>
-                    ))}
-                    {currentCategory === 'frameworks' && skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar" data-line={31 + index}>
-                        <span className="skill-name">{skill.name}</span>
-                        <div className="skill-progress">
-                          <div
-                            className="skill-fill"
-                            style={{ width: `${skill.level}%` }}
-                          ></div>
-                        </div>
-                        <span className="skill-level">{skill.level}%</span>
-                      </div>
-                    ))}
-                    {currentCategory === 'tools' && skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar" data-line={46 + index}>
-                        <span className="skill-name">{skill.name}</span>
-                        <div className="skill-progress">
-                          <div
-                            className="skill-fill"
-                            style={{ width: `${skill.level}%` }}
-                          ></div>
-                        </div>
-                        <span className="skill-level">{skill.level}%</span>
-                      </div>
-                    ))}
-                    {currentCategory === 'languages' && skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar" data-line={61 + index}>
-                        <span className="skill-name">{skill.name}</span>
-                        <div className="skill-progress">
-                          <div
-                            className="skill-fill"
-                            style={{ width: `${skill.level}%` }}
-                          ></div>
-                        </div>
-                        <span className="skill-level">{skill.level}%</span>
-                      </div>
-                    ))}
-                    {currentCategory === 'softSkills' && skillsData[currentCategory].map((skill, index) => (
-                      <div key={index} className="skill-bar" data-line={77 + index}>
+                    {skillsData[currentCategory].map((skill, index) => (
+                      <div key={index} className="skill-bar">
                         <span className="skill-name">{skill.name}</span>
                         <div className="skill-progress">
                           <div
@@ -272,32 +235,31 @@ export const Skills = () => {
             </div>
           )}
         </div>
-        
+
         {/* Category Selector - appears after animation completes */}
         {animationComplete && (
-          <div className="category-selector" id="category-selector" data-line="92-105">
+          <div className="category-selector" id="category-selector">
             <div className="selector-container">
-              {Object.keys(skillsData).map((category, index) => (
+              {Object.keys(skillsData).map((category) => (
                 <button
                   key={category}
                   className={`category-button ${currentCategory === category ? 'active' : ''}`}
                   onClick={() => handleCategorySelect(category)}
-                  data-line={92 + index}
+                  data-category={category}
                 >
-                  <i className={`fas ${
-                    category === 'technical' ? 'fa-cogs' :
-                    category === 'frameworks' ? 'fa-layer-group' :
-                    category === 'tools' ? 'fa-tools' :
-                    category === 'languages' ? 'fa-code' :
-                    category === 'softSkills' ? 'fa-users' : 'fa-star'
-                  }`}></i>
+                  <i className={`fas ${category === 'technical' ? 'fa-cogs' :
+                      category === 'frameworks' ? 'fa-layer-group' :
+                        category === 'tools' ? 'fa-tools' :
+                          category === 'languages' ? 'fa-code' :
+                            category === 'softSkills' ? 'fa-users' : 'fa-star'
+                    }`}></i>
                   <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
                 </button>
               ))}
             </div>
           </div>
         )}
-        
+
         <div className="skills-description">
           <div className="description-content">
             <h2>Technical Proficiencies</h2>

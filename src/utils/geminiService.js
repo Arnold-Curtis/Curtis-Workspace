@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getCurrentChatId } from './chatDatabase';
+import { getContentForAI, getAllSectionIds, isValidSectionId, getPageForSection } from './contentRegistry';
 
 // Initialize the Gemini API with the API key from environment variables
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
@@ -16,96 +17,80 @@ const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 // Store chat histories for each chat ID
 const chatHistories = new Map();
 
-// Website content for context
-let websiteContent = null;
-let pageContents = {};
+// Cached content for AI
+let cachedAIContent = null;
 
-// Load website content from webcont.txt
-export const loadWebsiteContent = async () => {
-  if (websiteContent) return websiteContent;
-
-  try {
-    // Fix the path to access the file correctly in the public directory
-    const response = await fetch('/webcont.txt');
-    if (!response.ok) {
-      throw new Error(`Failed to load website content: ${response.status}`);
-    }
-    websiteContent = await response.text();
-    return websiteContent;
-  } catch (error) {
-    console.error('Error loading website content:', error);
-    return null;
+/**
+ * Get website content for AI context
+ * Uses the new contentRegistry instead of text files
+ */
+const getWebsiteContent = () => {
+  if (!cachedAIContent) {
+    cachedAIContent = getContentForAI();
   }
+  return cachedAIContent;
 };
 
-// Load content for a specific page
-export const loadPageContent = async (pageName) => {
-  if (pageContents[pageName]) return pageContents[pageName];
+/**
+ * Build the system prompt with available section references
+ */
+const buildSystemPrompt = () => {
+  const content = getWebsiteContent();
+  const sectionIds = getAllSectionIds();
 
-  try {
-    // First try to load from src directory
-    let response = await fetch(`/src/${pageName}_content.txt`);
+  const sectionList = sectionIds.map(id => {
+    const parts = id.split('.');
+    const page = parts[0];
+    const section = parts.slice(1).join('.');
+    return `  - ${id} (${page} page - ${section})`;
+  }).join('\n');
 
-    // If that fails, try the root directory
-    if (!response.ok) {
-      response = await fetch(`/${pageName}_content.txt`);
-    }
+  return `[SYSTEM CONTEXT - NOT VISIBLE TO USER]
+You are Arnold Curtis's portfolio AI assistant. You help visitors learn about Arnold's background, skills, projects, and experience.
 
-    if (!response.ok) {
-      throw new Error(`Failed to load ${pageName} content: ${response.status}`);
-    }
+CONTENT OVERVIEW:
+${content}
 
-    const content = await response.text();
-    pageContents[pageName] = content;
-    return content;
-  } catch (error) {
-    console.error(`Error loading ${pageName} content:`, error);
-    return null;
-  }
+REFERENCE FORMAT:
+When referring to specific content, use clickable references in this format:
+[ref:SECTION_ID]text to display[/ref]
+
+Available section IDs you can reference:
+${sectionList}
+
+EXAMPLES:
+- "Arnold has [ref:skills.languages]strong expertise in Java at 95% proficiency[/ref]"
+- "Check out [ref:projects.aipa]AIPA, his AI Personal Assistant[/ref]"
+- "Learn about [ref:about.experience]his work experience[/ref]"
+- "See [ref:about.education]his educational background[/ref]"
+
+REFERENCE GUIDELINES:
+1. Include 2-4 relevant references per response
+2. Only use section IDs from the list above
+3. Make references flow naturally in your response
+4. Reference the most relevant sections for the user's query
+5. The text inside [ref:...] tags will be clickable - make it descriptive
+
+TONE:
+- Be helpful, friendly, and professional
+- Answer questions accurately based on the content provided
+- Do not mention that you were given this context information
+- If asked about something not in the content, politely say you don't have that information
+
+[END OF SYSTEM CONTEXT]`;
 };
 
-// Load all available page contents
-export const loadAllPageContents = async () => {
-  const pages = ['home', 'about', 'skills', 'projects', 'contact', 'resume', 'aiorb'];
-
-  try {
-    await Promise.all(pages.map(async (page) => {
-      try {
-        // First try to load from src directory
-        let content = await fetch(`/src/${page}_content.txt`);
-
-        // If that fails, try the root directory
-        if (!content.ok) {
-          content = await fetch(`/${page}_content.txt`);
-        }
-
-        if (content.ok) {
-          pageContents[page] = await content.text();
-        }
-      } catch (e) {
-        console.error(`Error loading ${page}_content.txt:`, e);
-      }
-    }));
-  } catch (error) {
-    console.error('Error loading page contents:', error);
-  }
-};
-
-// Initialize a new chat with website content context
+/**
+ * Initialize a new chat with website content context
+ */
 export const initializeNewChat = async (chatId = getCurrentChatId()) => {
   try {
-    // Get website content
-    const content = await loadWebsiteContent();
-    if (!content) {
-      console.error('Failed to load website content for AI context');
-      resetChatHistory(chatId);
-      return;
-    }
+    const systemPrompt = buildSystemPrompt();
 
     // Initialize chat history with system context
-    const systemPrompt = {
+    const systemMessage = {
       role: 'user',
-      parts: [{ text: `[SYSTEM CONTEXT - NOT VISIBLE TO USER]\nThis is the content map of Arnold Curtis's portfolio website. Use this information to answer user questions accurately about Arnold, his skills, projects, experience, and other details contained here:\n\n${content}\n\nYou are an AI assistant embedded in Arnold Curtis's portfolio website. Your purpose is to help visitors learn about Arnold's background, skills, projects, and experience. Be helpful, friendly, and knowledgeable about Arnold based on the information provided. Do not mention that you were given this context information.\n[END OF SYSTEM CONTEXT]` }],
+      parts: [{ text: systemPrompt }],
     };
 
     const aiGreeting = "Hi there! I'm Curtis' AI assistant. I can help you learn more about Curtis, his skills, projects, and experience. Feel free to ask me anything about his work or how he might be able to help with your development needs.";
@@ -116,7 +101,7 @@ export const initializeNewChat = async (chatId = getCurrentChatId()) => {
     };
 
     // Set the chat history with the system context and initial AI greeting
-    chatHistories.set(chatId, [systemPrompt, aiResponse]);
+    chatHistories.set(chatId, [systemMessage, aiResponse]);
 
     return aiGreeting;
   } catch (error) {
@@ -125,71 +110,9 @@ export const initializeNewChat = async (chatId = getCurrentChatId()) => {
   }
 };
 
-// Function to find relevant pages for a user query
-export const findRelevantPages = async (userMessage, chatId = getCurrentChatId()) => {
-  try {
-    // Initialize chat history for this chat if it doesn't exist
-    if (!chatHistories.has(chatId)) {
-      await initializeNewChat(chatId);
-    }
-
-    // Get chat history for this chat
-    const chatHistory = chatHistories.get(chatId);
-
-    // Create a prompt to ask the AI which pages are relevant
-    const relevancePrompt = {
-      role: 'user',
-      parts: [{
-        text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
-Based on the user's query: "${userMessage}", identify which pages from the website would be most relevant to answer their question.
-Return your response in the following JSON format only:
-{
-  "relevantPages": [
-    {"page": "pageName", "relevance": "high/medium/low", "sections": ["section1", "section2"]}
-  ]
-}
-Where:
-- "page" can be one of: "home", "about", "skills", "projects", "contact", "resume"
-- "relevance" indicates how relevant this page is to the query
-- "sections" lists specific sections within the page that are most relevant (optional)
-
-Return up to 3 most relevant pages, ordered by relevance.
-[END OF SYSTEM INSTRUCTION]` }],
-    };
-
-    // Create a chat session for finding relevant pages
-    const relevanceChat = model.startChat({
-      history: [...chatHistory, relevancePrompt],
-      generationConfig: {
-        maxOutputTokens: 500,
-        temperature: 0.2,
-      },
-    });
-
-    // Generate response to find relevant pages
-    const relevanceResult = await relevanceChat.sendMessage(userMessage);
-    const relevanceResponse = relevanceResult.response.text();
-
-    // Parse the JSON response
-    try {
-      // Extract JSON from the response (in case there's any extra text)
-      const jsonMatch = relevanceResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const relevantPagesData = JSON.parse(jsonMatch[0]);
-        return relevantPagesData.relevantPages || [];
-      }
-      return [];
-    } catch (error) {
-      console.error('Error parsing relevant pages JSON:', error);
-      return [];
-    }
-  } catch (error) {
-    console.error('Error finding relevant pages:', error);
-    return [];
-  }
-};
-
-// Function to generate a response from Gemini with contextual links
+/**
+ * Generate a response from Gemini with contextual references
+ */
 export const generateResponse = async (userMessage, chatId = getCurrentChatId()) => {
   try {
     // Check if API key is available
@@ -207,7 +130,6 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
     const chatHistory = chatHistories.get(chatId);
 
     // Check if the first message is the system context
-    // If not, we need to reinitialize with the system context
     const hasSystemContext = chatHistory.length > 0 &&
       chatHistory[0].parts[0].text.includes('[SYSTEM CONTEXT');
 
@@ -215,63 +137,6 @@ export const generateResponse = async (userMessage, chatId = getCurrentChatId())
       console.log('Chat history missing system context, reinitializing...');
       await initializeNewChat(chatId);
     }
-
-    // Step 1: Find relevant pages for the query
-    console.log('Finding relevant pages for query...');
-    const relevantPages = await findRelevantPages(userMessage, chatId);
-    console.log('Relevant pages:', relevantPages);
-
-    // Step 2: Load content from relevant pages
-    let pageContexts = '';
-    for (const pageInfo of relevantPages) {
-      try {
-        const pageName = pageInfo.page.toLowerCase();
-        const content = await fetch(`/src/${pageName}_content.txt`)
-          .then(res => res.ok ? res.text() : null)
-          .catch(() => null);
-
-        if (content) {
-          pageContexts += `\n\n## ${pageName.toUpperCase()} PAGE CONTENT:\n${content}`;
-        }
-      } catch (error) {
-        console.error(`Error loading content for ${pageInfo.page}:`, error);
-      }
-    }
-
-    // Step 3: Create a prompt with the relevant page contents
-    const contextPrompt = {
-      role: 'user',
-      parts: [{
-        text: `[SYSTEM INSTRUCTION - NOT VISIBLE TO USER]
-I'm going to provide you with specific content from the pages you identified as relevant to the user's query.
-Use this information to provide a detailed and accurate response.
-
-${pageContexts}
-
-When referring to specific content on the website, include reference links in your response using one of these formats:
-
-1. For specific line numbers:
-[link:PAGE_NAME:LINE_NUMBER]quoted content[/link]
-
-2. For line ranges:
-[link:PAGE_NAME:START_LINE-END_LINE]quoted content[/link]
-
-3. For specific sections:
-[link:PAGE_NAME:section:SECTION_ID]quoted content[/link]
-
-Examples:
-- "Arnold has experience with [link:SKILLS:64]Java at 95% proficiency[/link]"
-- "You can learn more about [link:PROJECTS:18-22]AIPA, his AI Personal Assistant[/link]"
-- "Check out [link:ABOUT:section:education]his educational background[/link]"
-
-These links will allow the user to navigate directly to the referenced content on the website.
-Include 2-5 relevant links in your response, focusing on the most important information.
-Make sure the links flow naturally in your response and provide value to the user.
-Always ensure you're using valid line numbers or section IDs that actually exist in the content.
-
-Now, please answer the user's query: "${userMessage}"
-[END OF SYSTEM INSTRUCTION]` }],
-    };
 
     // Get the updated chat history
     const updatedChatHistory = chatHistories.get(chatId);
@@ -282,9 +147,9 @@ Now, please answer the user's query: "${userMessage}"
       parts: [{ text: userMessage }],
     });
 
-    // Create a chat session with history and context prompt
+    // Create a chat session with history
     const chat = model.startChat({
-      history: [...updatedChatHistory, contextPrompt],
+      history: updatedChatHistory,
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 0.7,
@@ -295,7 +160,7 @@ Now, please answer the user's query: "${userMessage}"
     const result = await chat.sendMessage(userMessage);
     const response = result.response.text();
 
-    // Add AI response to chat history (without the context prompt)
+    // Add AI response to chat history
     updatedChatHistory.push({
       role: 'model',
       parts: [{ text: response }],
@@ -316,23 +181,27 @@ Now, please answer the user's query: "${userMessage}"
   }
 };
 
-// Function to reset chat history for a specific chat
+/**
+ * Reset chat history for a specific chat
+ */
 export const resetChatHistory = (chatId = getCurrentChatId()) => {
   chatHistories.set(chatId, []);
 };
 
-// Function to set chat history from stored messages
+/**
+ * Set chat history from stored messages
+ */
 export const setChatHistoryFromStored = async (storedMessages, chatId = getCurrentChatId()) => {
   try {
     console.log(`setChatHistoryFromStored: Setting chat history for chat ${chatId} with ${storedMessages.length} messages`);
 
-    // Get website content for system context
-    const content = await loadWebsiteContent();
+    // Build system prompt
+    const systemPrompt = buildSystemPrompt();
 
-    // Create system prompt with website content
-    const systemPrompt = {
+    // Create system message
+    const systemMessage = {
       role: 'user',
-      parts: [{ text: `[SYSTEM CONTEXT - NOT VISIBLE TO USER]\nThis is the content map of Arnold Curtis's portfolio website. Use this information to answer user questions accurately about Arnold, his skills, projects, experience, and other details contained here:\n\n${content}\n\nYou are an AI assistant embedded in Arnold Curtis's portfolio website. Your purpose is to help visitors learn about Arnold's background, skills, projects, and experience. Be helpful, friendly, and knowledgeable about Arnold based on the information provided. Do not mention that you were given this context information.\n[END OF SYSTEM CONTEXT]` }],
+      parts: [{ text: systemPrompt }],
     };
 
     // Map stored messages to chat history format
@@ -342,7 +211,7 @@ export const setChatHistoryFromStored = async (storedMessages, chatId = getCurre
     }));
 
     // Add system prompt at the beginning of history
-    const fullHistory = [systemPrompt, ...history];
+    const fullHistory = [systemMessage, ...history];
 
     // Set the chat history with system context
     chatHistories.set(chatId, fullHistory);
@@ -367,86 +236,181 @@ export const setChatHistoryFromStored = async (storedMessages, chatId = getCurre
   }
 };
 
-// Parse links from AI response
+/**
+ * Parse references from AI response
+ * Converts [ref:section.id]text[/ref] to clickable HTML spans
+ * Also supports legacy [link:PAGE:LINE]text[/link] format for backward compatibility
+ */
 export const parseLinks = (response) => {
-  // Updated regex to handle both line numbers and sections
-  const linkRegex = /\[link:([A-Z]+):([a-zA-Z0-9_:-]+)\](.*?)\[\/link\]/g;
   const links = [];
-  let match;
   let parsedResponse = response;
 
-  // Extract all links
-  while ((match = linkRegex.exec(response)) !== null) {
-    const page = match[1].toLowerCase();
-    const identifier = match[2]; // Can be a line number, range, or section identifier
-    const text = match[3];
+  // NEW FORMAT: [ref:section.id]text[/ref]
+  const refRegex = /\[ref:([a-z]+\.[a-zA-Z]+)\](.*?)\[\/ref\]/g;
+  let match;
 
-    // Validate the identifier
-    let validIdentifier = identifier;
-
-    // Check if it's a line number and validate it
-    if (!identifier.includes('section:')) {
-      // For line numbers or ranges
-      if (identifier.includes('-')) {
-        // Handle range format (e.g., "16-30")
-        const [start, end] = identifier.split('-').map(num => parseInt(num, 10));
-        if (isNaN(start) || start <= 0 || isNaN(end) || end <= 0) {
-          console.warn(`Invalid line range: ${identifier}, using fallback value`);
-          validIdentifier = '1'; // Fallback to first line if invalid
-        }
-      } else {
-        // Handle single line number
-        const lineNum = parseInt(identifier, 10);
-        if (isNaN(lineNum) || lineNum <= 0) {
-          console.warn(`Invalid line number: ${identifier}, using fallback value`);
-          validIdentifier = '1'; // Fallback to first line if invalid
-        }
-      }
-    }
+  while ((match = refRegex.exec(response)) !== null) {
+    const sectionId = match[1];
+    const text = match[2];
+    const page = getPageForSection(sectionId);
 
     links.push({
+      sectionId,
       page,
-      identifier: validIdentifier,
       text,
-      fullMatch: match[0]
+      fullMatch: match[0],
+      isNewFormat: true
     });
   }
 
-  // Replace link syntax with styled links
-  parsedResponse = response.replace(linkRegex, (match, page, identifier, text) => {
-    // Validate identifier before creating the link
-    let validIdentifier = identifier;
+  // Replace new format references with HTML
+  parsedResponse = parsedResponse.replace(refRegex, (match, sectionId, text) => {
+    const page = getPageForSection(sectionId);
+    const isValid = isValidSectionId(sectionId);
 
-    // Check if it's a line number and validate it
-    if (!identifier.includes('section:')) {
-      // For line numbers or ranges
-      if (identifier.includes('-')) {
-        // Handle range format (e.g., "16-30")
-        const [start, end] = identifier.split('-').map(num => parseInt(num, 10));
-        if (isNaN(start) || start <= 0 || isNaN(end) || end <= 0) {
-          validIdentifier = '1'; // Fallback to first line if invalid
-        }
-      } else {
-        // Handle single line number
-        const lineNum = parseInt(identifier, 10);
-        if (isNaN(lineNum) || lineNum <= 0) {
-          validIdentifier = '1'; // Fallback to first line if invalid
-        }
-      }
+    if (!isValid) {
+      console.warn(`Invalid section reference: ${sectionId}`);
+      // Still create the link, but log the warning
     }
 
-    return `<span class="ai-link" data-page="${page.toLowerCase()}" data-line="${validIdentifier}">${text}</span>`;
+    return `<span class="ai-ref" data-section="${sectionId}" data-page="${page || sectionId.split('.')[0]}">${text}</span>`;
+  });
+
+  // LEGACY FORMAT: [link:PAGE:LINE]text[/link] for backward compatibility
+  const legacyLinkRegex = /\[link:([A-Z]+):([a-zA-Z0-9_:-]+)\](.*?)\[\/link\]/g;
+
+  while ((match = legacyLinkRegex.exec(response)) !== null) {
+    const page = match[1].toLowerCase();
+    const identifier = match[2];
+    const text = match[3];
+
+    // Convert legacy format to section ID if possible
+    let sectionId = convertLegacyToSection(page, identifier);
+
+    links.push({
+      page,
+      identifier,
+      sectionId,
+      text,
+      fullMatch: match[0],
+      isNewFormat: false
+    });
+  }
+
+  // Replace legacy format with HTML
+  parsedResponse = parsedResponse.replace(legacyLinkRegex, (match, page, identifier, text) => {
+    const pageLower = page.toLowerCase();
+    const sectionId = convertLegacyToSection(pageLower, identifier);
+
+    if (sectionId) {
+      // Use new format if we can convert
+      return `<span class="ai-ref" data-section="${sectionId}" data-page="${pageLower}">${text}</span>`;
+    } else {
+      // Fallback to legacy format
+      return `<span class="ai-link" data-page="${pageLower}" data-line="${identifier}">${text}</span>`;
+    }
   });
 
   return { parsedResponse, links };
 };
 
-// Function to delete a chat's history
+/**
+ * Convert legacy line-based reference to section ID
+ * This provides backward compatibility for old chat histories
+ */
+const convertLegacyToSection = (page, identifier) => {
+  // Map common legacy references to section IDs
+  const legacyMappings = {
+    'home': {
+      '1-15': 'home.hero',
+      '16-25': 'home.buttons'
+    },
+    'about': {
+      '1-10': 'about.bio',
+      '11-25': 'about.experience',
+      '26-45': 'about.education',
+      '46-65': 'about.interests',
+      '66-80': 'about.journey',
+      '81-95': 'about.philosophy'
+    },
+    'skills': {
+      '16-30': 'skills.technical',
+      '31-45': 'skills.frameworks',
+      '46-60': 'skills.tools',
+      '61-76': 'skills.languages',
+      '77-91': 'skills.softSkills'
+    },
+    'projects': {
+      '1-15': 'projects.explorer',
+      '16-50': 'projects.aipa',
+      '51-85': 'projects.nlrs'
+    },
+    'contact': {
+      '1-20': 'contact.info',
+      '21-50': 'contact.form'
+    },
+    'resume': {
+      '1-10': 'resume.header',
+      '11-30': 'resume.experience',
+      '31-50': 'resume.education',
+      '51-75': 'resume.skills'
+    }
+  };
+
+  // Check for section: prefix
+  if (identifier.startsWith('section:')) {
+    const sectionName = identifier.replace('section:', '');
+    return `${page}.${sectionName}`;
+  }
+
+  // Try exact match first
+  const pageMappings = legacyMappings[page];
+  if (pageMappings && pageMappings[identifier]) {
+    return pageMappings[identifier];
+  }
+
+  // Try to find a matching range
+  if (pageMappings) {
+    const lineNum = parseInt(identifier, 10);
+    if (!isNaN(lineNum)) {
+      for (const [range, sectionId] of Object.entries(pageMappings)) {
+        const [start, end] = range.split('-').map(n => parseInt(n, 10));
+        if (lineNum >= start && lineNum <= end) {
+          return sectionId;
+        }
+      }
+    }
+  }
+
+  // Default to first section of page if nothing matches
+  const defaultSections = {
+    'home': 'home.hero',
+    'about': 'about.bio',
+    'skills': 'skills.technical',
+    'projects': 'projects.explorer',
+    'contact': 'contact.info',
+    'resume': 'resume.header'
+  };
+
+  return defaultSections[page] || null;
+};
+
+/**
+ * Delete a chat's history
+ */
 export const deleteChatHistory = (chatId) => {
   chatHistories.delete(chatId);
 };
 
-// Function to clear all chat histories
+/**
+ * Clear all chat histories
+ */
 export const clearAllChatHistories = () => {
   chatHistories.clear();
-}; 
+};
+
+// Legacy exports for backward compatibility
+export const loadWebsiteContent = async () => getWebsiteContent();
+export const loadPageContent = async (pageName) => getWebsiteContent();
+export const loadAllPageContents = async () => getWebsiteContent();
+export const findRelevantPages = async (userMessage, chatId) => [];

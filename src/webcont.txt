@@ -107,6 +107,7 @@
   - "TensorFlow" [PROFICIENCY: 60%]
   - "Flutter" [PROFICIENCY: 50%]
   - "Spring Framework" [PROFICIENCY: 70%]
+  - "Framer Motion" [PROFICIENCY: 75%]
 - PRESENTATION: Animated progress bars
 
 ### COMPONENT:TOOLS
@@ -149,54 +150,99 @@
 - PRESENTATION: IDE-style file explorer with project list
 
 ### COMPONENT:PROJECT_1
-- TITLE: "AI Personal Assistant (AIPA) (PLANAZ)"
-- DESCRIPTION: "AIPA, also known as PLANAZ, is an intelligent AI-powered personal assistant built to help users seamlessly manage their daily lives through natural conversation and smart automation. It uses large language models (LLMs), both locally and via cloud APIs, to understand user input, generate personalized plans, and handle events. Built with a modern React frontend and a robust Spring Boot + SQLite backend, AIPA combines conversational AI with productivity tools."
+- TITLE: "AI Personal Assistant (AIPA)"
+- DESCRIPTION: "AIPA is a full-stack AI-powered personal assistant that combines a modern React 19 frontend with a robust Spring Boot 3.4 backend. Integrated with Google's Gemini 2.0 Flash API, it provides intelligent, context-aware responses, automatic calendar event detection from natural language, persistent memory capabilities, and dynamic plan generation. The system features sophisticated input routing that determines whether user input requires planning, calendar events, or simple responses."
 - TECHNOLOGIES:
-  - "React.js"
-  - "Spring Boot"
+  - "React 19"
+  - "Spring Boot 3.4"
   - "Java"
   - "SQLite"
-  - "Large Language Models (LLMs)"
-  - "Cloud & Local AI Integration"
+  - "Google Gemini 2.0 Flash"
+  - "Spring Security"
+  - "JWT Authentication"
   - "REST APIs"
+  - "FullCalendar"
 - KEY_FEATURES:
-  - "Natural language understanding using LLMs"
-  - "Cloud and local LLM integration"
-  - "Calendar system for event scheduling"
-  - "Context-aware event creation"
-  - "Smart planning and task breakdown"
-  - "Auto-assignment of subtasks"
-  - "Dynamic reminder system"
-  - "Conversational interface"
-  - "Responsive UI in React"
-  - "Spring Boot backend with SQLite"
+  - "Gemini 2.0 Flash integration for fast, high-quality AI responses"
+  - "Multi-tier prompt system with sophisticated AI behavior templates"
+  - "Natural language event detection — auto-creates calendar events"
+  - "Persistent memory system that stores and retrieves user preferences"
+  - "Dynamic plan generation breaking complex goals into time-bound steps"
+  - "JWT-based authentication with refresh capability"
+  - "Customizable themes (10 color schemes)"
+  - "FullCalendar integration with day, week, and list views"
 - GITHUB_LINK: "github.com/Arnold-Curtis/AI-Personal-Assistant"
 - PRESENTATION: Detailed project card with sections for description, technologies, and features
 
 ### COMPONENT:PROJECT_2
-- TITLE: "Natural Language Review System"
-- DESCRIPTION: "A desktop Java application that transforms academic evaluations using NLP to analyze open-ended student feedback. It replaces rigid survey forms with natural language input to provide deeper, unbiased insights."
+- TITLE: "Natural Language Review System (NLRS)"
+- DESCRIPTION: "NLRS is a JavaFX desktop application designed for educational institutions to manage lecturer feedback. Students submit open-ended reviews which are automatically analyzed using Stanford CoreNLP for sentiment analysis (1-9 scale). Lecturers view aggregated sentiment scores, and administrators manage users and generate performance reports."
 - TECHNOLOGIES:
   - "Java"
-  - "JavaFX"
-  - "Scene Builder"
-  - "MySQL"
-  - "Natural Language Processing (NLP)"
-  - "JUnit"
-  - "TestNG"
-  - "Agile-Scrum"
-  - "Object-Oriented Design"
+  - "JavaFX 17"
+  - "FXML"
+  - "Stanford CoreNLP 4.5.6"
+  - "MySQL 8.0"
+  - "JDBC"
+  - "FormsFX"
+  - "Maven"
 - KEY_FEATURES:
-  - "Accepts natural language student reviews"
-  - "Analyzes feedback using NLP"
-  - "Reduces bias by removing predefined survey options"
-  - "Role-based access for students, lecturers, and admins"
-  - "Performance reporting and sentiment analysis"
-  - "Authentication to prevent fake reviews"
-  - "Lecturer feedback on reviews"
-  - "Modular and scalable design"
-  - "Unit testing with JUnit and TestNG"
+  - "Stanford CoreNLP pipeline for sentiment analysis"
+  - "Sentiment scoring from 1 (Very Negative) to 9 (Very Positive)"
+  - "Role-based dashboards for students, lecturers, and administrators"
+  - "Anonymous review submission protecting student privacy"
+  - "Comprehensive performance reports with aggregated sentiment data"
+  - "Authentication system preventing fake reviews"
 - GITHUB_LINK: "github.com/Arnold-Curtis/NaturalLanguageReviewSystem"
+- PRESENTATION: Detailed project card with sections for description, technologies, and features
+
+### COMPONENT:PROJECT_3
+- TITLE: "AudioGlass — Transparency Mode"
+- DESCRIPTION: "AudioGlass is a Windows desktop application providing real-time audio passthrough from microphone to headphones, emulating the 'transparency mode' found in premium ANC headphones like AirPods Pro. Designed for ultra-low latency (sub-15ms), the application runs its audio hot path in native C code to bypass .NET garbage collection pauses."
+- TECHNOLOGIES:
+  - "C# .NET"
+  - "Windows Forms"
+  - "Miniaudio (C library)"
+  - "Custom C++ Wrapper"
+  - "WASAPI"
+  - "P/Invoke"
+  - "NAudio"
+  - "PowerShell"
+- KEY_FEATURES:
+  - "Sub-15ms latency via native (unmanaged) audio processing"
+  - "GC-immune audio loop bypasses .NET garbage collection"
+  - "System tray application with minimal footprint"
+  - "Configurable buffer sizes (128-frame or 256-frame)"
+  - "Input/output device selection with hot-swap"
+  - "Adjustable passthrough volume (0-100%)"
+  - "Persistent settings saved across restarts"
+- GITHUB_LINK: "github.com/Arnold-Curtis/AudioGlass"
+- PRESENTATION: Detailed project card with sections for description, technologies, and features
+
+### COMPONENT:PROJECT_4
+- TITLE: "Curtis-Workspace — Interactive Portfolio"
+- DESCRIPTION: "This portfolio website reimagined as a fully interactive Windows 11-style desktop environment. Instead of traditional scrolling, visitors experience a multi-window operating system simulation with draggable windows, a centered taskbar, snap zones, and an AI-powered assistant orb integrated with Google Gemini."
+- TECHNOLOGIES:
+  - "React 19"
+  - "React Router 6"
+  - "Framer Motion"
+  - "Google Generative AI (Gemini)"
+  - "react-draggable"
+  - "react-resizable"
+  - "CSS3 Variables"
+  - "Netlify Functions"
+  - "PHP Backend"
+- KEY_FEATURES:
+  - "Multi-window architecture with independent, stacking windows"
+  - "Draggable windows with momentum and resize handles"
+  - "Windows 11-style centered taskbar"
+  - "Snap zones for half-screen, quarter-screen, and fullscreen"
+  - "AI Assistant Orb with Google Gemini integration"
+  - "Split-view mode — AI chat snaps beside referenced content"
+  - "Glassmorphism design with dark theme"
+  - "Responsive design with mobile-specific navigation"
+- GITHUB_LINK: "github.com/Arnold-Curtis/Curtis-Workspace"
+- LIVE_DEMO: "arnoldcurtis.netlify.app"
 - PRESENTATION: Detailed project card with sections for description, technologies, and features
 
 ## PAGE:CONTACT

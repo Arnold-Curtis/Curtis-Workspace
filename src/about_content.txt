@@ -86,7 +86,7 @@
 79. // Has syntax highlighting
 80. // Animated fade-in effect
 
-## SECTION: LEARNING PHILOSOPHY [LINES 81-95]
+## SECTION: LEARNING PHILOSOPHY [LINES 81-100]
 81. I believe true growth comes from staying curious.
 82. I'm constantly building, exploring, and refining my craft.
 83. I hold a foundational certification in C# from a bootcamp that sparked my journey into tech,
@@ -108,4 +108,4 @@
 97. Latest Certification: C# Programming – Fundamentals (Bootcamp)
 98. 
 99. // Current learning section rendered as variable declaration
-100. // Component ID: current-learning 
+100. // Component ID: current-learning

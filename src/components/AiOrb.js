@@ -15,17 +15,34 @@ import './AiOrb.css';
 
 // Separate component for AI response content to handle link clicks reliably
 // This fixes the intermittent link failure issue by attaching handlers in a controlled way
+// Now supports both new semantic references (.ai-ref) and legacy links (.ai-link)
 const AiResponseContent = ({ html, onLinkClick }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current || !onLinkClick) return;
 
-    // Find all AI links in the rendered HTML
-    const links = containerRef.current.querySelectorAll('.ai-link');
+    // Find all AI references in the rendered HTML (new format: .ai-ref, legacy: .ai-link)
+    const newRefs = containerRef.current.querySelectorAll('.ai-ref');
+    const legacyLinks = containerRef.current.querySelectorAll('.ai-link');
 
-    // Create a single handler that we can attach and track
-    const handleLinkClick = (e) => {
+    // Handler for new semantic references
+    const handleRefClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const sectionId = e.currentTarget.getAttribute('data-section');
+      const page = e.currentTarget.getAttribute('data-page');
+
+      if (sectionId) {
+        console.log(`AiResponseContent: Semantic ref clicked - section=${sectionId}, page=${page}`);
+        // Pass section ID as the identifier, with page for navigation
+        onLinkClick(page || sectionId.split('.')[0], sectionId);
+      }
+    };
+
+    // Handler for legacy links (backward compatibility)
+    const handleLegacyLinkClick = (e) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -33,7 +50,7 @@ const AiResponseContent = ({ html, onLinkClick }) => {
       const line = e.currentTarget.getAttribute('data-line');
 
       if (page) {
-        console.log(`AiResponseContent: Link clicked - page=${page}, line=${line}`);
+        console.log(`AiResponseContent: Legacy link clicked - page=${page}, line=${line}`);
         onLinkClick(page, line);
       }
     };
@@ -45,10 +62,10 @@ const AiResponseContent = ({ html, onLinkClick }) => {
     };
 
     // Handle touch end - reset visual feedback and trigger action
-    const handleTouchEnd = (e) => {
+    const handleTouchEnd = (handler) => (e) => {
       e.currentTarget.style.transform = 'scale(1)';
       e.currentTarget.style.opacity = '1';
-      handleLinkClick(e);
+      handler(e);
     };
 
     // Handle touch cancel - reset visual feedback without action
@@ -57,24 +74,36 @@ const AiResponseContent = ({ html, onLinkClick }) => {
       e.currentTarget.style.opacity = '1';
     };
 
-    // Attach click handlers to all links
-    links.forEach(link => {
-      // Add transition for smooth visual feedback
-      link.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
+    // Attach handlers to new semantic references
+    newRefs.forEach(ref => {
+      ref.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
+      ref.addEventListener('click', handleRefClick);
+      ref.addEventListener('touchstart', handleTouchStart, { passive: true });
+      ref.addEventListener('touchend', handleTouchEnd(handleRefClick), { passive: false });
+      ref.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+    });
 
-      link.addEventListener('click', handleLinkClick);
-      // Enhanced touch handling for mobile with visual feedback
+    // Attach handlers to legacy links (backward compatibility)
+    legacyLinks.forEach(link => {
+      link.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
+      link.addEventListener('click', handleLegacyLinkClick);
       link.addEventListener('touchstart', handleTouchStart, { passive: true });
-      link.addEventListener('touchend', handleTouchEnd, { passive: false });
+      link.addEventListener('touchend', handleTouchEnd(handleLegacyLinkClick), { passive: false });
       link.addEventListener('touchcancel', handleTouchCancel, { passive: true });
     });
 
     // Cleanup function to remove handlers
     return () => {
-      links.forEach(link => {
-        link.removeEventListener('click', handleLinkClick);
+      newRefs.forEach(ref => {
+        ref.removeEventListener('click', handleRefClick);
+        ref.removeEventListener('touchstart', handleTouchStart);
+        ref.removeEventListener('touchend', handleTouchEnd(handleRefClick));
+        ref.removeEventListener('touchcancel', handleTouchCancel);
+      });
+      legacyLinks.forEach(link => {
+        link.removeEventListener('click', handleLegacyLinkClick);
         link.removeEventListener('touchstart', handleTouchStart);
-        link.removeEventListener('touchend', handleTouchEnd);
+        link.removeEventListener('touchend', handleTouchEnd(handleLegacyLinkClick));
         link.removeEventListener('touchcancel', handleTouchCancel);
       });
     };
@@ -325,16 +354,29 @@ const AiOrb = () => {
     }
   }, [isMobile, windowManager, showChat, messages, currentChatId, snapChatToSide, navigate]);
 
-  // Simplified handler for AiResponseContent - this is a stable callback that takes page/line directly
-  const handleLinkClickInternal = useCallback((page, lineNumber) => {
+  // Simplified handler for AiResponseContent - supports both new semantic refs and legacy line numbers
+  const handleLinkClickInternal = useCallback((page, identifier) => {
     const pageLower = page.toLowerCase();
-    console.log(`handleLinkClickInternal: page=${pageLower}, line=${lineNumber}, isMobile=${isMobile}`);
+
+    // Determine if this is a semantic section ID or legacy line number
+    const isSectionId = identifier && identifier.includes('.');
+    const sectionId = isSectionId ? identifier : null;
+    const lineNumber = !isSectionId ? identifier : null;
+
+    console.log(`handleLinkClickInternal: page=${pageLower}, identifier=${identifier}, isSectionId=${isSectionId}, isMobile=${isMobile}`);
 
     // Mobile handling
     if (isMobile) {
       console.log('Mobile navigation triggered');
       const pageUrl = `/${pageLower === 'home' ? '' : pageLower}`;
-      sessionStorage.setItem('highlightLine', lineNumber);
+
+      // Store appropriate highlight request
+      if (sectionId) {
+        sessionStorage.setItem('highlightSection', sectionId);
+      } else if (lineNumber) {
+        sessionStorage.setItem('highlightLine', lineNumber);
+      }
+
       setShowChat(false);
       setTimeout(() => {
         navigate(pageUrl);
@@ -358,16 +400,31 @@ const AiOrb = () => {
     // Store chat state
     const currentChatState = { messages, chatId: currentChatId };
     sessionStorage.setItem('preservedChatState', JSON.stringify(currentChatState));
-    sessionStorage.setItem('highlightLine', lineNumber);
+
+    // Store appropriate highlight request
+    if (sectionId) {
+      sessionStorage.setItem('highlightSection', sectionId);
+    } else if (lineNumber) {
+      sessionStorage.setItem('highlightLine', lineNumber);
+    }
 
     // Desktop handling
     const isAlreadySnapped = windowManager && windowManager.isAiSnapped;
 
     if (isAlreadySnapped) {
       if (windowManager.snappedWindowId === pageLower) {
-        // Same page - just highlight
-        const event = new CustomEvent('ai-highlight-request', { detail: { lineNumber } });
+        // Same page - just highlight using the new event format
+        const event = new CustomEvent('ai-section-highlight', {
+          detail: { sectionId: sectionId, lineNumber: lineNumber }
+        });
         document.dispatchEvent(event);
+
+        // Also dispatch legacy event for backward compatibility
+        if (lineNumber) {
+          const legacyEvent = new CustomEvent('ai-highlight-request', { detail: { lineNumber } });
+          document.dispatchEvent(legacyEvent);
+        }
+
         if (inputRef.current) inputRef.current.focus();
         return;
       } else {

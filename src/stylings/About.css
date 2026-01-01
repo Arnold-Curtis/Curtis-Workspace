@@ -1,69 +1,69 @@
 .about-container {
-    margin-top: -6rem;
-  }
-  
-  .section-sub-text {
-    font-size: 16px;
-    text-transform: uppercase;
-    color: #b0b0b0;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-  
-  .section-head-text {
-    font-size: 30px;
-    font-weight: 700;
-    color: #333;
-  }
-  
-  .about-description {
-    margin-top: 1rem;
-    font-size: 18px;
-    color: #555;
-    max-width: 768px;
-    line-height: 1.6;
-  }
-  
-  .services-container {
-    margin-top: 5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-  }
-  
-  .service-card {
-    width: 100%;
-    max-width: 250px;
-    padding: 1px;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-  }
-  
-  .service-card-inner {
-    background-color: #333;
-    border-radius: 20px;
-    padding: 2rem;
-    min-height: 280px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .service-icon {
-    width: 64px;
-    height: 64px;
-    object-fit: contain;
-  }
-  
-  .service-title {
-    margin-top: 1rem;
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
-    text-align: center;
-  }
+  margin-top: -6rem;
+}
+
+.section-sub-text {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #b0b0b0;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.section-head-text {
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+}
+
+.about-description {
+  margin-top: 1rem;
+  font-size: 18px;
+  color: #555;
+  max-width: 768px;
+  line-height: 1.6;
+}
+
+.services-container {
+  margin-top: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+.service-card {
+  width: 100%;
+  max-width: 250px;
+  padding: 1px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+}
+
+.service-card-inner {
+  background-color: #333;
+  border-radius: 20px;
+  padding: 2rem;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.service-title {
+  margin-top: 1rem;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
 
 .about-page-container {
   width: 100%;
@@ -72,10 +72,12 @@
   color: #d4d4d4;
   font-family: 'Fira Code', monospace;
   border-radius: 8px;
-  overflow-y: auto !important; /* Force scrolling at container level */
+  overflow-y: auto !important;
+  /* Force scrolling at container level */
   display: flex;
   flex-direction: column;
-  position: relative; /* Ensure proper stacking context */
+  position: relative;
+  /* Ensure proper stacking context */
   z-index: 1;
 }
 
@@ -85,7 +87,8 @@
   height: 35px;
   display: flex;
   align-items: center;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
+  /* Prevent header from shrinking */
 }
 
 .file-tab {
@@ -130,8 +133,10 @@
 .about-content {
   display: flex;
   height: calc(100% - 35px);
-  overflow: visible; /* Allow content to flow */
-  flex: 1; /* Take up remaining space */
+  overflow: visible;
+  /* Allow content to flow */
+  flex: 1;
+  /* Take up remaining space */
 }
 
 .code-line-numbers {
@@ -142,8 +147,10 @@
   text-align: right;
   user-select: none;
   border-right: 1px solid #3c3c3c;
-  flex-shrink: 0; /* Prevent from shrinking */
-  overflow: hidden; /* Prevent scrolling here */
+  flex-shrink: 0;
+  /* Prevent from shrinking */
+  overflow: hidden;
+  /* Prevent scrolling here */
 }
 
 .line-number {
@@ -156,8 +163,10 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  overflow: visible; /* Allow content to flow */
-  padding-bottom: 40px; /* Add padding at bottom */
+  overflow: visible;
+  /* Allow content to flow */
+  padding-bottom: 40px;
+  /* Add padding at bottom */
 }
 
 .code-comment {
@@ -168,12 +177,15 @@
 }
 
 .section-container {
-  margin-bottom: 40px; /* Increased spacing between sections */
-  padding: 0 20px; /* Added padding to give more breathing room */
+  margin-bottom: 40px;
+  /* Increased spacing between sections */
+  padding: 0 20px;
+  /* Added padding to give more breathing room */
 }
 
 .section-title {
-  font-size: 18px; /* Increased size */
+  font-size: 18px;
+  /* Increased size */
   font-weight: 500;
   margin-bottom: 15px;
 }
@@ -200,8 +212,10 @@
 }
 
 .section-content {
-  padding-left: 30px; /* Increased left padding */
-  border-left: 2px solid #3c3c3c; /* Slightly thicker border */
+  padding-left: 30px;
+  /* Increased left padding */
+  border-left: 2px solid #3c3c3c;
+  /* Slightly thicker border */
   margin-left: 10px;
 }
 
@@ -214,7 +228,8 @@
 
 .experience-card {
   background-color: #252526;
-  padding: 20px 25px; /* Increased padding */
+  padding: 20px 25px;
+  /* Increased padding */
   border-radius: 5px;
   border-left: 3px solid #61dafb;
   max-width: 100%;
@@ -300,7 +315,8 @@
 /* Interests */
 .interests-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Wider columns */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* Wider columns */
   gap: 20px;
 }
 
@@ -329,77 +345,111 @@
   padding: 3px 0;
 }
 
+/* Technical Journey & Learning Philosophy Sections */
+.code-comment-block {
+  color: #6A9955;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.code-comment-block p {
+  margin-bottom: 15px;
+}
+
+.code-comment-block p:last-child {
+  margin-bottom: 0;
+}
+
+.current-focus {
+  margin-top: 20px;
+  padding: 12px 15px;
+  background-color: #252526;
+  border-radius: 5px;
+  border-left: 3px solid #DCDCAA;
+}
+
+.current-focus .string {
+  color: #CE9178;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .interests-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
-  
+
   .section-content {
     padding-left: 15px;
   }
-  
+
   .about-main {
     padding: 15px 15px;
   }
-  
+
   .experience-timeline {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .experience-card {
     padding: 15px;
   }
-  
+
   .section-container {
     margin-bottom: 25px;
     padding: 0 10px;
   }
-  
+
   .role {
     font-size: 16px;
   }
-  
+
   .service-card {
     max-width: 100%;
   }
-  
+
   .code-line-numbers {
-    display: none; /* Hide on mobile to prevent horizontal issues */
+    display: none;
+    /* Hide on mobile to prevent horizontal issues */
   }
-  
+
   /* Adjust layout for smaller screens */
   .about-page-container {
-    padding-bottom: 60px; /* Make space for mobile navigation */
+    padding-bottom: 60px;
+    /* Make space for mobile navigation */
     height: auto;
     min-height: 100vh;
-    overflow-y: auto !important; /* Ensure scrolling works */
-    overflow-x: hidden !important; /* Prevent horizontal scroll */
+    overflow-y: auto !important;
+    /* Ensure scrolling works */
+    overflow-x: hidden !important;
+    /* Prevent horizontal scroll */
     width: 100%;
     max-width: 100vw;
     box-sizing: border-box;
   }
-  
+
   /* Ensure content is scrollable on mobile */
   .about-content {
     height: auto;
-    min-height: calc(100vh - 95px); /* Adjust for header height and mobile nav */
-    overflow: hidden; /* Prevent scrolling at this level */
+    min-height: calc(100vh - 95px);
+    /* Adjust for header height and mobile nav */
+    overflow: hidden;
+    /* Prevent scrolling at this level */
     overflow-x: hidden;
     width: 100%;
   }
-  
+
   .about-main {
     overflow: visible;
     overflow-x: hidden;
     height: auto;
     padding: 10px 15px;
-    padding-bottom: 80px; /* Add bottom padding to ensure last content is visible */
+    padding-bottom: 80px;
+    /* Add bottom padding to ensure last content is visible */
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   /* Fix content being cut off by making divs non-fixed height */
   .section-container,
   .experience-timeline,
@@ -409,40 +459,42 @@
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   /* Make the experience cards better fit mobile screens */
   .experience-card {
     height: auto;
     overflow: visible;
     margin-bottom: 15px;
   }
-  
+
   /* Make sure large content blocks are visible and not hidden */
   .description,
   .technologies,
   .tech-tag {
     overflow: visible;
   }
-  
+
   /* Mobile adaptations to ensure content is fully scrollable */
   .about-page-container {
     overflow-y: auto !important;
     height: auto;
-    padding-bottom: 60px; /* Make room for mobile navigation */
+    padding-bottom: 60px;
+    /* Make room for mobile navigation */
   }
-  
+
   .about-content {
     height: auto;
     min-height: 100%;
     overflow-y: visible;
   }
-  
+
   .about-main {
     padding: 15px;
     height: auto;
-    overflow-y: visible; /* Ensure content doesn't get cut off */
+    overflow-y: visible;
+    /* Ensure content doesn't get cut off */
   }
-  
+
   /* Make experience cards stack properly */
   .experience-timeline {
     display: flex;
@@ -451,17 +503,19 @@
   }
 
   .code-line-numbers {
-    display: none; /* Hide line numbers on small screens to save space */
+    display: none;
+    /* Hide line numbers on small screens to save space */
   }
-  
+
   /* Ensure experience cards are fully visible */
   .experience-timeline {
     gap: 15px;
     padding-bottom: 20px;
   }
-  
+
   .section-container:last-child {
-    margin-bottom: 40px; /* Add space at the bottom */
+    margin-bottom: 40px;
+    /* Add space at the bottom */
   }
 }
 
@@ -470,66 +524,69 @@
   .about-content {
     flex-direction: column;
   }
-  
+
   .code-line-numbers {
-    display: none; /* Hide line numbers in portrait mode to save space */
+    display: none;
+    /* Hide line numbers in portrait mode to save space */
   }
-  
+
   .about-main {
     padding: 10px;
   }
-  
+
   .section-content {
     padding-left: 10px;
     border-left: 1px solid #3c3c3c;
   }
-  
-  .experience-card, .education-card {
+
+  .experience-card,
+  .education-card {
     padding: 12px;
   }
-  
+
   .tech-tag {
     font-size: 10px;
     padding: 2px 5px;
   }
-  
+
   .service-card-inner {
     min-height: 200px;
     padding: 1rem;
   }
-  
+
   .service-icon {
     width: 48px;
     height: 48px;
   }
-  
+
   /* Optimize vertical space usage */
   .section-container {
     margin-bottom: 20px;
   }
-  
+
   .section-title {
     font-size: 16px;
     margin-bottom: 10px;
   }
-  
+
   .role {
     font-size: 15px;
   }
-  
-  .company, .date {
+
+  .company,
+  .date {
     font-size: 13px;
   }
-  
+
   /* Make service cards fill width in portrait */
   .services-container {
     grid-template-columns: 1fr;
   }
-  
+
   .service-card {
     max-width: 100%;
   }
-  
+
   .service-card-inner {
     min-height: 220px;
   }
@@ -537,17 +594,20 @@
   .about-page-container {
     overflow-y: auto;
   }
-  
-  body, #root, .App {
+
+  body,
+  #root,
+  .App {
     overflow-y: auto;
     height: auto;
     min-height: 100vh;
   }
-  
+
   .code-line-numbers {
-    display: none; /* Hide line numbers in portrait to save space */
+    display: none;
+    /* Hide line numbers in portrait to save space */
   }
-  
+
   .about-main {
     padding: 10px;
     width: 100%;
@@ -559,63 +619,64 @@
   .about-main {
     padding: 10px 15px;
   }
-  
+
   .code-line-numbers {
     padding: 10px 5px;
     font-size: 10px;
     width: 20px;
   }
-  
+
   .section-container {
     margin-bottom: 20px;
   }
-  
+
   .experience-timeline {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
   }
-  
+
   .interests-container {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
-  
+
   .about-content {
     height: auto;
     min-height: calc(100vh - 130px);
-    overflow: visible; /* Allow content to scroll */
+    overflow: visible;
+    /* Allow content to scroll */
   }
-  
+
   /* Use horizontal space effectively */
   .about-page-container {
     padding-bottom: 55px;
   }
-  
+
   /* Organize experience cards horizontally */
   .experience-timeline {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
   }
-  
+
   .about-content {
     flex-direction: row;
   }
-  
+
   /* Services in a more compact grid */
   .services-container {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
   }
-  
+
   .about-page-container {
     padding-bottom: 55px;
   }
-  
+
   .about-content {
     flex-direction: row;
   }
-  
+
   .code-line-numbers {
     min-width: 30px;
     padding: 10px 5px;
@@ -624,18 +685,18 @@
   .about-page-container {
     padding-bottom: 55px;
   }
-  
+
   .about-content {
     min-height: calc(100vh - 90px);
   }
-  
+
   .code-line-numbers {
     display: block;
     padding: 15px 5px;
     font-size: 11px;
     width: 30px;
   }
-  
+
   .about-main {
     overflow-y: auto;
   }
@@ -646,24 +707,26 @@
   .section-title {
     font-size: 16px;
   }
-  
+
   .role {
     font-size: 15px;
   }
-  
-  .company, .date, .edu-date {
+
+  .company,
+  .date,
+  .edu-date {
     font-size: 12px;
   }
-  
+
   .technologies {
     gap: 5px;
   }
-  
+
   .tech-tag {
     font-size: 9px;
     padding: 2px 4px;
   }
-  
+
   .code-comment {
     font-size: 12px;
   }
@@ -679,29 +742,36 @@
 }
 
 @media (min-width: 769px) {
-  body, html {
-    overflow: hidden; /* Prevent body scrolling */
+
+  body,
+  html {
+    overflow: hidden;
+    /* Prevent body scrolling */
     height: 100vh;
   }
-  
-  #root, .App {
+
+  #root,
+  .App {
     height: 100%;
     overflow: hidden;
   }
-  
+
   .about-page-container {
-    overflow-y: auto !important; /* Force scrollbar here */
+    overflow-y: auto !important;
+    /* Force scrollbar here */
     height: 100%;
     max-height: 100%;
   }
-  
+
   .about-content {
-    overflow: visible; /* No scroll here */
+    overflow: visible;
+    /* No scroll here */
     height: auto;
   }
-  
+
   .about-main {
-    overflow: visible; /* No scroll here */
+    overflow: visible;
+    /* No scroll here */
     height: auto;
   }
 }
