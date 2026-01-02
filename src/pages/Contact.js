@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../stylings/Contact.css';
 import { motion } from 'framer-motion';
 import { submitContact } from '../utils/apiService';
-import { processPendingHighlight, injectHighlightStyles } from '../utils/highlightService';
+import { processPendingHighlight, highlightSection, injectHighlightStyles } from '../utils/highlightService';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +20,20 @@ const Contact = () => {
     setTimeout(() => {
       processPendingHighlight();
     }, 500);
+
+    // Listen for highlight events from AI link clicks
+    const handleSectionHighlight = (event) => {
+      const { sectionId } = event.detail;
+      if (sectionId && sectionId.startsWith('contact.')) {
+        console.log('Contact: Received highlight request for section:', sectionId);
+        highlightSection(sectionId);
+      }
+    };
+
+    document.addEventListener('ai-section-highlight', handleSectionHighlight);
+    return () => {
+      document.removeEventListener('ai-section-highlight', handleSectionHighlight);
+    };
   }, []);
 
   // Handle input changes

@@ -425,55 +425,126 @@
 
 .ai-response {
   white-space: pre-wrap;
+  line-height: 1.6;
 }
 
-/* AI Link and Reference styling - improved */
-/* Supports both legacy .ai-link and new .ai-ref (semantic references) */
+/* ===================================
+   Markdown Formatting Styles
+   =================================== */
+
+.ai-bold {
+  font-weight: 600;
+  color: #e8e8e8;
+}
+
+.ai-italic {
+  font-style: italic;
+  color: #d4d4d4;
+}
+
+.ai-code {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  background: rgba(97, 218, 251, 0.1);
+  border: 1px solid rgba(97, 218, 251, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.9em;
+  color: #61dafb;
+}
+
+.ai-bullet {
+  display: block;
+  padding-left: 8px;
+  margin: 4px 0;
+  color: #d4d4d4;
+}
+
+/* ===================================
+   Modern Chip-Style Link Buttons
+   =================================== */
+
 .ai-link,
 .ai-ref {
-  color: #7289da;
-  text-decoration: underline;
-  cursor: pointer;
-  position: relative;
-  padding: 0 2px;
-  border-radius: 3px;
-  transition: all 0.2s ease;
+  /* Modern chip design - NO underline */
+  text-decoration: none !important;
+
+  /* Gradient background */
+  background: linear-gradient(135deg, rgba(97, 218, 251, 0.12), rgba(114, 137, 218, 0.18));
+  border: 1px solid rgba(97, 218, 251, 0.35);
+  border-radius: 18px;
+
+  /* Spacing */
+  padding: 5px 14px;
+  margin: 2px 4px 2px 0;
+
+  /* Text styling */
+  color: #61dafb;
   font-weight: 500;
-  display: inline-block;
+  font-size: 0.92em;
+
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  vertical-align: baseline;
 }
 
-.ai-message.user .ai-link,
-.ai-message.user .ai-ref {
-  color: #70a9f7;
+/* Link icon before text */
+.ai-link::before,
+.ai-ref::before {
+  content: '→';
+  font-weight: 700;
+  font-size: 0.85em;
+  opacity: 0.8;
+  transition: transform 0.2s ease;
 }
 
+/* Remove old after pseudo-element */
+.ai-link::after,
+.ai-ref::after {
+  content: none !important;
+}
+
+/* Hover effect - elevated look */
 .ai-link:hover,
 .ai-ref:hover {
-  background-color: rgba(114, 137, 218, 0.1);
-  color: #5c6bc0;
-  text-decoration: none;
+  background: linear-gradient(135deg, rgba(97, 218, 251, 0.25), rgba(114, 137, 218, 0.3));
+  border-color: rgba(97, 218, 251, 0.6);
+  box-shadow: 0 3px 12px rgba(97, 218, 251, 0.25);
+  transform: translateY(-2px);
+  color: #7dd3fc;
+}
+
+.ai-link:hover::before,
+.ai-ref:hover::before {
+  transform: translateX(2px);
+}
+
+/* Active/pressed state */
+.ai-link:active,
+.ai-ref:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(97, 218, 251, 0.2);
+}
+
+/* Links inside user messages */
+.ai-message.user .ai-link,
+.ai-message.user .ai-ref {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
 }
 
 .ai-message.user .ai-link:hover,
 .ai-message.user .ai-ref:hover {
-  background-color: rgba(112, 169, 247, 0.1);
-}
-
-.ai-link::after,
-.ai-ref::after {
-  content: '\f0c1';
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-  margin-left: 4px;
-  font-size: 0.8em;
-  opacity: 0.7;
-  vertical-align: super;
-  transition: all 0.2s ease;
-}
-
-.ai-link:active,
-.ai-ref:active {
-  transform: translateY(1px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 3px 12px rgba(255, 255, 255, 0.15);
 }
 
 /* Mobile-specific AI link and reference improvements */
@@ -482,15 +553,17 @@
   .ai-link,
   .ai-ref {
     /* Increase touch target size for mobile */
-    min-height: 32px;
-    padding: 4px 6px;
-    margin: 2px 0;
-    border-radius: 6px;
-    line-height: 1.4;
+    min-height: 36px;
+    padding: 6px 12px;
+    margin: 4px 4px 4px 0;
+    border-radius: 16px;
+    font-size: 0.9em;
+
     /* Improve touch handling */
-    -webkit-tap-highlight-color: rgba(114, 137, 218, 0.2);
+    -webkit-tap-highlight-color: rgba(97, 218, 251, 0.3);
     touch-action: manipulation;
     user-select: none;
+
     /* Ensure it's above other elements */
     position: relative;
     z-index: 10;
@@ -498,21 +571,26 @@
 
   .ai-link:active,
   .ai-ref:active {
-    background-color: rgba(114, 137, 218, 0.3);
-    transform: scale(0.98);
+    background: linear-gradient(135deg, rgba(97, 218, 251, 0.3), rgba(114, 137, 218, 0.4));
+    transform: scale(0.97);
+    box-shadow: none;
   }
 
-  /* Remove hover effects on mobile */
-  .ai-link:hover::before,
-  .ai-ref:hover::before {
-    display: none;
+  /* Disable hover effects on mobile (no hover on touch) */
+  .ai-link:hover,
+  .ai-ref:hover {
+    transform: none;
+    box-shadow: none;
   }
 
-  /* Better visual feedback for mobile taps */
-  .ai-link::after,
-  .ai-ref::after {
-    font-size: 0.9em;
-    margin-left: 6px;
+  /* Markdown styles for mobile */
+  .ai-code {
+    font-size: 0.85em;
+    padding: 2px 4px;
+  }
+
+  .ai-bullet {
+    padding-left: 6px;
   }
 }
 
@@ -1152,7 +1230,8 @@
   right: 10px !important;
   top: 80px !important;
   width: 40vw !important;
-  height: calc(100vh - 100px) !important;
+  height: calc(100vh - 148px) !important;
+  /* 80px top + 48px taskbar + 20px padding */
   left: auto !important;
   transform: none !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;

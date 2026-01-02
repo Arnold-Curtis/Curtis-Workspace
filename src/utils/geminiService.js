@@ -273,7 +273,7 @@ export const parseLinks = (response) => {
       // Still create the link, but log the warning
     }
 
-    return `<span class="ai-ref" data-section="${sectionId}" data-page="${page || sectionId.split('.')[0]}">${text}</span>`;
+    return `<span class="ai-ref" data-target-section="${sectionId}" data-page="${page || sectionId.split('.')[0]}">${text}</span>`;
   });
 
   // LEGACY FORMAT: [link:PAGE:LINE]text[/link] for backward compatibility
@@ -304,12 +304,26 @@ export const parseLinks = (response) => {
 
     if (sectionId) {
       // Use new format if we can convert
-      return `<span class="ai-ref" data-section="${sectionId}" data-page="${pageLower}">${text}</span>`;
+      return `<span class="ai-ref" data-target-section="${sectionId}" data-page="${pageLower}">${text}</span>`;
     } else {
       // Fallback to legacy format
       return `<span class="ai-link" data-page="${pageLower}" data-line="${identifier}">${text}</span>`;
     }
   });
+
+  // Parse Markdown formatting
+  // Bold: **text** or __text__
+  parsedResponse = parsedResponse.replace(/\*\*(.+?)\*\*/g, '<strong class="ai-bold">$1</strong>');
+  parsedResponse = parsedResponse.replace(/__(.+?)__/g, '<strong class="ai-bold">$1</strong>');
+
+  // Italic: *text* or _text_ (but not if already part of bold)
+  parsedResponse = parsedResponse.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em class="ai-italic">$1</em>');
+
+  // Inline code: `code`
+  parsedResponse = parsedResponse.replace(/`([^`]+)`/g, '<code class="ai-code">$1</code>');
+
+  // Bullet points: lines starting with * or -
+  parsedResponse = parsedResponse.replace(/^[\*\-]\s+(.+)$/gm, '<span class="ai-bullet">• $1</span>');
 
   return { parsedResponse, links };
 };

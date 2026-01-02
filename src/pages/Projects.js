@@ -136,6 +136,17 @@ const Projects = () => {
   ];
 
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [expandedCard, setExpandedCard] = useState(null);
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const openProject = (project) => {
     setSelectedProject(project);
@@ -145,17 +156,74 @@ const Projects = () => {
     setSelectedProject(null);
   };
 
+  // Toggle mobile card expansion
+  const toggleCard = (projectKey) => {
+    setExpandedCard(expandedCard === projectKey ? null : projectKey);
+  };
+
   const redirectToGitHub = () => {
     window.open('https://github.com/Arnold-Curtis', '_blank');
   };
 
   // Check for highlight requests when component mounts
+  // For mobile: Also expand the target card
   useEffect(() => {
     injectHighlightStyles();
-    setTimeout(() => {
-      processPendingHighlight();
-    }, 500);
-  }, []);
+
+    // Check sessionStorage for pending highlight
+    const highlightSection = sessionStorage.getItem('highlightSection');
+
+    if (highlightSection && highlightSection.startsWith('projects.')) {
+      const projectKey = highlightSection.replace('projects.', '');
+
+      console.log(`[Projects] Pending highlight found: ${highlightSection}, key: ${projectKey}, isMobile: ${isMobile}`);
+
+      // On mobile, expand the target card first
+      if (isMobile) {
+        setExpandedCard(projectKey);
+      }
+
+      // Wait for DOM to render, then scroll and highlight
+      setTimeout(() => {
+        // Find the element with data-section or data-project
+        const element = document.querySelector(
+          `[data-section="${highlightSection}"], [data-project="${projectKey}"]`
+        );
+
+        if (element) {
+          console.log('[Projects] Found element, scrolling and highlighting');
+
+          // Scroll to element
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Add highlight class
+          element.classList.add('ai-highlight');
+
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            element.classList.remove('ai-highlight');
+            element.classList.add('ai-highlight-persistent');
+
+            setTimeout(() => {
+              element.classList.remove('ai-highlight-persistent');
+            }, 5000);
+          }, 3000);
+
+          // Clear the sessionStorage
+          sessionStorage.removeItem('highlightSection');
+        } else {
+          console.warn('[Projects] Element not found for:', highlightSection);
+          // Still call processPendingHighlight as fallback
+          processPendingHighlight();
+        }
+      }, isMobile ? 800 : 500);
+    } else {
+      // No project-specific highlight, use normal processing
+      setTimeout(() => {
+        processPendingHighlight();
+      }, 500);
+    }
+  }, [isMobile]);
 
   // Listen for section highlight events to auto-select the project
   useEffect(() => {
@@ -195,128 +263,218 @@ const Projects = () => {
         </div>
       </div>
 
-      <div className="projects-content">
-        <div
-          className="explorer-section"
-          id="explorer-section"
-          data-section="projects.explorer"
-        >
-          <div className="explorer-header">
-            <span>PROJECTS EXPLORER</span>
-          </div>
-          <div className="project-list">
-            {projectsData.map((project) => (
-              <div
-                key={project.id}
-                className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
-                onClick={() => openProject(project)}
-                data-project={project.key}
-              >
-                <i className="fas fa-code-branch"></i>
-                <span>{project.title}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="project-display">
-          {selectedProject ? (
+      {/* Mobile Card View */}
+      {isMobile ? (
+        <div className="mobile-projects-grid">
+          {projectsData.map((project) => (
             <motion.div
-              className={`project-details project-${selectedProject.key}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              id={`project-details-${selectedProject.id}`}
-              data-section={`projects.${selectedProject.key}`}
-              data-project={selectedProject.key}
+              key={project.id}
+              className={`mobile-project-card ${expandedCard === project.key ? 'expanded' : ''}`}
+              onClick={() => toggleCard(project.key)}
+              data-project={project.key}
+              data-section={`projects.${project.key}`}
+              initial={false}
+              animate={{ height: 'auto' }}
             >
-              <div className="project-header">
-                <h2>{selectedProject.title}</h2>
-                <button className="close-btn" onClick={closeProject}>
-                  <i className="fas fa-times"></i>
-                </button>
+              <div className="card-header">
+                <div className="card-title-section">
+                  <i className="fas fa-code-branch card-icon"></i>
+                  <h3 className="card-title">{project.title}</h3>
+                </div>
+                <i className={`fas fa-chevron-down card-expand-icon ${expandedCard === project.key ? 'rotated' : ''}`}></i>
               </div>
 
-              <div className="project-image">
-                <img src={selectedProject.image} alt={selectedProject.title} />
+              <div className="card-tech-preview">
+                {project.technologies.slice(0, 4).map((tech, index) => (
+                  <span key={index} className="tech-tag-mini">{tech}</span>
+                ))}
+                {project.technologies.length > 4 && (
+                  <span className="tech-tag-more">+{project.technologies.length - 4}</span>
+                )}
               </div>
 
-              <div className="project-info">
-                <div className="info-section">
-                  <h3>
-                    <i className="fas fa-info-circle section-icon"></i>
-                    Description
-                  </h3>
-                  <p>{selectedProject.description}</p>
+              {/* Expandable Content - CSS handles display toggle */}
+              <div className="card-content">
+                <div className="card-description">
+                  <p>{project.description}</p>
                 </div>
 
-                <div className="info-section">
-                  <h3>
-                    <i className="fas fa-tools section-icon"></i>
-                    Technologies
-                  </h3>
-                  <div className="tech-tags">
-                    {selectedProject.technologies.map((tech, index) => (
-                      <span key={index} className="tech-tag">
-                        {tech}
-                      </span>
+                <div className="card-technologies">
+                  <h4><i className="fas fa-tools"></i> Technologies</h4>
+                  <div className="card-tech-tags">
+                    {project.technologies.map((tech, index) => (
+                      <span key={index} className="tech-tag">{tech}</span>
                     ))}
                   </div>
                 </div>
 
-                <div className="info-section">
-                  <h3>
-                    <i className="fas fa-star section-icon"></i>
-                    Key Features
-                  </h3>
-                  <ul className="feature-list">
-                    {selectedProject.features.map((feature, index) => (
-                      <li key={index} className="feature-item">
-                        <i className="fas fa-check-circle feature-icon"></i>
+                <div className="card-features">
+                  <h4><i className="fas fa-star"></i> Key Features</h4>
+                  <ul>
+                    {project.features.slice(0, 5).map((feature, index) => (
+                      <li key={index}>
+                        <i className="fas fa-check"></i>
                         {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="project-links">
+                <div className="card-links" onClick={(e) => e.stopPropagation()}>
                   <a
-                    href={selectedProject.github}
-                    className="project-link github-link"
+                    href={project.github}
+                    className="card-link github-btn"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <i className="fab fa-github"></i> View Code
+                    <i className="fab fa-github"></i> GitHub
                   </a>
-                  {selectedProject.demo ? (
+                  {project.demo ? (
                     <a
-                      href={selectedProject.demo}
-                      className="project-link demo-link"
+                      href={project.demo}
+                      className="card-link demo-btn"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <i className="fas fa-external-link-alt"></i> Live Demo
                     </a>
                   ) : (
-                    <button className="project-link demo-link disabled" disabled>
-                      <i className="fas fa-external-link-alt"></i> Live Demo
-                    </button>
+                    <span className="card-link demo-btn disabled">
+                      <i className="fas fa-external-link-alt"></i> No Demo
+                    </span>
                   )}
                 </div>
               </div>
             </motion.div>
-          ) : (
-            <div className="no-selection">
-              <div className="placeholder-content">
-                <i className="fas fa-laptop-code placeholder-icon"></i>
-                <h3>Select a project from the sidebar to view details</h3>
-                <p>Browse through my portfolio of web applications, machine learning projects, and more</p>
-              </div>
-            </div>
-          )}
+          ))}
         </div>
-      </div>
-    </div>
+      ) : (
+        /* Desktop Split View */
+        <div className="projects-content">
+          <div
+            className="explorer-section"
+            id="explorer-section"
+            data-section="projects.explorer"
+          >
+            <div className="explorer-header">
+              <span>PROJECTS EXPLORER</span>
+            </div>
+            <div className="project-list">
+              {projectsData.map((project) => (
+                <div
+                  key={project.id}
+                  className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
+                  onClick={() => openProject(project)}
+                  data-project={project.key}
+                  data-section={`projects.${project.key}`}
+                >
+                  <i className="fas fa-code-branch"></i>
+                  <span>{project.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="project-display">
+            {selectedProject ? (
+              <motion.div
+                className={`project-details project-${selectedProject.key}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                id={`project-details-${selectedProject.id}`}
+                data-section={`projects.${selectedProject.key}`}
+                data-project={selectedProject.key}
+              >
+                <div className="project-header">
+                  <h2>{selectedProject.title}</h2>
+                  <button className="close-btn" onClick={closeProject}>
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+
+                <div className="project-image">
+                  <img src={selectedProject.image} alt={selectedProject.title} />
+                </div>
+
+                <div className="project-info">
+                  <div className="info-section">
+                    <h3>
+                      <i className="fas fa-info-circle section-icon"></i>
+                      Description
+                    </h3>
+                    <p>{selectedProject.description}</p>
+                  </div>
+
+                  <div className="info-section">
+                    <h3>
+                      <i className="fas fa-tools section-icon"></i>
+                      Technologies
+                    </h3>
+                    <div className="tech-tags">
+                      {selectedProject.technologies.map((tech, index) => (
+                        <span key={index} className="tech-tag">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="info-section">
+                    <h3>
+                      <i className="fas fa-star section-icon"></i>
+                      Key Features
+                    </h3>
+                    <ul className="feature-list">
+                      {selectedProject.features.map((feature, index) => (
+                        <li key={index} className="feature-item">
+                          <i className="fas fa-check-circle feature-icon"></i>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="project-links">
+                    <a
+                      href={selectedProject.github}
+                      className="project-link github-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="fab fa-github"></i> View Code
+                    </a>
+                    {selectedProject.demo ? (
+                      <a
+                        href={selectedProject.demo}
+                        className="project-link demo-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fas fa-external-link-alt"></i> Live Demo
+                      </a>
+                    ) : (
+                      <button className="project-link demo-link disabled" disabled>
+                        <i className="fas fa-external-link-alt"></i> Live Demo
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <div className="no-selection">
+                <div className="placeholder-content">
+                  <i className="fas fa-laptop-code placeholder-icon"></i>
+                  <h3>Select a project from the sidebar to view details</h3>
+                  <p>Browse through my portfolio of web applications, machine learning projects, and more</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )
+      }
+    </div >
   );
 };
 

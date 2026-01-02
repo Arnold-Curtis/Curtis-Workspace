@@ -8,12 +8,13 @@ import { getSelectorsForSection, findSectionById, getPageForSection } from './co
 /**
  * Check if there's a highlight request in session storage
  * Now supports both section IDs and legacy line numbers
+ * NOTE: Does NOT remove the item - removal happens after successful highlight
  */
 export const checkForHighlightRequest = () => {
   // Check for new section-based highlight
   const highlightSection = sessionStorage.getItem('highlightSection');
   if (highlightSection) {
-    sessionStorage.removeItem('highlightSection');
+    // DON'T remove here - let highlightSection() remove after success
     console.log('checkForHighlightRequest: Found section highlight request:', highlightSection);
     return { type: 'section', value: highlightSection };
   }
@@ -21,7 +22,7 @@ export const checkForHighlightRequest = () => {
   // Check for legacy line-based highlight (backward compatibility)
   const highlightLine = sessionStorage.getItem('highlightLine');
   if (highlightLine) {
-    sessionStorage.removeItem('highlightLine');
+    // DON'T remove here - let highlightElement() remove after success
     console.log('checkForHighlightRequest: Found legacy line highlight request:', highlightLine);
     return { type: 'line', value: highlightLine };
   }
@@ -35,39 +36,91 @@ export const checkForHighlightRequest = () => {
  * @returns {boolean} true if element was found and highlighted
  */
 export const highlightSection = (sectionId) => {
-  console.log(`highlightSection: Attempting to highlight section: ${sectionId}`);
+  console.log(`[HighlightService] Attempting to highlight section: ${sectionId}`);
 
   // Get all selectors for this section in priority order
   const selectors = getSelectorsForSection(sectionId);
-  console.log(`highlightSection: Trying selectors:`, selectors);
+  console.log(`[HighlightService] Trying selectors:`, selectors);
+
+  // Try to find main content area first (to avoid accidentally selecting chat elements)
+  const mainContentSelectors = [
+    '.content',
+    '.main-content',
+    '.about-page-container',
+    '.skills-page-container',
+    '.projects-page-container',
+    '.resume-page-container',
+    '.contact-page-container',
+    '.page-container',
+    'main',
+    '[class*="-page"]'
+  ];
+
+  let mainContent = null;
+  for (const mainSel of mainContentSelectors) {
+    mainContent = document.querySelector(mainSel);
+    if (mainContent) break;
+  }
 
   // Try each selector until we find an element
   for (const selector of selectors) {
     try {
-      const element = document.querySelector(selector);
+      // SAFETY: Add exclusion for chat elements to prevent highlighting links in chat
+      const safeSelector = `${selector}:not(.ai-ref):not(.ai-link):not([class*="ai-chat"]):not([class*="ai-message"])`;
+
+      // First try within main content area
+      let element = mainContent?.querySelector(safeSelector);
+
+      // Fallback to document-wide search with safety exclusions
+      if (!element) {
+        element = document.querySelector(safeSelector);
+      }
+
       if (element) {
-        console.log(`highlightSection: Found element with selector "${selector}":`, element);
+        console.log(`[HighlightService] Found element with selector "${selector}":`, element.tagName, element.className);
         applyHighlightEffect([element]);
+        // Clear the pending request after successful highlight
+        sessionStorage.removeItem('highlightSection');
         return true;
       }
     } catch (error) {
-      console.warn(`highlightSection: Error with selector "${selector}":`, error);
+      console.warn(`[HighlightService] Error with selector "${selector}":`, error);
     }
   }
 
-  // Fallback: Try content-based matching
-  console.log('highlightSection: No element found with selectors, trying content-based fallback');
+  // Special fallback for projects: Try data-project attribute
+  // e.g., sectionId "projects.audioglass" -> try data-project="audioglass"
+  if (sectionId.startsWith('projects.')) {
+    const projectKey = sectionId.replace('projects.', '');
+    const projectSelectors = [
+      `[data-project="${projectKey}"]`,
+      `[data-section="${sectionId}"]`,
+      `.project-item[data-project="${projectKey}"]`
+    ];
+
+    for (const projSel of projectSelectors) {
+      const element = document.querySelector(projSel);
+      if (element) {
+        console.log(`[HighlightService] Found project element with selector "${projSel}"`);
+        applyHighlightEffect([element]);
+        return true;
+      }
+    }
+  }
+
+  // Fallback: Try content-based matching (only in main content area)
+  console.log('[HighlightService] No element found with selectors, trying content-based fallback');
   const section = findSectionById(sectionId);
   if (section && section.title) {
-    const element = findElementByContent(section.title);
+    const element = findElementByContent(section.title, mainContent);
     if (element) {
-      console.log('highlightSection: Found element by content matching:', element);
+      console.log('[HighlightService] Found element by content matching:', element.tagName);
       applyHighlightEffect([element]);
       return true;
     }
   }
 
-  console.warn(`highlightSection: Could not find element for section: ${sectionId}`);
+  console.warn(`[HighlightService] Could not find element for section: ${sectionId}`);
   return false;
 };
 
@@ -167,24 +220,30 @@ export const highlightElement = (lineNumber) => {
  * Find section by partial ID (e.g., "bio" matches "about.bio")
  */
 const highlightSectionByPartialId = (partialId) => {
-  console.log(`highlightSectionByPartialId: Looking for partial ID: ${partialId}`);
+  console.log(`[HighlightService] Looking for partial ID: ${partialId}`);
+
+  // Safety exclusion suffix to prevent matching chat elements
+  const excludeChat = ':not(.ai-ref):not(.ai-link):not([class*="ai-chat"]):not([class*="ai-message"])';
 
   // Try as-is first
   const selectors = [
-    `[data-section*="${partialId}"]`,
-    `#${partialId}`,
-    `.${partialId}`,
-    `#${partialId}-section`,
-    `.${partialId}-section`,
-    `[id*="${partialId}"]`,
-    `[class*="${partialId}"]`
+    `[data-section*="${partialId}"]${excludeChat}`,
+    `#${partialId}${excludeChat}`,
+    `.${partialId}${excludeChat}`,
+    `#${partialId}-section${excludeChat}`,
+    `.${partialId}-section${excludeChat}`,
+    `[id*="${partialId}"]${excludeChat}`,
+    `[class*="${partialId}"]${excludeChat}`
   ];
 
   for (const selector of selectors) {
     try {
       const element = document.querySelector(selector);
       if (element) {
-        console.log(`highlightSectionByPartialId: Found element with selector "${selector}"`);
+        // Double-check: skip if inside AI chat
+        if (element.closest('.ai-chat-window, .ai-chat-content, .ai-message')) continue;
+
+        console.log(`[HighlightService] Found element with selector for partial ID "${partialId}"`);
         applyHighlightEffect([element]);
         return true;
       }
@@ -205,19 +264,26 @@ const highlightSectionByPartialId = (partialId) => {
 
 /**
  * Find element by matching content (heading text, title, etc.)
+ * @param {string} searchText - Text to search for
+ * @param {Element|null} container - Optional container to search within
  */
-const findElementByContent = (searchText) => {
+const findElementByContent = (searchText, container = null) => {
   if (!searchText) return null;
 
   const searchLower = searchText.toLowerCase();
+  const searchRoot = container || document;
 
-  // Look for headings that match
-  const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .section-title, .card-title');
+  // Look for headings that match (exclude chat elements)
+  const headings = searchRoot.querySelectorAll('h1:not(.ai-ref), h2:not(.ai-ref), h3:not(.ai-ref), h4:not(.ai-ref), h5:not(.ai-ref), h6:not(.ai-ref), .section-title:not(.ai-ref), .card-title:not(.ai-ref)');
   for (const heading of headings) {
+    // Skip if inside AI chat
+    if (heading.closest('.ai-chat-window, .ai-chat-content, .ai-message')) continue;
+
     if (heading.textContent.toLowerCase().includes(searchLower)) {
       // Return the parent section if available
       const section = heading.closest('section') ||
         heading.closest('.section') ||
+        heading.closest('.section-container') ||
         heading.closest('.card') ||
         heading.parentElement;
       return section || heading;
@@ -393,20 +459,34 @@ export const storeHighlightRequest = (sectionId) => {
 
 /**
  * Process any pending highlight requests (call after page load)
+ * Now with improved timing for mobile devices
  */
 export const processPendingHighlight = () => {
   const request = checkForHighlightRequest();
 
   if (!request) return false;
 
-  // Small delay to ensure DOM is ready
-  setTimeout(() => {
-    if (request.type === 'section') {
-      highlightSection(request.value);
-    } else if (request.type === 'line') {
-      highlightElement(request.value);
-    }
-  }, 500);
+  console.log('[HighlightService] Processing pending highlight:', request);
 
+  // Initial attempt with delay for DOM render
+  const attemptHighlight = (attempt = 1) => {
+    setTimeout(() => {
+      let success = false;
+
+      if (request.type === 'section') {
+        success = highlightSection(request.value);
+      } else if (request.type === 'line') {
+        success = highlightElement(request.value);
+      }
+
+      // Retry once if first attempt fails (mobile may need more time)
+      if (!success && attempt < 3) {
+        console.log(`[HighlightService] Highlight attempt ${attempt} failed, retrying...`);
+        attemptHighlight(attempt + 1);
+      }
+    }, attempt === 1 ? 600 : 400); // First attempt 600ms, retries 400ms apart
+  };
+
+  attemptHighlight();
   return true;
 };

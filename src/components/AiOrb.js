@@ -14,106 +14,88 @@ import ChatHistory from './ChatHistory';
 import './AiOrb.css';
 
 // Separate component for AI response content to handle link clicks reliably
-// This fixes the intermittent link failure issue by attaching handlers in a controlled way
-// Now supports both new semantic references (.ai-ref) and legacy links (.ai-link)
+// Uses EVENT DELEGATION for maximum reliability - single handler on container
+// Supports both new semantic references (.ai-ref) and legacy links (.ai-link)
 const AiResponseContent = ({ html, onLinkClick }) => {
   const containerRef = useRef(null);
 
-  useEffect(() => {
-    if (!containerRef.current || !onLinkClick) return;
+  // Use event delegation - single click handler on container
+  // This eliminates all cleanup/stale reference issues
+  const handleContainerClick = useCallback((e) => {
+    // Use closest() for reliable element detection - more robust than manual bubbling
+    const aiRef = e.target.closest('.ai-ref');
+    const aiLink = e.target.closest('.ai-link');
 
-    // Find all AI references in the rendered HTML (new format: .ai-ref, legacy: .ai-link)
-    const newRefs = containerRef.current.querySelectorAll('.ai-ref');
-    const legacyLinks = containerRef.current.querySelectorAll('.ai-link');
-
-    // Handler for new semantic references
-    const handleRefClick = (e) => {
+    if (aiRef) {
       e.preventDefault();
       e.stopPropagation();
 
-      const sectionId = e.currentTarget.getAttribute('data-section');
-      const page = e.currentTarget.getAttribute('data-page');
+      const sectionId = aiRef.getAttribute('data-target-section');
+      const page = aiRef.getAttribute('data-page');
 
-      if (sectionId) {
-        console.log(`AiResponseContent: Semantic ref clicked - section=${sectionId}, page=${page}`);
-        // Pass section ID as the identifier, with page for navigation
+      console.log(`[AiResponseContent] ai-ref clicked: section=${sectionId}, page=${page}`);
+
+      if (sectionId && onLinkClick) {
         onLinkClick(page || sectionId.split('.')[0], sectionId);
       }
-    };
+      return;
+    }
 
-    // Handler for legacy links (backward compatibility)
-    const handleLegacyLinkClick = (e) => {
+    if (aiLink) {
       e.preventDefault();
       e.stopPropagation();
 
-      const page = e.currentTarget.getAttribute('data-page');
-      const line = e.currentTarget.getAttribute('data-line');
+      const page = aiLink.getAttribute('data-page');
+      const line = aiLink.getAttribute('data-line');
 
-      if (page) {
-        console.log(`AiResponseContent: Legacy link clicked - page=${page}, line=${line}`);
+      console.log(`[AiResponseContent] ai-link clicked: page=${page}, line=${line}`);
+
+      if (page && onLinkClick) {
         onLinkClick(page, line);
+      }
+      return;
+    }
+  }, [onLinkClick]);
+
+  // Handle touch feedback separately (visual only)
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleTouchStart = (e) => {
+      const target = e.target.closest('.ai-ref, .ai-link');
+      if (target) {
+        target.style.transform = 'scale(0.95)';
+        target.style.opacity = '0.8';
       }
     };
 
-    // Handle touch start for visual feedback
-    const handleTouchStart = (e) => {
-      e.currentTarget.style.transform = 'scale(0.95)';
-      e.currentTarget.style.opacity = '0.8';
+    const handleTouchEnd = (e) => {
+      const target = e.target.closest('.ai-ref, .ai-link');
+      if (target) {
+        target.style.transform = 'scale(1)';
+        target.style.opacity = '1';
+      }
     };
 
-    // Handle touch end - reset visual feedback and trigger action
-    const handleTouchEnd = (handler) => (e) => {
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.opacity = '1';
-      handler(e);
-    };
+    const container = containerRef.current;
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    container.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
-    // Handle touch cancel - reset visual feedback without action
-    const handleTouchCancel = (e) => {
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.opacity = '1';
-    };
-
-    // Attach handlers to new semantic references
-    newRefs.forEach(ref => {
-      ref.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
-      ref.addEventListener('click', handleRefClick);
-      ref.addEventListener('touchstart', handleTouchStart, { passive: true });
-      ref.addEventListener('touchend', handleTouchEnd(handleRefClick), { passive: false });
-      ref.addEventListener('touchcancel', handleTouchCancel, { passive: true });
-    });
-
-    // Attach handlers to legacy links (backward compatibility)
-    legacyLinks.forEach(link => {
-      link.style.transition = 'transform 0.1s ease, opacity 0.1s ease';
-      link.addEventListener('click', handleLegacyLinkClick);
-      link.addEventListener('touchstart', handleTouchStart, { passive: true });
-      link.addEventListener('touchend', handleTouchEnd(handleLegacyLinkClick), { passive: false });
-      link.addEventListener('touchcancel', handleTouchCancel, { passive: true });
-    });
-
-    // Cleanup function to remove handlers
     return () => {
-      newRefs.forEach(ref => {
-        ref.removeEventListener('click', handleRefClick);
-        ref.removeEventListener('touchstart', handleTouchStart);
-        ref.removeEventListener('touchend', handleTouchEnd(handleRefClick));
-        ref.removeEventListener('touchcancel', handleTouchCancel);
-      });
-      legacyLinks.forEach(link => {
-        link.removeEventListener('click', handleLegacyLinkClick);
-        link.removeEventListener('touchstart', handleTouchStart);
-        link.removeEventListener('touchend', handleTouchEnd(handleLegacyLinkClick));
-        link.removeEventListener('touchcancel', handleTouchCancel);
-      });
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('touchcancel', handleTouchEnd);
     };
-  }, [html, onLinkClick]);
+  }, [html]); // Only re-run when html changes (new content)
 
   return (
     <div
       ref={containerRef}
       className="ai-response"
+      onClick={handleContainerClick}
       dangerouslySetInnerHTML={{ __html: html }}
+      style={{ cursor: 'default' }}
     />
   );
 };
@@ -135,6 +117,8 @@ const AiOrb = () => {
   const constraintsRef = useRef(null);
   const messagesEndRef = useRef(null);
   const orbRef = useRef(null);
+  // Ref to access current messages without adding to callback dependencies
+  const messagesRef = useRef(messages);
 
   // Drag controls for the chat window header
   const dragControls = useDragControls();
@@ -153,6 +137,12 @@ const AiOrb = () => {
     window.windowManagerContext = windowManager;
     console.log('AiOrb: WindowManager context set globally');
   }, [windowManager]);
+
+  // Keep messagesRef in sync with messages state
+  // This allows handleLinkClickInternal to access current messages without re-creating
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   // Check if we're on a mobile device
   useEffect(() => {
@@ -241,7 +231,7 @@ const AiOrb = () => {
           left: 'auto',
           top: `${topBarHeight + 20}px`,
           width: '40vw',
-          height: `calc(100vh - ${topBarHeight + 40}px)`
+          height: `calc(100vh - ${topBarHeight + 88}px)` // +88 = 20px top padding + 48px taskbar + 20px bottom padding
         };
 
         Object.assign(chatRef.current.style, targetStyles);
@@ -397,8 +387,8 @@ const AiOrb = () => {
       return;
     }
 
-    // Store chat state
-    const currentChatState = { messages, chatId: currentChatId };
+    // Store chat state - use ref to avoid dependency on messages array
+    const currentChatState = { messages: messagesRef.current, chatId: currentChatId };
     sessionStorage.setItem('preservedChatState', JSON.stringify(currentChatState));
 
     // Store appropriate highlight request
@@ -428,9 +418,35 @@ const AiOrb = () => {
         if (inputRef.current) inputRef.current.focus();
         return;
       } else {
-        // Different page - snapWithAi now handles opening the window
+        // Different page - switch to it and then trigger highlight
         console.log('Switching to different page in snap mode:', pageLower);
         windowManager.snapWithAi(pageLower);
+
+        // Dispatch highlight event AFTER page has time to render
+        // Using longer delay (1200ms) to ensure page is fully loaded
+        setTimeout(() => {
+          if (sectionId) {
+            console.log('=== AI HIGHLIGHT DEBUG ===');
+            console.log('Dispatching ai-section-highlight event');
+            console.log('Target section:', sectionId);
+            console.log('Target page:', pageLower);
+            console.log('Document has listeners:', document.hasOwnProperty('addEventListener'));
+
+            const event = new CustomEvent('ai-section-highlight', {
+              detail: { sectionId: sectionId },
+              bubbles: true
+            });
+            document.dispatchEvent(event);
+            console.log('Event dispatched successfully');
+          } else if (lineNumber) {
+            console.log('Dispatching legacy highlight for line:', lineNumber);
+            const event = new CustomEvent('ai-highlight-request', {
+              detail: { lineNumber: lineNumber },
+              bubbles: true
+            });
+            document.dispatchEvent(event);
+          }
+        }, 1200); // Increased delay for page to fully render
         return;
       }
     }
@@ -442,6 +458,31 @@ const AiOrb = () => {
         windowManager.snapWithAi(pageLower);
         await snapChatToSide();
         console.log('Split view setup complete');
+
+        // Dispatch highlight event AFTER split view is set up
+        // Using longer delay (1200ms) to ensure page is fully loaded
+        setTimeout(() => {
+          if (sectionId) {
+            console.log('=== AI HIGHLIGHT DEBUG (Split View) ===');
+            console.log('Dispatching ai-section-highlight event');
+            console.log('Target section:', sectionId);
+            console.log('Target page:', pageLower);
+
+            const event = new CustomEvent('ai-section-highlight', {
+              detail: { sectionId: sectionId },
+              bubbles: true
+            });
+            document.dispatchEvent(event);
+            console.log('Event dispatched successfully (split view path)');
+          } else if (lineNumber) {
+            console.log('Dispatching legacy highlight for line:', lineNumber);
+            const event = new CustomEvent('ai-highlight-request', {
+              detail: { lineNumber: lineNumber },
+              bubbles: true
+            });
+            document.dispatchEvent(event);
+          }
+        }, 1200); // Increased delay for page to fully render
       } catch (error) {
         console.error('Split view setup error:', error);
       }
@@ -453,7 +494,7 @@ const AiOrb = () => {
     } else {
       performSplitView();
     }
-  }, [isMobile, windowManager, showChat, messages, currentChatId, snapChatToSide, navigate]);
+  }, [isMobile, windowManager, showChat, currentChatId, snapChatToSide, navigate]);
 
   // COMPLETELY REWRITTEN: Clean exit from snapped mode with full cleanup
   const exitSnappedMode = useCallback(() => {
@@ -911,24 +952,38 @@ const AiOrb = () => {
     setShowChat(false);
   }, [windowManager, exitSnappedMode]);
 
-  // Improved scroll to bottom function
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      try {
-        messagesEndRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'end'
-        });
-      } catch (error) {
-        console.error('Error scrolling to bottom:', error);
-        // Fallback method if smooth scrolling fails
-        if (messagesEndRef.current.parentElement) {
-          messagesEndRef.current.parentElement.scrollTop =
-            messagesEndRef.current.parentElement.scrollHeight;
+  // Improved scroll to bottom function with requestAnimationFrame for reliable timing
+  const scrollToBottom = useCallback(() => {
+    // Use requestAnimationFrame to ensure DOM is fully updated
+    requestAnimationFrame(() => {
+      if (messagesEndRef.current) {
+        try {
+          // First, try direct scroll for immediate positioning
+          const container = messagesEndRef.current.closest('.ai-chat-content');
+          if (container) {
+            container.scrollTop = container.scrollHeight;
+          }
+
+          // Then apply smooth scroll for visual polish
+          setTimeout(() => {
+            if (messagesEndRef.current) {
+              messagesEndRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end'
+              });
+            }
+          }, 50);
+        } catch (error) {
+          console.error('Error scrolling to bottom:', error);
+          // Fallback method
+          if (messagesEndRef.current.parentElement) {
+            messagesEndRef.current.parentElement.scrollTop =
+              messagesEndRef.current.parentElement.scrollHeight;
+          }
         }
       }
-    }
-  };
+    });
+  }, []);
 
   // Toggle chat history
   const toggleChatHistory = () => {
@@ -1027,7 +1082,7 @@ const AiOrb = () => {
     // Scroll to bottom after user message is added
     setTimeout(() => {
       scrollToBottom();
-    }, 100);
+    }, 150);
 
     // Set loading state
     setIsLoading(true);
@@ -1055,7 +1110,7 @@ const AiOrb = () => {
       // Scroll to bottom after AI response is added
       setTimeout(() => {
         scrollToBottom();
-      }, 100);
+      }, 150);
     } catch (error) {
       console.error('Error getting AI response:', error);
 
@@ -1073,7 +1128,7 @@ const AiOrb = () => {
       // Final scroll to bottom
       setTimeout(() => {
         scrollToBottom();
-      }, 200);
+      }, 300);
     }
   };
 

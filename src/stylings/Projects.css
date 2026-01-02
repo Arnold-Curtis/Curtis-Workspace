@@ -6,9 +6,11 @@
   font-family: 'Fira Code', monospace;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent scrolling on the container */
+  overflow: hidden;
+  /* Prevent scrolling on the container */
   border-radius: 8px;
-  position: absolute; /* Position absolutely */
+  position: absolute;
+  /* Position absolutely */
   top: 0;
   left: 0;
   right: 0;
@@ -104,20 +106,24 @@
 /* Improve Projects layout with proper 15/85% split */
 .projects-content {
   display: flex;
-  height: calc(100% - 35px); /* Adjust for header height */
+  height: calc(100% - 35px);
+  /* Adjust for header height */
   overflow: hidden;
-  width: 100%; /* Ensure full width */
+  width: 100%;
+  /* Ensure full width */
 }
 
 /* Explorer sidebar */
 .explorer-section {
-  width: 15%; /* Reduce to 15% as requested */
-  min-width: 180px; 
+  width: 15%;
+  /* Reduce to 15% as requested */
+  min-width: 180px;
   max-width: 220px;
   background-color: #252526;
   border-right: 1px solid #3c3c3c;
   overflow-y: auto;
-  height: 100%; /* Ensure full height */
+  height: 100%;
+  /* Ensure full height */
 }
 
 .explorer-header {
@@ -131,13 +137,15 @@
 }
 
 .project-list {
-  padding: 8px 0; /* Reduced from 10px */
+  padding: 8px 0;
+  /* Reduced from 10px */
   overflow-y: auto;
   max-height: 100%;
 }
 
 .project-item {
-  padding: 5px 16px; /* Reduced from 6px */
+  padding: 5px 16px;
+  /* Reduced from 6px */
   font-size: 13px;
   color: #cccccc;
   cursor: pointer;
@@ -164,33 +172,42 @@
 .project-display {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 30px 40px; /* Keep good padding */
-  height: 100%; /* Ensure full height */
-  box-sizing: border-box; /* Include padding in height calculation */
-  width: 85%; /* Increase to 85% as requested */
+  padding: 30px 40px;
+  /* Keep good padding */
+  height: 100%;
+  /* Ensure full height */
+  box-sizing: border-box;
+  /* Include padding in height calculation */
+  width: 85%;
+  /* Increase to 85% as requested */
 }
 
 .project-details {
-  max-width: 1600px; /* Increased from 1400px for even more width */
+  max-width: 1600px;
+  /* Increased from 1400px for even more width */
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr; /* Default for small screens */
+  grid-template-columns: 1fr;
+  /* Default for small screens */
 }
 
 .project-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px; /* Increased from 30px */
+  margin-bottom: 40px;
+  /* Increased from 30px */
   border-bottom: 1px solid #3c3c3c;
-  padding-bottom: 18px; /* Increased padding */
+  padding-bottom: 18px;
+  /* Increased padding */
   grid-column: span 1;
 }
 
 .project-header h2 {
   margin: 0;
   color: #4FC1FF;
-  font-size: 36px; /* Increased from 32px */
+  font-size: 36px;
+  /* Increased from 32px */
   font-weight: 500;
 }
 
@@ -210,42 +227,51 @@
 
 /* Larger project image */
 .project-image {
-  margin-bottom: 40px; /* Increased from 30px */
+  margin-bottom: 40px;
+  /* Increased from 30px */
   border: 1px solid #3c3c3c;
   border-radius: 5px;
   overflow: hidden;
   max-width: 100%;
-  max-height: 600px; /* Increased from 500px */
+  max-height: 600px;
+  /* Increased from 500px */
   grid-column: span 1;
 }
 
 .project-image img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Maintain aspect ratio */
+  object-fit: contain;
+  /* Maintain aspect ratio */
   display: block;
 }
 
 .project-info {
   grid-column: span 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Increased from 300px */
-  gap: 30px; /* Increased from 25px */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  /* Increased from 300px */
+  gap: 30px;
+  /* Increased from 25px */
 }
 
 .info-section {
-  margin-bottom: 0; /* Remove bottom margin since we're using grid gap */
+  margin-bottom: 0;
+  /* Remove bottom margin since we're using grid gap */
 }
 
 .info-section h3 {
   color: #CE9178;
-  font-size: 18px; /* Increased from 16px */
+  font-size: 18px;
+  /* Increased from 16px */
   font-weight: 500;
   margin-top: 0;
-  margin-bottom: 15px; /* Increased from 10px */
+  margin-bottom: 15px;
+  /* Increased from 10px */
   display: flex;
   align-items: center;
-  gap: 10px; /* Increased from 8px */
+  gap: 10px;
+  /* Increased from 8px */
 }
 
 .section-icon {
@@ -254,9 +280,11 @@
 
 .info-section p {
   margin: 0;
-  line-height: 1.7; /* Increased from 1.6 */
+  line-height: 1.7;
+  /* Increased from 1.6 */
   color: #cccccc;
-  font-size: 15px; /* Added font size */
+  font-size: 15px;
+  /* Added font size */
 }
 
 .tech-tags {
@@ -346,52 +374,64 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  width: 100%; /* Ensure full width */
+  width: 100%;
+  /* Ensure full width */
 }
 
 .placeholder-content {
   text-align: center;
-  max-width: 800px; /* Increased from 700px */
-  padding: 80px; /* Increased padding */
+  max-width: 800px;
+  /* Increased from 700px */
+  padding: 80px;
+  /* Increased padding */
 }
 
 .placeholder-icon {
-  font-size: 90px; /* Increased from 72px */
+  font-size: 90px;
+  /* Increased from 72px */
   color: #61dafb;
-  margin-bottom: 40px; /* Increased from 30px */
+  margin-bottom: 40px;
+  /* Increased from 30px */
 }
 
 .placeholder-content h3 {
   color: #4FC1FF;
-  margin: 0 0 20px 0; /* Increased bottom margin */
+  margin: 0 0 20px 0;
+  /* Increased bottom margin */
   font-weight: 500;
-  font-size: 30px; /* Increased from 26px */
+  font-size: 30px;
+  /* Increased from 26px */
 }
 
 .placeholder-content p {
   color: #cccccc;
   margin: 0;
-  font-size: 20px; /* Increased from 18px */
+  font-size: 20px;
+  /* Increased from 18px */
 }
 
 /* Responsive Design */
 @media (min-width: 1400px) {
   .project-details {
-    grid-template-columns: minmax(600px, 1fr) minmax(550px, 1fr); /* Increased column sizes */
-    gap: 60px; /* Increased from 50px */
+    grid-template-columns: minmax(600px, 1fr) minmax(550px, 1fr);
+    /* Increased column sizes */
+    gap: 60px;
+    /* Increased from 50px */
     align-items: start;
   }
-  
+
   .project-header {
     grid-column: span 2;
-    margin-bottom: 50px; /* Increased from 40px */
+    margin-bottom: 50px;
+    /* Increased from 40px */
   }
-  
+
   .project-image {
     grid-column: 1;
-    max-height: 700px; /* Increased from 600px */
+    max-height: 700px;
+    /* Increased from 600px */
   }
-  
+
   .project-info {
     grid-column: 2;
   }
@@ -410,7 +450,7 @@
     height: auto;
     overflow-y: visible;
   }
-  
+
   .explorer-section {
     width: 100%;
     max-height: 200px;
@@ -450,7 +490,7 @@
   .github-redirect-button:active {
     transform: scale(0.95);
   }
-  
+
   /* Make project list horizontal for mobile with scroll indicators */
   .project-list {
     display: flex;
@@ -464,22 +504,18 @@
     /* Scroll snap for better UX */
     scroll-snap-type: x mandatory;
     /* Fade edges to indicate more content */
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 15px,
-      black calc(100% - 15px),
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 15px,
-      black calc(100% - 15px),
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to right,
+        transparent,
+        black 15px,
+        black calc(100% - 15px),
+        transparent);
+    mask-image: linear-gradient(to right,
+        transparent,
+        black 15px,
+        black calc(100% - 15px),
+        transparent);
   }
-  
+
   .project-item {
     flex: 0 0 auto;
     padding: 8px 15px;
@@ -504,55 +540,59 @@
   .project-item:last-child {
     margin-right: 15px;
   }
-  
+
   .project-display {
     width: 100%;
     height: auto;
-    min-height: calc(100vh - 200px - 95px); /* Adjust to account for explorer + header */
+    min-height: calc(100vh - 200px - 95px);
+    /* Adjust to account for explorer + header */
     padding: 15px;
-    padding-bottom: 80px; /* Space for floating GitHub button */
+    padding-bottom: 80px;
+    /* Space for floating GitHub button */
   }
-  
+
   .project-display {
     padding: 15px;
   }
-  
+
   .project-info {
     grid-template-columns: 1fr;
   }
-  
+
   .project-header h2 {
     font-size: 24px;
   }
-  
+
   .project-links {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .project-link {
     width: 100%;
     justify-content: center;
     min-height: 44px;
   }
-  
+
   .placeholder-content {
     padding: 20px;
   }
-  
+
   .placeholder-icon {
     font-size: 36px;
   }
-  
+
   /* Fix ghost space issue */
   .projects-container {
     height: auto;
     overflow-y: visible;
-    padding-bottom: 60px; /* Space for mobile navigation */
+    padding-bottom: 60px;
+    /* Space for mobile navigation */
   }
-  
+
   .explorer-header {
-    display: none; /* Save space on mobile */
+    display: none;
+    /* Save space on mobile */
   }
 }
 
@@ -561,38 +601,39 @@
   .explorer-section {
     max-height: 150px;
   }
-  
+
   .project-item {
     padding: 8px 12px;
     font-size: 14px;
   }
-  
+
   .project-header {
     margin-bottom: 20px;
     padding-bottom: 10px;
   }
-  
+
   .info-section h3 {
     font-size: 14px;
   }
-  
-  .info-section p, .feature-item {
+
+  .info-section p,
+  .feature-item {
     font-size: 12px;
   }
-  
+
   .tech-tags {
     gap: 5px;
   }
-  
+
   .tech-tag {
     font-size: 10px;
     padding: 2px 6px;
   }
-  
+
   .project-display {
     padding: 10px;
   }
-  
+
   .project-links {
     margin-top: 15px;
   }
@@ -601,9 +642,10 @@
 /* Landscape mode specific styles */
 @media (orientation: landscape) and (max-width: 920px) {
   .projects-content {
-    flex-direction: row; /* Keep side-by-side layout in landscape */
+    flex-direction: row;
+    /* Keep side-by-side layout in landscape */
   }
-  
+
   .explorer-section {
     width: 25%;
     min-width: 160px;
@@ -611,35 +653,36 @@
     border-right: 1px solid #3c3c3c;
     border-bottom: none;
   }
-  
+
   .project-item {
     padding: 5px 10px;
     font-size: 12px;
     gap: 5px;
   }
-  
+
   .project-display {
     width: 75%;
     padding: 15px;
   }
-  
+
   .project-list {
     padding: 10px 5px;
   }
-  
+
   .project-display {
-    padding-bottom: 55px; /* Account for mobile navigation */
+    padding-bottom: 55px;
+    /* Account for mobile navigation */
   }
-  
+
   .project-header h2 {
     font-size: 22px;
   }
-  
+
   .project-links {
     flex-direction: row;
     gap: 10px;
   }
-  
+
   .project-link {
     padding: 6px 12px;
     font-size: 12px;
@@ -652,35 +695,36 @@
     font-size: 10px;
     padding: 5px 10px;
   }
-  
+
   .project-item {
     padding: 6px 10px;
     font-size: 12px;
   }
-  
+
   .project-header h2 {
     font-size: 20px;
   }
-  
+
   .project-header {
     padding-bottom: 10px;
     margin-bottom: 15px;
   }
-  
+
   .info-section h3 {
     font-size: 14px;
   }
-  
-  .info-section p, .feature-item {
+
+  .info-section p,
+  .feature-item {
     font-size: 12px;
     line-height: 1.4;
   }
-  
+
   .tech-tag {
     font-size: 9px;
     padding: 2px 4px;
   }
-  
+
   .project-links a {
     padding: 6px 12px;
     font-size: 12px;
@@ -689,6 +733,7 @@
 
 /* Mobile enhancements for Projects component */
 @media (max-width: 768px) {
+
   /* Adjust the explorer section to be more compact on mobile */
   .explorer-section {
     max-height: none;
@@ -698,12 +743,12 @@
     padding-bottom: 0;
     width: 100%;
   }
-  
+
   /* Hide the explorer header on mobile to save space */
   .explorer-header {
     display: none;
   }
-  
+
   /* Style the project list as horizontally scrollable */
   .project-list {
     display: flex;
@@ -715,20 +760,20 @@
     scrollbar-color: #3c3c3c #1e1e1e;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .project-list::-webkit-scrollbar {
     height: 4px;
   }
-  
+
   .project-list::-webkit-scrollbar-thumb {
     background-color: #3c3c3c;
     border-radius: 4px;
   }
-  
+
   .project-list::-webkit-scrollbar-track {
     background-color: #1e1e1e;
   }
-  
+
   /* Make project items more like buttons/pills in horizontal list */
   .project-item {
     flex: 0 0 auto;
@@ -741,37 +786,37 @@
     width: max-content;
     max-width: 200px;
   }
-  
+
   .project-item.active {
     border-color: #61dafb;
     background-color: #37373d;
   }
-  
+
   /* Make the project display take the remaining height */
   .project-display {
     max-height: calc(100vh - 170px);
     overflow-y: auto;
     padding-bottom: 60px;
   }
-  
+
   /* Adjust grid layout for project info */
   .project-info {
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
-  
+
   /* Reduce padding to fit more content */
   .info-section {
     padding: 10px 0;
   }
-  
+
   /* Make images responsive */
   .project-image img {
     max-width: 100%;
     height: auto;
   }
-  
+
   /* Make sure the CTA buttons are visible and easy to tap */
   .project-links {
     position: sticky;
@@ -782,7 +827,7 @@
     display: flex;
     justify-content: space-around;
   }
-  
+
   .project-link {
     min-width: 120px;
     justify-content: center;
@@ -794,25 +839,25 @@
   .project-display {
     padding: 0 15px 70px 15px;
   }
-  
+
   .project-header h2 {
     font-size: 20px;
   }
-  
+
   /* Enhance the no selection message for smaller screens */
   .no-selection {
     padding: 20px;
   }
-  
+
   .placeholder-content {
     padding: 30px 10px;
   }
-  
+
   .placeholder-content h3 {
     font-size: 18px;
     margin-top: 15px;
   }
-  
+
   .placeholder-content p {
     font-size: 14px;
     max-width: 100%;
@@ -825,11 +870,11 @@
   .project-list {
     padding: 10px 5px;
   }
-  
+
   .project-display {
     padding-bottom: 55px;
   }
-  
+
   .project-links {
     flex-direction: row;
     flex-wrap: wrap;
@@ -842,13 +887,14 @@
 @media (max-width: 768px) {
   .explorer-section {
     width: 100%;
-    max-height: 120px; /* reduced height to ~25% of screen */
+    max-height: 120px;
+    /* reduced height to ~25% of screen */
     border-right: none;
     border-bottom: 1px solid #3c3c3c;
     overflow-x: auto;
     overflow-y: hidden;
   }
-  
+
   /* Make project list horizontal for better use of space */
   .project-list {
     display: flex;
@@ -857,7 +903,7 @@
     overflow-x: auto;
     padding: 10px 5px;
   }
-  
+
   .project-item {
     flex: 0 0 auto;
     padding: 8px 15px;
@@ -869,28 +915,31 @@
     border: 1px solid #3c3c3c;
     height: auto;
   }
-  
+
   .project-item.active {
     border-color: #61dafb;
     background-color: #37373d;
   }
-  
+
   /* Project display area takes ~75% of space */
   .project-display {
-    height: calc(100vh - 200px); /* Take remaining space */
+    height: calc(100vh - 200px);
+    /* Take remaining space */
     overflow-y: auto;
     padding: 15px;
-    padding-bottom: 80px; /* Add space for bottom nav */
+    padding-bottom: 80px;
+    /* Add space for bottom nav */
   }
-  
+
   /* Improve scrolling and fix "ghost space" issues */
   .projects-container {
     overflow-y: auto;
     height: auto;
     position: relative;
-    padding-bottom: 60px; /* Make space for mobile nav */
+    padding-bottom: 60px;
+    /* Make space for mobile nav */
   }
-  
+
   .projects-content {
     height: auto;
     overflow-y: visible;
@@ -900,13 +949,14 @@
 /* Portrait mode specific improvements */
 @media (orientation: portrait) and (max-width: 768px) {
   .explorer-section {
-    max-height: 100px; /* Even smaller in portrait mode */
+    max-height: 100px;
+    /* Even smaller in portrait mode */
   }
-  
+
   .project-list {
     padding: 5px;
   }
-  
+
   .project-display {
     height: calc(100vh - 180px);
   }
@@ -915,14 +965,16 @@
 /* Landscape mode improvements */
 @media (orientation: landscape) and (max-width: 920px) {
   .projects-content {
-    flex-direction: row; /* Stack in landscape too */
+    flex-direction: row;
+    /* Stack in landscape too */
   }
-  
+
   .explorer-section {
-    max-height: 90px; /* Smaller in landscape due to less vertical space */
+    max-height: 90px;
+    /* Smaller in landscape due to less vertical space */
     width: 100%;
   }
-  
+
   .project-display {
     height: calc(100vh - 170px);
     padding-bottom: 55px;
@@ -936,18 +988,20 @@
     height: auto;
     overflow-y: visible;
   }
-  
+
   /* Projects list takes ~25% of the height */
   .explorer-section {
     width: 100%;
-    max-height: 25vh; /* Limit to 25% of viewport height */
-    min-height: 100px; /* Minimum height to ensure visibility */
+    max-height: 25vh;
+    /* Limit to 25% of viewport height */
+    min-height: 100px;
+    /* Minimum height to ensure visibility */
     border-right: none;
     border-bottom: 1px solid #3c3c3c;
     overflow-x: auto;
     overflow-y: hidden;
   }
-  
+
   /* Make project list horizontal for mobile */
   .project-list {
     display: flex;
@@ -955,9 +1009,10 @@
     white-space: nowrap;
     overflow-x: auto;
     padding: 10px 5px;
-    height: calc(25vh - 20px); /* Account for padding */
+    height: calc(25vh - 20px);
+    /* Account for padding */
   }
-  
+
   .project-item {
     flex: 0 0 auto;
     padding: 8px 15px;
@@ -969,67 +1024,77 @@
     border: 1px solid #3c3c3c;
     height: auto;
   }
-  
+
   /* Project display area takes ~75% of space */
   .project-display {
     height: auto;
-    min-height: 75vh; /* Take 75% of viewport height */
+    min-height: 75vh;
+    /* Take 75% of viewport height */
     width: 100%;
     overflow-y: auto;
     padding: 15px;
-    padding-bottom: 80px; /* Add space for bottom nav */
+    padding-bottom: 80px;
+    /* Add space for bottom nav */
   }
 }
 
 /* Portrait mode specific improvements */
 @media (orientation: portrait) and (max-width: 768px) {
   .explorer-section {
-    max-height: 25vh; /* Keep at 25% of height */
+    max-height: 25vh;
+    /* Keep at 25% of height */
   }
-  
+
   .project-display {
-    min-height: calc(75vh - 60px); /* Account for bottom navigation */
+    min-height: calc(75vh - 60px);
+    /* Account for bottom navigation */
   }
 }
 
 /* Landscape mode improvements */
 @media (orientation: landscape) and (max-width: 920px) {
+
   /* Use left/right split in landscape for better use of space */
   .projects-content {
-    flex-direction: row; /* Side by side layout */
+    flex-direction: row;
+    /* Side by side layout */
     height: auto;
-    min-height: calc(100vh - 95px); /* Fill available space */
+    min-height: calc(100vh - 95px);
+    /* Fill available space */
   }
-  
+
   .explorer-section {
-    width: 25%; /* Take 25% of screen width */
+    width: 25%;
+    /* Take 25% of screen width */
     max-width: 250px;
     height: auto;
-    min-height: calc(100vh - 95px); /* Fill available height */
+    min-height: calc(100vh - 95px);
+    /* Fill available height */
     max-height: none;
     border-right: 1px solid #3c3c3c;
     border-bottom: none;
     overflow-y: auto;
     overflow-x: hidden;
   }
-  
+
   .project-list {
     display: flex;
-    flex-direction: column; /* Stack projects vertically in landscape */
+    flex-direction: column;
+    /* Stack projects vertically in landscape */
     white-space: normal;
     overflow-x: visible;
     overflow-y: auto;
     height: auto;
     padding: 10px 5px;
   }
-  
+
   .project-item {
     margin-right: 0;
     margin-bottom: 8px;
     width: auto;
     max-width: none;
   }
-  
+
   .project-display {
     width: 75%;
     height: auto;
@@ -1045,16 +1110,18 @@
     height: auto;
     overflow-y: visible;
   }
-  
+
   /* Projects list takes ~15% of the height in mobile */
   .explorer-section {
     width: 100%;
-    max-height: 15vh; /* Limit to 15% of viewport height */
-    min-height: 80px; /* Minimum height to ensure visibility */
+    max-height: 15vh;
+    /* Limit to 15% of viewport height */
+    min-height: 80px;
+    /* Minimum height to ensure visibility */
     border-right: none;
     border-bottom: 1px solid #3c3c3c;
   }
-  
+
   /* Stack projects vertically for mobile as requested */
   .project-list {
     display: flex;
@@ -1064,7 +1131,7 @@
     padding: 5px;
     max-height: 15vh;
   }
-  
+
   .project-item {
     padding: 8px 15px;
     margin-bottom: 5px;
@@ -1075,71 +1142,365 @@
     border-radius: 4px;
     border: 1px solid #3c3c3c;
   }
-  
+
   /* Project display area takes ~85% of space */
   .project-display {
     height: auto;
-    min-height: 85vh; /* Take 85% of viewport height */
+    min-height: 85vh;
+    /* Take 85% of viewport height */
     width: 100%;
     overflow-y: auto;
     padding: 15px;
-    padding-bottom: 80px; /* Add space for bottom nav */
+    padding-bottom: 80px;
+    /* Add space for bottom nav */
   }
 }
 
 /* Portrait mode specific improvements */
 @media (orientation: portrait) and (max-width: 768px) {
   .explorer-section {
-    max-height: 15vh; /* Keep at 15% of height */
+    max-height: 15vh;
+    /* Keep at 15% of height */
   }
-  
+
   .project-display {
-    min-height: calc(85vh - 60px); /* Account for bottom navigation */
+    min-height: calc(85vh - 60px);
+    /* Account for bottom navigation */
   }
 }
 
 /* Landscape mode improvements */
 @media (orientation: landscape) and (max-width: 920px) {
+
   /* Use left/right split in landscape for better use of space */
   .projects-content {
-    flex-direction: row; /* Side by side layout */
+    flex-direction: row;
+    /* Side by side layout */
     height: auto;
-    min-height: calc(100vh - 95px); /* Fill available space */
+    min-height: calc(100vh - 95px);
+    /* Fill available space */
   }
-  
+
   .explorer-section {
-    width: 15%; /* Take 15% of screen width */
+    width: 15%;
+    /* Take 15% of screen width */
     max-width: 200px;
     height: auto;
-    min-height: calc(100vh - 95px); /* Fill available height */
+    min-height: calc(100vh - 95px);
+    /* Fill available height */
     max-height: none;
     border-right: 1px solid #3c3c3c;
     border-bottom: none;
     overflow-y: auto;
     overflow-x: hidden;
   }
-  
+
   .project-list {
     display: flex;
-    flex-direction: column; /* Stack projects vertically in landscape */
+    flex-direction: column;
+    /* Stack projects vertically in landscape */
     white-space: normal;
     overflow-x: visible;
     overflow-y: auto;
     height: auto;
     padding: 10px 5px;
   }
-  
+
   .project-item {
     margin-right: 0;
     margin-bottom: 8px;
     width: auto;
     max-width: none;
   }
-  
+
   .project-display {
     width: 85%;
     height: auto;
     min-height: calc(100vh - 95px);
     padding-bottom: 55px;
+  }
+}
+
+/* ===================================================
+   NEW MOBILE CARD GRID LAYOUT
+   Complete redesign for mobile using vertical cards
+   =================================================== */
+
+/* Mobile Projects Grid Container */
+.mobile-projects-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  padding-bottom: 120px;
+  /* Space for mobile nav */
+  overflow-y: auto;
+  height: calc(100vh - 35px);
+  /* Full height minus header */
+  background-color: #1e1e1e;
+}
+
+/* Individual Project Card */
+.mobile-project-card {
+  background: linear-gradient(145deg, #2d2d2d 0%, #252526 100%);
+  border: 1px solid #3c3c3c;
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* NO overflow:hidden - allow content to display fully */
+  -webkit-tap-highlight-color: rgba(97, 218, 251, 0.15);
+}
+
+.mobile-project-card:active {
+  transform: scale(0.98);
+}
+
+.mobile-project-card.expanded {
+  border-color: #61dafb;
+  box-shadow: 0 4px 24px rgba(97, 218, 251, 0.15);
+  background: linear-gradient(145deg, #333333 0%, #2a2a2a 100%);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-icon {
+  color: #61dafb;
+  font-size: 18px;
+}
+
+.card-title {
+  color: #4FC1FF;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-expand-icon {
+  color: #61dafb;
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.card-expand-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Tech Preview Tags (collapsed) - Show all tags that fit */
+.card-tech-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  max-width: 100%;
+}
+
+.tech-tag-mini {
+  background: rgba(97, 218, 251, 0.1);
+  border: 1px solid rgba(97, 218, 251, 0.3);
+  color: #61dafb;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tech-tag-more {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #888;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+/* Expandable Card Content - Use display toggle instead of height animation */
+.card-content {
+  display: none;
+  /* Hidden by default */
+}
+
+.mobile-project-card.expanded .card-content {
+  display: block;
+  /* Show when expanded */
+  padding-top: 20px;
+  border-top: 1px solid #3c3c3c;
+  margin-top: 16px;
+}
+
+/* Card Description */
+.card-description {
+  margin-bottom: 20px;
+}
+
+.card-description p {
+  color: #cccccc;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Card Technologies Section */
+.card-technologies {
+  margin-bottom: 20px;
+}
+
+.card-technologies h4,
+.card-features h4 {
+  color: #CE9178;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-technologies h4 i,
+.card-features h4 i {
+  color: #61dafb;
+  font-size: 13px;
+}
+
+.card-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-tech-tags .tech-tag {
+  background-color: #2d2d2d;
+  color: #61dafb;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  border: 1px solid #3c3c3c;
+}
+
+/* Card Features Section */
+.card-features {
+  margin-bottom: 20px;
+}
+
+.card-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.card-features li i {
+  color: #4ade80;
+  font-size: 11px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Card Links */
+.card-links {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #3c3c3c;
+}
+
+.card-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  /* Touch target */
+}
+
+.card-link.github-btn {
+  background: linear-gradient(145deg, #333, #2a2a2a);
+  border: 1px solid #444;
+  color: #ffffff;
+}
+
+.card-link.github-btn:active {
+  background: #444;
+}
+
+.card-link.demo-btn {
+  background: linear-gradient(145deg, #0e7490, #0891b2);
+  border: 1px solid #06b6d4;
+  color: #ffffff;
+}
+
+.card-link.demo-btn:active {
+  background: #0891b2;
+}
+
+.card-link.demo-btn.disabled {
+  background: #333;
+  border-color: #444;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Mobile Highlight Styles */
+.mobile-project-card.ai-highlight,
+.mobile-project-card.ai-highlight-persistent {
+  animation: card-pulse 0.8s ease-in-out;
+  border-color: #61dafb !important;
+  box-shadow: 0 0 20px rgba(97, 218, 251, 0.4) !important;
+}
+
+@keyframes card-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(97, 218, 251, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(97, 218, 251, 0.7);
+  }
+}
+
+/* Hide desktop view on mobile */
+@media (max-width: 768px) {
+  .projects-content {
+    display: none !important;
+  }
+}
+
+/* Show desktop view only on larger screens */
+@media (min-width: 769px) {
+  .mobile-projects-grid {
+    display: none !important;
   }
 }

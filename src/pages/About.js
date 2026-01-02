@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../stylings/About.css';
 import { motion } from 'framer-motion';
-import { processPendingHighlight, injectHighlightStyles } from '../utils/highlightService';
+import { processPendingHighlight, highlightSection, injectHighlightStyles } from '../utils/highlightService';
 
 const About = () => {
   // Experience data with dummy content
@@ -25,6 +25,26 @@ const About = () => {
     setTimeout(() => {
       processPendingHighlight();
     }, 500);
+
+    // Listen for highlight events from AI link clicks
+    const handleSectionHighlight = (event) => {
+      console.log('=== ABOUT.JS EVENT RECEIVED ===');
+      console.log('Event detail:', event.detail);
+      const { sectionId } = event.detail;
+      console.log('Section ID from event:', sectionId);
+      console.log('Checking if starts with about.:', sectionId?.startsWith('about.'));
+
+      if (sectionId && sectionId.startsWith('about.')) {
+        console.log('About: Triggering highlightSection for:', sectionId);
+        const result = highlightSection(sectionId);
+        console.log('highlightSection result:', result);
+      }
+    };
+
+    document.addEventListener('ai-section-highlight', handleSectionHighlight);
+    return () => {
+      document.removeEventListener('ai-section-highlight', handleSectionHighlight);
+    };
   }, []);
 
   return (
