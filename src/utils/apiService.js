@@ -18,7 +18,7 @@ const apiRequest = async (endpoint, options = {}) => {
   try {
     const url = `${API_BASE_URL}${endpoint}`;
     console.log(`API Request: ${options.method || 'GET'} ${url}`);
-    
+
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -239,6 +239,46 @@ export const getAllAdminData = async () => {
   };
 };
 
+// ============ ANALYTICS API ============
+
+/**
+ * Get analytics dashboard overview
+ */
+export const getAnalyticsDashboard = async () => {
+  return apiRequest('/analytics.php?action=dashboard');
+};
+
+/**
+ * Get list of tracked users with engagement metrics
+ */
+export const getAnalyticsUsers = async () => {
+  return apiRequest('/analytics.php?action=users');
+};
+
+/**
+ * Get daily activity data for charts (last 30 days)
+ */
+export const getAnalyticsActivity = async () => {
+  return apiRequest('/analytics.php?action=activity');
+};
+
+/**
+ * Get conversion funnel metrics
+ */
+export const getAnalyticsConversions = async () => {
+  return apiRequest('/analytics.php?action=conversions');
+};
+
+/**
+ * Trigger manual PostHog sync
+ */
+export const triggerAnalyticsSync = async (secretKey) => {
+  return apiRequest('/analytics.php?action=sync', {
+    method: 'POST',
+    body: JSON.stringify({ secret_key: secretKey }),
+  });
+};
+
 // Export named object
 const apiService = {
   // Contact
@@ -265,6 +305,13 @@ const apiService = {
   // Admin
   getAdminStats,
   getAllAdminData,
+  // Analytics
+  getAnalyticsDashboard,
+  getAnalyticsUsers,
+  getAnalyticsActivity,
+  getAnalyticsConversions,
+  triggerAnalyticsSync,
 };
 
 export default apiService;
+

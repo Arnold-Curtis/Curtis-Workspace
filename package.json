@@ -7,12 +7,14 @@
     "cra-template": "1.2.0",
     "crypto-js": "^4.2.0",
     "framer-motion": "^11.16.0",
+    "posthog-js": "^1.96.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-draggable": "^4.4.6",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
+    "recharts": "^2.15.4",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
@@ -21,7 +23,7 @@
     "build:dev": "react-scripts build",
     "build:production": "react-scripts build && npm run copy-api:production",
     "copy-api": "xcopy /E /I /Y api build\\api",
-    "copy-api:production": "xcopy /E /I /Y api build\\api && copy /Y api\\config.production.php build\\api\\config.php",
+    "copy-api:production": "xcopy /E /I /Y api build\\api && copy /Y api\\config.production.php build\\api\\config.php && copy /Y api\\posthog-config.production.php build\\api\\posthog-config.php",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

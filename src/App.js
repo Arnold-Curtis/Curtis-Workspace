@@ -20,6 +20,7 @@ import Guestbook from './pages/Guestbook';
 import AdminMessages from './pages/AdminMessages';
 import BookCall from './pages/BookCall';
 import withHighlighting from './hoc/withHighlighting';
+import { initPostHog, trackPageView } from './utils/posthogService';
 import './App.css';
 
 // Apply the highlighting HOC to all page components
@@ -63,6 +64,16 @@ function AppWithRoutes() {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
+
+  // Initialize PostHog analytics
+  useEffect(() => {
+    initPostHog();
+  }, []);
+
+  // Track page views on route changes
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
 
   // Check for admin URL parameter or path to open admin panel on desktop
   useEffect(() => {

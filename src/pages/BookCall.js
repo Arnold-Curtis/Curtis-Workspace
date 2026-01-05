@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import '../stylings/BookCall.css';
 import { submitBooking } from '../utils/apiService';
+import { getDistinctId } from '../utils/posthogService';
 
 const BookCall = () => {
   const [formData, setFormData] = useState({
@@ -16,47 +17,47 @@ const BookCall = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
-  
+
   // Generate available dates (next 14 days)
   const generateAvailableDates = () => {
     const dates = [];
     const today = new Date();
-    
+
     for (let i = 1; i <= 14; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      
+
       // Skip weekends (Saturday = 6, Sunday = 0)
       if (date.getDay() !== 0 && date.getDay() !== 6) {
         const formattedDate = date.toISOString().split('T')[0];
         dates.push(formattedDate);
       }
     }
-    
+
     return dates;
   };
-  
+
   // Generate available time slots
   const generateTimeSlots = () => {
     const slots = [];
     const startHour = 9; // 9 AM
     const endHour = 17; // 5 PM
-    
+
     for (let hour = startHour; hour <= endHour; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         if (hour === endHour && minute > 0) continue; // Don't include times after 5 PM
-        
+
         const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
         const period = hour < 12 ? 'AM' : 'PM';
         const formattedMinute = minute.toString().padStart(2, '0');
-        
+
         slots.push(`${formattedHour}:${formattedMinute} ${period}`);
       }
     }
-    
+
     return slots;
   };
-  
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,13 +66,13 @@ const BookCall = () => {
       [name]: value
     }));
   };
-  
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    
+
     // Validate form data
     if (!formData.name || !formData.email || !formData.date || !formData.time || !formData.topic) {
       setError('Please fill in all required fields.');
@@ -80,7 +81,7 @@ const BookCall = () => {
     }
 
     try {
-      // Submit to backend API
+      // Submit to backend API with PostHog identity for tracking
       const result = await submitBooking({
         name: formData.name,
         email: formData.email,
@@ -89,7 +90,8 @@ const BookCall = () => {
         preferred_time: formData.time,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         topic: formData.topic,
-        message: formData.message
+        message: formData.message,
+        ph_distinct_id: getDistinctId() // Identity handover for analytics
       });
 
       if (result.success) {
@@ -117,7 +119,7 @@ const BookCall = () => {
         const savedBookings = JSON.parse(localStorage.getItem('callBookings') || '[]');
         const updatedBookings = [bookingData, ...savedBookings];
         localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-        
+
         setSubmitted(true);
         setFormData({
           name: '',
@@ -144,7 +146,7 @@ const BookCall = () => {
       const savedBookings = JSON.parse(localStorage.getItem('callBookings') || '[]');
       const updatedBookings = [bookingData, ...savedBookings];
       localStorage.setItem('callBookings', JSON.stringify(updatedBookings));
-      
+
       setSubmitted(true);
       setFormData({
         name: '',
@@ -175,9 +177,9 @@ const BookCall = () => {
           <i className="fas fa-times close-icon"></i>
         </div>
       </div>
-      
+
       <div className="book-call-content">
-        <motion.div 
+        <motion.div
           className="code-line-numbers"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -187,9 +189,9 @@ const BookCall = () => {
             <div key={i} className="line-number">{i + 1}</div>
           ))}
         </motion.div>
-        
+
         <div className="book-call-main">
-          <motion.div 
+          <motion.div
             className="code-comment"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -202,8 +204,8 @@ const BookCall = () => {
  * Availability is shown in real-time based on calendar openings.
  */`}
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="section-container"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -212,14 +214,14 @@ const BookCall = () => {
             <h2 className="section-title">
               <span className="keyword">const</span> <span className="variable">ScheduleCall</span> = () =&gt; &#123;
             </h2>
-            
+
             <div className="terminal-like-container">
               <div className="terminal-header">
                 <span className="terminal-title">
                   <i className="fas fa-calendar-alt"></i> schedule.meeting
                 </span>
               </div>
-              
+
               <div className="terminal-body">
                 <div className="booking-intro">
                   <h2>Book a Call</h2>
@@ -233,68 +235,68 @@ const BookCall = () => {
                     <span>Call confirmation within: <strong>24 hours</strong></span>
                   </div>
                 </div>
-                
+
                 <form className="booking-form" onSubmit={handleSubmit}>
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="name">
                         <i className="fas fa-user"></i> Your Name *
                       </label>
-                      <input 
+                      <input
                         id="name"
                         name="name"
-                        type="text" 
-                        className="input-field" 
-                        placeholder="Full Name" 
+                        type="text"
+                        className="input-field"
+                        placeholder="Full Name"
                         value={formData.name}
                         onChange={handleChange}
-                        required 
+                        required
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label htmlFor="email">
                         <i className="fas fa-envelope"></i> Email Address *
                       </label>
-                      <input 
+                      <input
                         id="email"
                         name="email"
-                        type="email" 
-                        className="input-field" 
-                        placeholder="your.email@example.com" 
+                        type="email"
+                        className="input-field"
+                        placeholder="your.email@example.com"
                         value={formData.email}
                         onChange={handleChange}
-                        required 
+                        required
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="phone">
                         <i className="fas fa-phone"></i> Phone Number
                       </label>
-                      <input 
+                      <input
                         id="phone"
                         name="phone"
-                        type="tel" 
-                        className="input-field" 
-                        placeholder="Phone Number (optional)" 
+                        type="tel"
+                        className="input-field"
+                        placeholder="Phone Number (optional)"
                         value={formData.phone}
                         onChange={handleChange}
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="date">
                         <i className="fas fa-calendar"></i> Preferred Date *
                       </label>
-                      <select 
+                      <select
                         id="date"
                         name="date"
-                        className="input-field select-field" 
+                        className="input-field select-field"
                         value={formData.date}
                         onChange={handleChange}
                         required
@@ -307,15 +309,15 @@ const BookCall = () => {
                         ))}
                       </select>
                     </div>
-                    
+
                     <div className="form-group">
                       <label htmlFor="time">
                         <i className="fas fa-clock"></i> Preferred Time *
                       </label>
-                      <select 
+                      <select
                         id="time"
                         name="time"
-                        className="input-field select-field" 
+                        className="input-field select-field"
                         value={formData.time}
                         onChange={handleChange}
                         required
@@ -327,16 +329,16 @@ const BookCall = () => {
                       </select>
                     </div>
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="topic">
                         <i className="fas fa-comment-alt"></i> Call Topic *
                       </label>
-                      <select 
+                      <select
                         id="topic"
                         name="topic"
-                        className="input-field select-field" 
+                        className="input-field select-field"
                         value={formData.topic}
                         onChange={handleChange}
                         required
@@ -350,24 +352,24 @@ const BookCall = () => {
                       </select>
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="message">
                       <i className="fas fa-pen"></i> Additional Details
                     </label>
-                    <textarea 
+                    <textarea
                       id="message"
                       name="message"
-                      className="input-field" 
-                      placeholder="Please provide any additional information that might be helpful..." 
-                      rows="5" 
+                      className="input-field"
+                      placeholder="Please provide any additional information that might be helpful..."
+                      rows="5"
                       value={formData.message}
                       onChange={handleChange}
                     ></textarea>
                   </div>
-                  
-                  <button 
-                    type="submit" 
+
+                  <button
+                    type="submit"
                     className={`submit-button ${submitting ? 'submitting' : ''}`}
                     disabled={submitting}
                   >
@@ -381,14 +383,14 @@ const BookCall = () => {
                       </>
                     )}
                   </button>
-                  
+
                   {submitted && (
                     <div className="success-message">
                       <i className="fas fa-check-circle"></i>
                       <span>Your call has been scheduled! Check your email for confirmation details.</span>
                     </div>
                   )}
-                  
+
                   {error && (
                     <div className="error-message">
                       <i className="fas fa-exclamation-circle"></i>
@@ -400,8 +402,8 @@ const BookCall = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="section-container"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -423,7 +425,7 @@ const BookCall = () => {
                   <li><i className="fas fa-check"></i> Professional consultation on your needs</li>
                 </ul>
               </div>
-              
+
               <div className="info-section">
                 <div className="info-header">
                   <i className="fas fa-headset"></i>
@@ -451,8 +453,8 @@ const BookCall = () => {
             </div>
             <div className="code-line">&#125;;</div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="section-container export-section"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

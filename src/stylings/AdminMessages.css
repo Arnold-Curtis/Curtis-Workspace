@@ -1,13 +1,15 @@
 .admin-page-container {
-  min-height: 100vh;
+  height: 100%;
   background-color: #1e1e1e;
   color: #d4d4d4;
   font-family: 'Fira Code', monospace;
   padding: 20px;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 0 auto;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* Login Form Styling */
@@ -564,6 +566,7 @@
   flex-direction: column;
   gap: 20px;
   margin-top: 20px;
+  padding-bottom: 40px;
 }
 
 .request-card {
@@ -719,7 +722,7 @@
 
   .admin-page-container {
     margin: 20px;
-    overflow: hidden;
+    overflow-y: auto;
   }
   
   .admin-actions {

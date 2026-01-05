@@ -187,7 +187,8 @@
 /* Window content */
 .window-content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   width: 100%;
   height: calc(100% - 35px);

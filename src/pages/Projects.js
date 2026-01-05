@@ -120,7 +120,7 @@ const Projects = () => {
       ],
       image: "https://via.placeholder.com/600x350/252526/61dafb?text=Interactive+Portfolio",
       github: "https://github.com/Arnold-Curtis/Curtis-Workspace",
-      demo: "https://arnoldcurtis.netlify.app",
+      demo: null,
       features: [
         "Multi-window architecture with independent, stacking windows",
         "Draggable windows with momentum, bounds checking, and resize handles",

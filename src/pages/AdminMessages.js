@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import '../stylings/AdminMessages.css';
-import { 
-  getContacts, 
-  getGuestbookEntries, 
-  getBookings, 
+import AdminAnalytics from './AdminAnalytics';
+import {
+  getContacts,
+  getGuestbookEntries,
+  getBookings,
   getResumeRequests,
   markContactRead,
   deleteContact,
@@ -73,10 +74,10 @@ const AdminMessages = () => {
   // Download submissions as JSON file
   const downloadSubmissions = () => {
     const dataStr = JSON.stringify(submissions, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `contact_submissions_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -92,7 +93,7 @@ const AdminMessages = () => {
       setSubmissions([]);
     }
   };
-  
+
   // Delete a specific contact submission
   const handleDeleteContact = async (id) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
@@ -104,18 +105,18 @@ const AdminMessages = () => {
   // Mark contact as read
   const handleMarkAsRead = async (id) => {
     await markContactRead(id);
-    setSubmissions(submissions.map(s => 
+    setSubmissions(submissions.map(s =>
       s.id === id ? { ...s, read: 1 } : s
     ));
   };
-  
+
   // Download call bookings as JSON file
   const downloadBookings = () => {
     const dataStr = JSON.stringify(callBookings, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `call_bookings_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -125,10 +126,10 @@ const AdminMessages = () => {
   // Download resume requests as JSON file
   const downloadResumeRequests = () => {
     const dataStr = JSON.stringify(resumeRequests, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `resume_requests_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -144,7 +145,7 @@ const AdminMessages = () => {
       setCallBookings([]);
     }
   };
-  
+
   // Clear all resume requests
   const clearResumeRequests = async () => {
     if (window.confirm('Are you sure you want to delete all resume requests? This action cannot be undone.')) {
@@ -164,23 +165,23 @@ const AdminMessages = () => {
       setGuestbookEntries([]);
     }
   };
-  
+
   // Update call status
   const updateCallStatus = async (id, newStatus) => {
     await updateBookingStatus(id, newStatus);
-    setCallBookings(callBookings.map(booking => 
+    setCallBookings(callBookings.map(booking =>
       booking.id === id ? { ...booking, status: newStatus } : booking
     ));
   };
-  
+
   // Update resume request status
   const updateResumeStatus = async (id, newStatus) => {
     if (newStatus === 'sent' || newStatus === 'fulfilled') {
       await fulfillResumeRequest(id);
     }
-    setResumeRequests(resumeRequests.map(request => 
-      request.id === id 
-        ? { ...request, status: newStatus, fulfilled: newStatus === 'sent' ? 1 : 0 } 
+    setResumeRequests(resumeRequests.map(request =>
+      request.id === id
+        ? { ...request, status: newStatus, fulfilled: newStatus === 'sent' ? 1 : 0 }
         : request
     ));
   };
@@ -190,13 +191,13 @@ const AdminMessages = () => {
     if (newStatus === 'approved') {
       await approveGuestbookEntry(id);
     }
-    setGuestbookEntries(guestbookEntries.map(entry => 
-      entry.id === id 
-        ? { ...entry, status: newStatus, approved: newStatus === 'approved' ? 1 : 0 } 
+    setGuestbookEntries(guestbookEntries.map(entry =>
+      entry.id === id
+        ? { ...entry, status: newStatus, approved: newStatus === 'approved' ? 1 : 0 }
         : entry
     ));
   };
-  
+
   // Delete a specific call booking
   const deleteCallBookingItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this booking?')) {
@@ -207,7 +208,7 @@ const AdminMessages = () => {
       }
     }
   };
-  
+
   // Delete a specific resume request
   const deleteResumeRequestItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this resume request?')) {
@@ -226,7 +227,7 @@ const AdminMessages = () => {
       setGuestbookEntries(guestbookEntries.filter(entry => entry.id !== id));
     }
   };
-  
+
   // View call details
   const toggleCallDetails = (id) => {
     if (showCallDetails === id) {
@@ -235,7 +236,7 @@ const AdminMessages = () => {
       setShowCallDetails(id);
     }
   };
-  
+
   // View resume request details
   const toggleRequestDetails = (id) => {
     if (showRequestDetails === id) {
@@ -244,7 +245,7 @@ const AdminMessages = () => {
       setShowRequestDetails(id);
     }
   };
-  
+
   // Get status class for styling
   const getStatusClass = (status) => {
     switch (status.toLowerCase()) {
@@ -273,7 +274,7 @@ const AdminMessages = () => {
       `If you have any questions or would like to discuss potential opportunities, please don't hesitate to contact me.\n\n` +
       `Best regards,\nArnold Curtis`
     );
-    
+
     window.open(`mailto:${request.email}?subject=${subject}&body=${body}`);
     updateResumeStatus(request.id, 'sent');
   };
@@ -285,27 +286,27 @@ const AdminMessages = () => {
           <div className="admin-login-card">
             <h2>Restricted Access</h2>
             <p>This page is restricted to administrators only.</p>
-            
+
             <form onSubmit={verifyAccessCode} className="admin-login-form">
               <div className="admin-form-group">
                 <label htmlFor="accessCode">Access Code</label>
-                <input 
+                <input
                   id="accessCode"
-                  type="password" 
-                  className="admin-input-field" 
-                  placeholder="Enter access code" 
+                  type="password"
+                  className="admin-input-field"
+                  placeholder="Enter access code"
                   value={accessCode}
                   onChange={(e) => setAccessCode(e.target.value)}
-                  required 
+                  required
                 />
               </div>
-              
+
               {error && (
                 <div className="admin-error-message">
                   {error}
                 </div>
               )}
-              
+
               <button type="submit" className="admin-button">
                 Access Dashboard
               </button>
@@ -315,21 +316,21 @@ const AdminMessages = () => {
       ) : (
         <div className="admin-content">
           <div className="admin-tabs">
-            <button 
+            <button
               className={`admin-tab ${activeTab === 'messages' ? 'active' : ''}`}
               onClick={() => setActiveTab('messages')}
             >
               <i className="fas fa-envelope"></i> Contact Messages
               <span className="tab-counter">{submissions.length}</span>
             </button>
-            <button 
+            <button
               className={`admin-tab ${activeTab === 'calls' ? 'active' : ''}`}
               onClick={() => setActiveTab('calls')}
             >
               <i className="fas fa-phone-alt"></i> Call Bookings
               <span className="tab-counter">{callBookings.length}</span>
             </button>
-            <button 
+            <button
               className={`admin-tab ${activeTab === 'resumes' ? 'active' : ''}`}
               onClick={() => setActiveTab('resumes')}
             >
@@ -343,22 +344,28 @@ const AdminMessages = () => {
               <i className="fas fa-comments"></i> Guestbook
               <span className="tab-counter">{guestbookEntries.length}</span>
             </button>
+            <button
+              className={`admin-tab ${activeTab === 'analytics' ? 'active' : ''}`}
+              onClick={() => setActiveTab('analytics')}
+            >
+              <i className="fas fa-chart-line"></i> Analytics
+            </button>
           </div>
-          
+
           {activeTab === 'messages' && (
             <>
               <div className="admin-header">
                 <h1>Contact Form Submissions</h1>
                 <div className="admin-actions">
-                  <button 
-                    onClick={downloadSubmissions} 
+                  <button
+                    onClick={downloadSubmissions}
                     className="admin-button download-button"
                     disabled={submissions.length === 0}
                   >
                     <i className="fas fa-download"></i> Export to JSON
                   </button>
-                  <button 
-                    onClick={clearSubmissions} 
+                  <button
+                    onClick={clearSubmissions}
                     className="admin-button delete-button"
                     disabled={submissions.length === 0}
                   >
@@ -366,7 +373,7 @@ const AdminMessages = () => {
                   </button>
                 </div>
               </div>
-              
+
               {submissions.length > 0 ? (
                 <div className="submissions-table-container">
                   <table className="submissions-table">
@@ -445,7 +452,7 @@ const AdminMessages = () => {
                         </div>
                       </div>
 
-                      <div className="request-details" style={{display: 'block', margin: '15px 0'}}>
+                      <div className="request-details" style={{ display: 'block', margin: '15px 0' }}>
                         <div className="details-content">
                           <p>{entry.message}</p>
                         </div>
@@ -490,21 +497,21 @@ const AdminMessages = () => {
               )}
             </>
           )}
-          
+
           {activeTab === 'calls' && (
             <>
               <div className="admin-header">
                 <h1>Call Bookings</h1>
                 <div className="admin-actions">
-                  <button 
-                    onClick={downloadBookings} 
+                  <button
+                    onClick={downloadBookings}
                     className="admin-button download-button"
                     disabled={callBookings.length === 0}
                   >
                     <i className="fas fa-download"></i> Export to JSON
                   </button>
-                  <button 
-                    onClick={clearBookings} 
+                  <button
+                    onClick={clearBookings}
                     className="admin-button delete-button"
                     disabled={callBookings.length === 0}
                   >
@@ -512,7 +519,7 @@ const AdminMessages = () => {
                   </button>
                 </div>
               </div>
-              
+
               {callBookings.length > 0 ? (
                 <div className="call-bookings-container">
                   {callBookings.map((booking) => (
@@ -528,7 +535,7 @@ const AdminMessages = () => {
                           {booking.status}
                         </div>
                       </div>
-                      
+
                       <div className="booking-info">
                         <div className="contact-info">
                           <div className="info-row">
@@ -546,23 +553,23 @@ const AdminMessages = () => {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="topic-info">
                           <div className="topic-badge">{booking.topic}</div>
                         </div>
                       </div>
-                      
+
                       <div className="booking-actions">
-                        <button 
+                        <button
                           className="action-button details-button"
                           onClick={() => toggleCallDetails(booking.id)}
                         >
                           <i className={`fas ${showCallDetails === booking.id ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                          {showCallDetails === booking.id ? 'Hide Details' : 'Show Details'} 
+                          {showCallDetails === booking.id ? 'Hide Details' : 'Show Details'}
                         </button>
-                        
+
                         <div className="status-actions">
-                          <button 
+                          <button
                             className={`status-button confirm-button ${booking.status === 'Confirmed' ? 'active' : ''}`}
                             onClick={() => updateCallStatus(booking.id, 'Confirmed')}
                             disabled={booking.status === 'Confirmed'}
@@ -570,7 +577,7 @@ const AdminMessages = () => {
                             <i className="fas fa-check"></i>
                             Confirm
                           </button>
-                          <button 
+                          <button
                             className={`status-button complete-button ${booking.status === 'Completed' ? 'active' : ''}`}
                             onClick={() => updateCallStatus(booking.id, 'Completed')}
                             disabled={booking.status === 'Completed'}
@@ -578,7 +585,7 @@ const AdminMessages = () => {
                             <i className="fas fa-check-double"></i>
                             Complete
                           </button>
-                          <button 
+                          <button
                             className={`status-button cancel-button ${booking.status === 'Cancelled' ? 'active' : ''}`}
                             onClick={() => updateCallStatus(booking.id, 'Cancelled')}
                             disabled={booking.status === 'Cancelled'}
@@ -587,8 +594,8 @@ const AdminMessages = () => {
                             Cancel
                           </button>
                         </div>
-                        
-                        <button 
+
+                        <button
                           className="action-button delete-button"
                           onClick={() => deleteCallBookingItem(booking.id)}
                         >
@@ -596,7 +603,7 @@ const AdminMessages = () => {
                           Delete
                         </button>
                       </div>
-                      
+
                       {showCallDetails === booking.id && (
                         <div className="booking-details">
                           <div className="details-header">Additional Information</div>
@@ -625,21 +632,21 @@ const AdminMessages = () => {
               )}
             </>
           )}
-          
+
           {activeTab === 'resumes' && (
             <>
               <div className="admin-header">
                 <h1>Resume Requests</h1>
                 <div className="admin-actions">
-                  <button 
-                    onClick={downloadResumeRequests} 
+                  <button
+                    onClick={downloadResumeRequests}
                     className="admin-button download-button"
                     disabled={resumeRequests.length === 0}
                   >
                     <i className="fas fa-download"></i> Export to JSON
                   </button>
-                  <button 
-                    onClick={clearResumeRequests} 
+                  <button
+                    onClick={clearResumeRequests}
                     className="admin-button delete-button"
                     disabled={resumeRequests.length === 0}
                   >
@@ -647,7 +654,7 @@ const AdminMessages = () => {
                   </button>
                 </div>
               </div>
-              
+
               {resumeRequests.length > 0 ? (
                 <div className="resume-requests-container">
                   {resumeRequests.map((request) => (
@@ -662,7 +669,7 @@ const AdminMessages = () => {
                           {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                         </div>
                       </div>
-                      
+
                       <div className="request-contact">
                         <div className="contact-item">
                           <i className="fas fa-envelope"></i>
@@ -673,18 +680,18 @@ const AdminMessages = () => {
                           <span>{new Date(request.date).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      
+
                       <div className="request-actions">
-                        <button 
+                        <button
                           className="action-button details-button"
                           onClick={() => toggleRequestDetails(request.id)}
                         >
                           <i className={`fas ${showRequestDetails === request.id ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                          {showRequestDetails === request.id ? 'Hide Message' : 'View Message'} 
+                          {showRequestDetails === request.id ? 'Hide Message' : 'View Message'}
                         </button>
-                        
+
                         <div className="status-actions">
-                          <button 
+                          <button
                             className={`status-button approve-button ${request.status === 'approved' ? 'active' : ''}`}
                             onClick={() => updateResumeStatus(request.id, 'approved')}
                             disabled={request.status === 'approved' || request.status === 'sent'}
@@ -692,7 +699,7 @@ const AdminMessages = () => {
                             <i className="fas fa-check"></i>
                             Approve
                           </button>
-                          <button 
+                          <button
                             className={`status-button send-button ${request.status === 'sent' ? 'active' : ''}`}
                             onClick={() => handleSendResume(request)}
                             disabled={request.status === 'sent' || request.status === 'rejected'}
@@ -700,7 +707,7 @@ const AdminMessages = () => {
                             <i className="fas fa-paper-plane"></i>
                             Send Resume
                           </button>
-                          <button 
+                          <button
                             className={`status-button reject-button ${request.status === 'rejected' ? 'active' : ''}`}
                             onClick={() => updateResumeStatus(request.id, 'rejected')}
                             disabled={request.status === 'rejected' || request.status === 'sent'}
@@ -709,8 +716,8 @@ const AdminMessages = () => {
                             Reject
                           </button>
                         </div>
-                        
-                        <button 
+
+                        <button
                           className="action-button delete-button"
                           onClick={() => deleteResumeRequestItem(request.id)}
                         >
@@ -718,7 +725,7 @@ const AdminMessages = () => {
                           Delete
                         </button>
                       </div>
-                      
+
                       {showRequestDetails === request.id && (
                         <div className="request-details">
                           <div className="details-header">Additional Information</div>
@@ -741,6 +748,10 @@ const AdminMessages = () => {
                 </div>
               )}
             </>
+          )}
+
+          {activeTab === 'analytics' && (
+            <AdminAnalytics />
           )}
         </div>
       )}

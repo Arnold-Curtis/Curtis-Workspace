@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../stylings/Guestbook.css';
 import { motion } from 'framer-motion';
 import { submitGuestbookEntry, getApprovedGuestbookEntries } from '../utils/apiService';
+import { getDistinctId } from '../utils/posthogService';
 
 const Guestbook = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,8 @@ const Guestbook = () => {
         name: formData.name,
         message: formData.message,
         company: '',
-        role: formData.role
+        role: formData.role,
+        ph_distinct_id: getDistinctId() // Identity handover for analytics
       });
 
       if (result.success) {

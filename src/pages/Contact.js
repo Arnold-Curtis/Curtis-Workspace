@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../stylings/Contact.css';
 import { motion } from 'framer-motion';
 import { submitContact } from '../utils/apiService';
+import { getDistinctId } from '../utils/posthogService';
 import { processPendingHighlight, highlightSection, injectHighlightStyles } from '../utils/highlightService';
 
 const Contact = () => {
@@ -52,12 +53,13 @@ const Contact = () => {
     setError(null);
 
     try {
-      // Submit to backend API
+      // Submit to backend API with PostHog identity for tracking
       const result = await submitContact({
         name: formData.name,
         email: formData.email,
         subject: '',
-        message: formData.message
+        message: formData.message,
+        ph_distinct_id: getDistinctId() // Identity handover for analytics
       });
 
       if (result.success) {
